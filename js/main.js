@@ -99,3 +99,9 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// FAQ Accordion Toggle
+function toggleFaq(button) {
+    const faqItem = button.parentElement;
+    faqItem.classList.toggle('active');
+}

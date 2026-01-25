@@ -148,7 +148,16 @@ p {
 .link-arrow::after {
     content: '→';
     margin-left: 0.5rem;
-    transition: transform 0.3s ease;
+    animation: arrow-nudge 1.5s ease-in-out infinite;
+}
+
+@keyframes arrow-nudge {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
 }
 
 .link-arrow:hover {
@@ -156,7 +165,49 @@ p {
 }
 
 .link-arrow:hover::after {
+    animation: none;
     transform: translateX(4px);
+}
+
+/* Light variant for dark backgrounds */
+.link-arrow--light {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.link-arrow--light:hover {
+    color: var(--color-white);
+}
+
+/* Breathing animations - slow, organic, calming */
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.85;
+    }
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+@keyframes breathe-circles {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.08);
+        opacity: 1;
+    }
+}
+
+@keyframes breathe-subtle {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
 }
 
 /* ============================================
@@ -253,10 +304,23 @@ p {
 
 .hero--with-image {
     position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero--with-image::after {
+    content: '';
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    right: -5%;
+    bottom: -5%;
     background-image: url('../images/hero-group-session.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    animation: breathe-subtle 8s ease-in-out infinite;
+    z-index: -2;
 }
 
 .hero--with-image::before {
@@ -267,6 +331,7 @@ p {
     right: 0;
     bottom: 0;
     background: linear-gradient(to bottom, rgba(250, 249, 247, 0.85), rgba(250, 249, 247, 0.75));
+    z-index: -1;
 }
 
 .hero--with-image .hero-content {
@@ -362,6 +427,23 @@ p {
     margin-bottom: var(--space-md);
 }
 
+.service-icon svg {
+    animation: breathe 5s ease-in-out infinite;
+}
+
+/* Stagger the animations for each card */
+.service-card:nth-child(1) .service-icon svg {
+    animation-delay: 0s;
+}
+
+.service-card:nth-child(2) .service-icon svg {
+    animation-delay: 2s;
+}
+
+.service-card:nth-child(3) .service-icon svg {
+    animation-delay: 4s;
+}
+
 .service-card h3 {
     margin-bottom: var(--space-sm);
 }
@@ -383,6 +465,7 @@ p {
     max-width: 800px;
     margin: 0 auto;
     text-align: center;
+    animation: breathe-subtle 7s ease-in-out infinite;
 }
 
 .testimonial-quote p {
@@ -408,6 +491,16 @@ p {
     padding: var(--space-xl) 0;
     background-color: var(--color-primary);
     text-align: center;
+    animation: cta-breathe 8s ease-in-out infinite;
+}
+
+@keyframes cta-breathe {
+    0%, 100% {
+        background-color: var(--color-primary);
+    }
+    50% {
+        background-color: #526352; /* slightly lighter sage */
+    }
 }
 
 .cta h2 {
@@ -540,8 +633,9 @@ p {
         padding: var(--space-sm) 0;
     }
 
-    .nav-cta {
+    .nav-menu .nav-cta {
         margin-top: var(--space-sm);
+        padding: 0.875rem 1.75rem;
     }
 
     .nav-toggle.active span:nth-child(1) {
@@ -814,5 +908,116 @@ p {
 
     .event-date {
         justify-self: center;
+    }
+}
+
+/* FAQ Accordion */
+.faq-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.faq-item:first-of-type {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-primary);
+    transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--color-primary-dark);
+}
+
+.faq-icon {
+    font-size: 1.5rem;
+    font-weight: 300;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faq-answer p {
+    color: var(--color-text-light);
+    padding-bottom: 1.25rem;
+    margin: 0;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+}
+
+/* Benefits List (Men's Group page) */
+.benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.benefit-item svg {
+    flex-shrink: 0;
+    margin-top: 0.25rem;
+}
+
+.benefit-item strong {
+    display: block;
+    font-size: 1.05rem;
+    margin-bottom: 0.25rem;
+}
+
+.benefit-item p {
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Full-width image break */
+.image-break {
+    width: 100%;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.image-break img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .link-arrow::after,
+    .service-icon svg,
+    .testimonial-quote,
+    .hero--with-image::after,
+    .cta {
+        animation: none;
     }
 }
