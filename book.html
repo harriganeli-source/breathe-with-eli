@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Session | Eli Harrigan</title>
+    <meta name="description" content="Book a breathwork session, coaching call, or free consultation with Eli Harrigan.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .booking-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .booking-card {
+            background: var(--color-white);
+            border: 2px solid var(--color-bg-alt);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .booking-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        .booking-card.active {
+            border-color: var(--color-primary);
+            background: var(--color-bg-alt);
+        }
+        .booking-card h3 {
+            margin-bottom: 0.5rem;
+        }
+        .booking-card .price {
+            font-size: 1.75rem;
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            margin: 1rem 0;
+        }
+        .booking-card .duration {
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+        }
+        .booking-card p {
+            margin-top: 1rem;
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Sub-options for expandable cards */
+        .sub-options {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-bg-alt);
+        }
+        .sub-options.show {
+            display: block;
+        }
+        .sub-options h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--color-text);
+        }
+        .sub-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--color-white);
+            border: 1px solid var(--color-bg-alt);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .sub-option:hover {
+            border-color: var(--color-primary);
+            background: var(--color-bg);
+        }
+        .sub-option .location {
+            font-weight: 500;
+            color: var(--color-text);
+        }
+        .sub-option .option-price {
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        .booking-container {
+            min-height: 600px;
+            background-color: var(--color-white);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .booking-container iframe {
+            width: 100%;
+            height: 800px;
+            border: none;
+        }
+        .booking-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        .booking-intro p {
+            color: var(--color-text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Eli Harrigan</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="about.html">About</a></li>
+                <li><a href="work-with-me.html">Work With Me</a></li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="book.html" class="nav-cta">Book a Session</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Book a Session</h1>
+        </div>
+    </header>
+
+    <!-- Service Selection -->
+    <section class="content-section">
+        <div class="container">
+            <div class="booking-intro">
+                <h2>What are you looking for?</h2>
+                <p>Select an option below to go directly to scheduling.</p>
+            </div>
+            <div class="booking-options">
+                <div class="booking-card" data-service="consultation" onclick="bookService('consultation')">
+                    <h3>Free Virtual Consultation</h3>
+                    <div class="price">$0</div>
+                    <div class="duration">30 minutes</div>
+                    <p>Not sure where to start? Let's chat and figure out the best path forward together.</p>
+                </div>
+                <div class="booking-card" data-service="breathwork" onclick="toggleOptions('breathwork')">
+                    <h3>Private Breathwork</h3>
+                    <div class="price">$175</div>
+                    <div class="duration">90 minutes</div>
+                    <p>A powerful somatic session to release tension, process emotions, and reconnect with your body.</p>
+                    <div class="sub-options" id="breathwork-options">
+                        <h4>Choose your location:</h4>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('breathwork-victor')">
+                            <span class="location">Victor, NY (In-Person)</span>
+                        </div>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('breathwork-pittsford')">
+                            <span class="location">Pittsford, NY (In-Person)</span>
+                        </div>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('breathwork-virtual')">
+                            <span class="location">Virtual (Zoom)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-card" data-service="coaching" onclick="toggleOptions('coaching')">
+                    <h3>Coaching Session</h3>
+                    <div class="price">$125</div>
+                    <div class="duration">75 minutes</div>
+                    <p>1:1 somatic coaching for honest reflection, emotional unearthing, and embodied change.</p>
+                    <div class="sub-options" id="coaching-options">
+                        <h4>Choose your location:</h4>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-victor')">
+                            <span class="location">Victor, NY (In-Person)</span>
+                        </div>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-pittsford')">
+                            <span class="location">Pittsford, NY (In-Person)</span>
+                        </div>
+                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-virtual')">
+                            <span class="location">Virtual (Zoom)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem;">
+                <div>
+                    <h3>Locations</h3>
+                    <ul style="margin-top: 1rem; color: var(--color-text-light);">
+                        <li style="margin-bottom: 0.75rem;"><strong>Victor, NY</strong> – In-person breathwork & coaching</li>
+                        <li style="margin-bottom: 0.75rem;"><strong>Pittsford, NY</strong> – In-person breathwork & coaching</li>
+                        <li style="margin-bottom: 0.75rem;"><strong>Virtual</strong> – Coaching & breathwork via Zoom</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>What to Expect</h3>
+                    <p style="margin-top: 1rem; color: var(--color-text-light);">
+                        After booking, you'll receive a confirmation email with any preparation details and location information. I'll reach out if I have any questions before our session.
+                    </p>
+                </div>
+                <div>
+                    <h3>Cancellation Policy</h3>
+                    <p style="margin-top: 1rem; color: var(--color-text-light);">
+                        Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may be subject to a fee.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Questions Section -->
+    <section class="content-section">
+        <div class="container" style="text-align: center; max-width: 600px;">
+            <h2>Questions?</h2>
+            <p>Not sure which session is right for you? Book a free consultation and we'll figure it out together. Or reach out anytime.</p>
+            <a href="contact.html" class="btn btn-secondary" style="margin-top: 1rem;">Contact Me</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">Eli Harrigan</a>
+                    <p>Breathwork & Coaching</p>
+                    <p class="footer-location">Rochester, NY & Online</p>
+                </div>
+                <div class="footer-nav">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="work-with-me.html">Work With Me</a></li>
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="book.html">Book</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="mailto:eli@breathewitheli.com">eli@breathewitheli.com</a></li>
+                        <li><a href="https://instagram.com/breathewitheli" target="_blank" rel="noopener">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Eli Harrigan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Acuity appointment type URLs
+        const acuityUrls = {
+            'consultation': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88330409',
+            'coaching-virtual': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88330399',
+            'coaching-victor': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88331832',
+            'coaching-pittsford': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88331858',
+            'breathwork-victor': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=84562996',
+            'breathwork-pittsford': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=21772859',
+            'breathwork-virtual': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=84563446'
+        };
+
+        // Book a specific service - opens Acuity directly
+        function bookService(service) {
+            const url = acuityUrls[service];
+            if (url) {
+                window.open(url, '_blank');
+            }
+        }
+
+        // Toggle sub-options for a service
+        function toggleOptions(service) {
+            const options = document.getElementById(service + '-options');
+            const card = document.querySelector('[data-service="' + service + '"]');
+
+            options.classList.toggle('show');
+            card.classList.toggle('active');
+        }
+
+        // Check URL parameters on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const service = params.get('service');
+
+            if (service === 'breathwork' || service === 'coaching') {
+                // Show options expanded
+                const options = document.getElementById(service + '-options');
+                const card = document.querySelector('[data-service="' + service + '"]');
+                options.classList.add('show');
+                card.classList.add('active');
+                // Scroll to the card
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            } else if (service === 'consultation') {
+                // Direct link - open Acuity immediately
+                bookService(service);
+            }
+        });
+    </script>
+</body>
+</html>
