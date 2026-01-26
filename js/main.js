@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     // Add fade-in class to elements
-    document.querySelectorAll('.service-card, .testimonial-quote, .event-card').forEach(el => {
+    document.querySelectorAll('.service-card, .testimonial-quote, .testimonial-card, .event-card, .intro-content, .intro--with-image .two-col').forEach(el => {
         el.classList.add('fade-in');
         fadeInObserver.observe(el);
     });
@@ -129,6 +129,125 @@ function toggleFaq(button) {
     const faqItem = button.parentElement;
     faqItem.classList.toggle('active');
 }
+
+// Kit (ConvertKit) form handling is done by Kit's official script
+// loaded via: https://breathe-with-eli.kit.com/7a97c5385b/index.js
+
+// Interactive Hover Mandala with breathing animation
+(function() {
+    const isMobile = window.innerWidth <= 768;
+    const container = isMobile
+        ? document.getElementById('hero-mandala-mobile')
+        : document.getElementById('hero-mandala');
+    const heroSection = document.querySelector('.hero--mandala');
+    if (!container || !heroSection) return;
+
+    const numChevrons = isMobile ? 12 : 24;
+    const baseRadius = isMobile ? 60 : 340;
+    const breathAmount = 6; // How much the radius changes during breathing
+    const hoverExpandAmount = 40; // Additional expansion on hover
+    const breathDuration = 8000; // 8 seconds per breath cycle
+    const hoverEaseSpeed = 0.015; // How fast hover offset interpolates (0-1, lower = smoother)
+    const chevrons = [];
+    const chevronState = []; // Store current and target hover offsets
+
+    // Create chevron elements arranged in a circle
+    for (let i = 0; i < numChevrons; i++) {
+        const angle = (i / numChevrons) * Math.PI * 2;
+        const chevron = document.createElement('div');
+        chevron.className = 'chevron';
+
+        // Rotate to point outward
+        const rotation = (angle * 180 / Math.PI) + 90;
+        chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+
+        container.appendChild(chevron);
+        chevrons.push(chevron);
+        chevronState.push({
+            angle: angle,
+            currentOffset: 0,
+            targetOffset: 0,
+            collapseTimeout: null
+        });
+    }
+
+    function updateChevronPosition(index, breathProgress) {
+        const chevron = chevrons[index];
+        const state = chevronState[index];
+
+        // Smoothly interpolate current offset toward target
+        state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+
+        // Calculate breathing radius (sine wave)
+        const breathOffset = Math.sin(breathProgress * Math.PI * 2) * breathAmount;
+        const currentRadius = baseRadius + breathOffset + state.currentOffset;
+
+        const x = Math.cos(state.angle) * currentRadius;
+        const y = Math.sin(state.angle) * currentRadius;
+
+        chevron.style.left = `calc(50% + ${x}px)`;
+        chevron.style.top = `calc(50% + ${y}px)`;
+    }
+
+    // Breathing animation loop
+    function animateBreathing() {
+        const now = Date.now();
+        const breathProgress = (now % breathDuration) / breathDuration;
+
+        for (let i = 0; i < chevrons.length; i++) {
+            updateChevronPosition(i, breathProgress);
+        }
+
+        requestAnimationFrame(animateBreathing);
+    }
+
+    function expandChevron(index) {
+        const state = chevronState[index];
+        state.targetOffset = hoverExpandAmount;
+
+        // Clear any existing collapse timeout
+        if (state.collapseTimeout) {
+            clearTimeout(state.collapseTimeout);
+        }
+
+        // Set new collapse timeout (delay before returning)
+        state.collapseTimeout = setTimeout(() => {
+            collapseChevron(index);
+        }, 800);
+    }
+
+    function collapseChevron(index) {
+        const state = chevronState[index];
+        state.targetOffset = 0;
+        state.collapseTimeout = null;
+    }
+
+    // Mouse interaction on the whole hero section
+    heroSection.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left - rect.width / 2;
+        const mouseY = e.clientY - rect.top - rect.height / 2;
+
+        for (let i = 0; i < chevronState.length; i++) {
+            const state = chevronState[i];
+            // Calculate base position for distance check
+            const checkX = Math.cos(state.angle) * baseRadius;
+            const checkY = Math.sin(state.angle) * baseRadius;
+
+            // Check distance from mouse to chevron base position
+            const dx = mouseX - checkX;
+            const dy = mouseY - checkY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 70) {
+                expandChevron(i);
+            }
+        }
+    });
+
+    // Start breathing animation
+    animateBreathing();
+})();
 
 // Interactive Breath Wave - Trailing Line
 (function() {

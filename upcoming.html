@@ -22,7 +22,14 @@
             </button>
             <ul class="nav-menu">
                 <li><a href="about.html">About</a></li>
-                <li><a href="work-with-me.html">Work With Me</a></li>
+                <li class="nav-dropdown">
+                    <a href="work-with-me.html">Work With Me</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
+                        <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
+                        <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
+                    </ul>
+                </li>
                 <li><a href="upcoming.html">Events</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="book.html" class="nav-cta">Book a Session</a></li>
@@ -104,18 +111,25 @@
         </div>
     </section>
 
-    <!-- Mailing List -->
-    <section class="content-section">
-        <div class="container" style="text-align: center; max-width: 600px;">
-            <h2>Stay in the Loop</h2>
-            <p>Get notified about upcoming events, workshops, and offerings. No spam, just meaningful updates.</p>
-            <form class="newsletter-form" style="margin-top: 2rem;">
-                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                    <input type="email" placeholder="Your email address" style="flex: 1; min-width: 250px; padding: 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; font-size: 1rem;">
-                    <button type="submit" class="btn btn-primary">Subscribe</button>
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-dual">
+                <div class="cta-option">
+                    <h2>Ready to Begin?</h2>
+                    <p>Book a free 30-minute consultation to discuss your goals and see if we're a good fit.</p>
+                    <a href="book.html?service=consultation" class="btn btn-primary">Schedule Your Call</a>
                 </div>
-            </form>
-            <p style="font-size: 0.85rem; color: var(--color-text-light); margin-top: 1rem;">I respect your privacy and will never share your information.</p>
+                <div class="cta-divider"></div>
+                <div class="cta-option">
+                    <h2>Stay Connected</h2>
+                    <p>Join my mailing list for updates on upcoming events and workshops.</p>
+                    <div class="kit-form-container">
+                        <script src="https://f.convertkit.com/ckjs/ck.5.js"></script>
+                        <form action="https://app.kit.com/forms/9017140/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="9017140" data-uid="bd08d53fc5" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;message&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:true,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800"><div data-style="clean"><ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul><div data-element="fields" data-stacked="false" class="seva-fields formkit-fields"><div class="formkit-field"><input class="formkit-input" aria-label="First Name" name="fields[first_name]" placeholder="First Name" type="text" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400;"></div><div class="formkit-field"><input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400;"></div><button data-element="submit" class="formkit-submit formkit-submit" style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); border-radius: 4px; font-weight: 400;"><div class="formkit-spinner"><div></div><div></div><div></div></div><span class="">Subscribe</span></button></div></div></form>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -132,7 +146,14 @@
                     <h4>Navigate</h4>
                     <ul>
                         <li><a href="about.html">About</a></li>
-                        <li><a href="work-with-me.html">Work With Me</a></li>
+                        <li class="nav-dropdown">
+                    <a href="work-with-me.html">Work With Me</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
+                        <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
+                        <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
+                    </ul>
+                </li>
                         <li><a href="upcoming.html">Events</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="book.html">Book</a></li>
@@ -153,5 +174,6 @@
     </footer>
 
     <script src="js/main.js"></script>
+    
 </body>
 </html>
