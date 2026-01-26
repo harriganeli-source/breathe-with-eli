@@ -1,0 +1,31 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/breathwork",
+      "destination": "/work-with-me#breathwork",
+      "permanent": true
+    },
+    {
+      "source": "/coaching",
+      "destination": "/work-with-me#coaching",
+      "permanent": true
+    },
+    {
+      "source": "/clients",
+      "destination": "/about#testimonials",
+      "permanent": true
+    },
+    {
+      "source": "/private",
+      "destination": "/work-with-me",
+      "permanent": true
+    },
+    {
+      "source": "/cart",
+      "destination": "/book",
+      "permanent": true
+    }
+  ]
+}

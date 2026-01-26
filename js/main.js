@@ -77,6 +77,30 @@ document.addEventListener('DOMContentLoaded', function() {
         el.classList.add('fade-in');
         fadeInObserver.observe(el);
     });
+
+    // Synchronize service icon breathing animations
+    // Use a single JavaScript timer to drive all icons together
+    const serviceIcons = document.querySelectorAll('.service-icon svg');
+    if (serviceIcons.length > 0) {
+        const duration = 5000; // 5 seconds per breath cycle
+
+        function animateBreath() {
+            const now = Date.now();
+            const progress = (now % duration) / duration;
+            // Sine wave: 0 -> 1 -> 0 over the cycle
+            const breathProgress = Math.sin(progress * Math.PI * 2) * 0.5 + 0.5;
+            const scale = 1 + (breathProgress * 0.15); // 1.0 to 1.15
+
+            serviceIcons.forEach(icon => {
+                icon.style.setProperty('--breath-scale', scale);
+                icon.style.setProperty('--breath-progress', breathProgress);
+            });
+
+            requestAnimationFrame(animateBreath);
+        }
+
+        animateBreath();
+    }
 });
 
 // Add CSS for fade-in animations
@@ -132,18 +156,18 @@ function toggleFaq(button) {
     // Settings
     const padding = 40;
     const lineWidth = 2;
-    const scrollSpeed = 2;       // How fast the line flows right-to-left
-    const easeSpeed = 0.08;      // How fast head follows cursor
+    const scrollSpeed = 0.8;     // How fast the line flows left-to-right (pixels per frame)
+    const maxMoveSpeed = 0.002;  // Max amount head can move per frame (very slow = smooth waves)
 
     // History buffer - stores Y positions that flow from left to right
-    // Each entry is a Y value (0-1 range)
-    const historyLength = Math.ceil(width / scrollSpeed) + 10;
+    // Need enough entries to cover the full width of the canvas
+    const historyLength = Math.ceil(width) + 50;
     const history = new Array(historyLength).fill(0.5);
     let historyOffset = 0;       // Sub-pixel offset for smooth scrolling
 
     // Current state
     let targetY = 0.5;           // Where cursor wants the head
-    let currentY = 0.5;          // Current head position (eased)
+    let currentY = 0.5;          // Current head position (rate-limited)
     let lastTargetY = 0.5;
     let currentState = 'breathe';
     let isHovering = false;
@@ -198,17 +222,20 @@ function toggleFaq(button) {
     }
 
     function draw() {
-        // Ease head toward target
+        // Move head toward target with max speed limit
         const delta = targetY - currentY;
-        currentY += delta * easeSpeed;
+        if (Math.abs(delta) > maxMoveSpeed) {
+            currentY += Math.sign(delta) * maxMoveSpeed;
+        } else {
+            currentY = targetY;
+        }
 
         // Update history offset for smooth scrolling
         historyOffset += scrollSpeed;
 
-        // When we've scrolled a full pixel, shift the history
+        // When we've scrolled enough, shift the history
         while (historyOffset >= 1) {
             historyOffset -= 1;
-            // Shift everything right (newer values come in from left)
             history.pop();
             history.unshift(currentY);
         }
@@ -233,39 +260,26 @@ function toggleFaq(button) {
 
         ctx.globalAlpha = 1;
 
-        // Draw the flowing line from history
+        // Draw the flowing line from history - simple pixel-by-pixel for smoothest result
         ctx.beginPath();
         ctx.strokeStyle = primaryColor;
         ctx.lineWidth = lineWidth;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // Build points from history
-        const points = [];
-        for (let x = 0; x <= width; x++) {
-            // Calculate which history index this x corresponds to
-            const historyIndex = Math.floor((x + historyOffset) / 1);
+        // Start at x=0
+        const startIndex = Math.floor(historyOffset);
+        const startY = padding + (history[startIndex] || 0.5) * (height - padding * 2);
+        ctx.moveTo(0, startY);
+
+        // Draw line pixel by pixel across full width
+        for (let x = 1; x <= width; x++) {
+            const historyIndex = Math.floor(x + historyOffset);
             const yValue = history[Math.min(historyIndex, history.length - 1)] || 0.5;
             const y = padding + yValue * (height - padding * 2);
-            points.push({ x, y });
+            ctx.lineTo(x, y);
         }
 
-        // Draw smooth curve through points
-        if (points.length > 0) {
-            ctx.moveTo(points[0].x, points[0].y);
-
-            // Use quadratic curves for smoothness
-            for (let i = 1; i < points.length - 1; i += 2) {
-                const xc = points[i].x;
-                const yc = points[i].y;
-                const x2 = points[Math.min(i + 1, points.length - 1)].x;
-                const y2 = points[Math.min(i + 1, points.length - 1)].y;
-                ctx.quadraticCurveTo(xc, yc, (xc + x2) / 2, (yc + y2) / 2);
-            }
-            // Connect to last point
-            const last = points[points.length - 1];
-            ctx.lineTo(last.x, last.y);
-        }
         ctx.stroke();
 
         requestAnimationFrame(draw);
