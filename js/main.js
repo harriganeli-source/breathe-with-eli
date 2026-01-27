@@ -151,6 +151,18 @@ function toggleFaq(button) {
     const chevrons = [];
     const chevronState = []; // Store current and target hover offsets
 
+    // Page-load entrance animation settings
+    const entranceDelay = 300; // ms before animation starts
+    const entranceDuration = 2000; // ms for full entrance animation (slower, more relaxed)
+    const entranceStartRadius = 1.4; // Start 40% wider than final position
+    const entranceStartTime = Date.now() + entranceDelay;
+    let entranceComplete = false;
+    let bottomChevronFlipped = false;
+    // Bottom chevron calculation: cos(angle)*radius gives X, sin(angle)*radius gives Y
+    // For bottom of screen, we want max Y (positive), which is sin(angle) = 1, meaning angle = π/2
+    // Since angle = (i/numChevrons) * 2π, we need i/numChevrons = 0.25 for angle = π/2
+    const bottomChevronIndex = Math.floor(numChevrons * 0.25); // Bottom chevron (at π/2 radians, max Y on screen)
+
     // Create chevron elements arranged in a circle
     for (let i = 0; i < numChevrons; i++) {
         const angle = (i / numChevrons) * Math.PI * 2;
@@ -161,32 +173,75 @@ function toggleFaq(button) {
         const rotation = (angle * 180 / Math.PI) + 90;
         chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
 
+        // Start with reduced opacity for entrance animation
+        chevron.style.opacity = '0';
+
+        // Set color gradient - hue shift around the ring
+        // Base color is sage green (around 100 on hue wheel)
+        // Shift from warm gold/olive (60) at top to cool teal (140) at bottom
+        const hueShift = (i / numChevrons) * 80 - 40; // -40 to +40 range for more visible gradient
+        chevron.style.setProperty('--chevron-hue', 100 + hueShift);
+
         container.appendChild(chevron);
         chevrons.push(chevron);
         chevronState.push({
             angle: angle,
             currentOffset: 0,
             targetOffset: 0,
-            collapseTimeout: null
+            collapseTimeout: null,
+            // Stagger entrance by angle - top chevrons appear first, rippling around
+            entranceStagger: i * (300 / numChevrons)
         });
     }
 
-    function updateChevronPosition(index, breathProgress) {
+    function updateChevronPosition(index, breathProgress, now) {
         const chevron = chevrons[index];
         const state = chevronState[index];
 
         // Smoothly interpolate current offset toward target
         state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
 
+        // Calculate entrance animation progress
+        let entranceProgress = 1;
+        let entranceRadiusMultiplier = 1;
+        let entranceOpacity = 1;
+
+        if (!entranceComplete) {
+            const entranceElapsed = now - entranceStartTime - state.entranceStagger;
+            if (entranceElapsed < 0) {
+                entranceProgress = 0;
+            } else if (entranceElapsed < entranceDuration) {
+                // Ease-out cubic for smooth deceleration (settling feel)
+                const t = entranceElapsed / entranceDuration;
+                entranceProgress = 1 - Math.pow(1 - t, 3);
+            }
+            // Chevrons start from wider radius and contract inward to final position
+            // entranceStartRadius (1.4) -> 1.0 as entranceProgress goes 0 -> 1
+            entranceRadiusMultiplier = entranceStartRadius - (entranceStartRadius - 1) * entranceProgress;
+            // Fade in during first third of entrance
+            entranceOpacity = Math.min(1, entranceProgress * 3);
+        }
+
         // Calculate breathing radius (sine wave)
         const breathOffset = Math.sin(breathProgress * Math.PI * 2) * breathAmount;
-        const currentRadius = baseRadius + breathOffset + state.currentOffset;
+        const currentRadius = (baseRadius + breathOffset + state.currentOffset) * entranceRadiusMultiplier;
 
         const x = Math.cos(state.angle) * currentRadius;
         const y = Math.sin(state.angle) * currentRadius;
 
         chevron.style.left = `calc(50% + ${x}px)`;
         chevron.style.top = `calc(50% + ${y}px)`;
+        chevron.style.opacity = entranceOpacity;
+
+        // Handle bottom chevron flip to become scroll indicator
+        if (index === bottomChevronIndex && bottomChevronFlipped) {
+            // The chevron base shape ">" points right at 0deg
+            // But the bottom chevron already has 180deg rotation applied (pointing left/outward)
+            // To flip it to point DOWN as a scroll indicator, we need to rotate it
+            // from pointing outward (away from center) to pointing down
+            // Testing with 0deg - the raw chevron shape points right, let's see what we get
+            chevron.style.transform = `translate(-50%, -50%) rotate(0deg)`;
+        }
     }
 
     // Breathing animation loop
@@ -195,7 +250,36 @@ function toggleFaq(button) {
         const breathProgress = (now % breathDuration) / breathDuration;
 
         for (let i = 0; i < chevrons.length; i++) {
-            updateChevronPosition(i, breathProgress);
+            updateChevronPosition(i, breathProgress, now);
+        }
+
+        // Check if entrance animation is complete
+        if (!entranceComplete) {
+            const lastChevronFinish = entranceStartTime + chevronState[chevronState.length - 1].entranceStagger + entranceDuration;
+            if (now > lastChevronFinish) {
+                entranceComplete = true;
+                // On desktop only: flip the bottom chevron to point down as scroll indicator
+                // On mobile: keep the separate scroll-indicator visible instead
+                if (!isMobile) {
+                    setTimeout(() => {
+                        bottomChevronFlipped = true;
+                        const bottomChevron = chevrons[bottomChevronIndex];
+                        bottomChevron.classList.add('scroll-chevron');
+                        // Make it clickable to scroll to intro section
+                        bottomChevron.addEventListener('click', () => {
+                            const intro = document.getElementById('intro');
+                            if (intro) {
+                                const navHeight = document.querySelector('.navbar').offsetHeight;
+                                const targetPosition = intro.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                                window.scrollTo({
+                                    top: targetPosition,
+                                    behavior: 'smooth'
+                                });
+                            }
+                        });
+                    }, 1500); // 1.5 second delay after entrance completes
+                }
+            }
         }
 
         requestAnimationFrame(animateBreathing);

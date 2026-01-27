@@ -417,6 +417,19 @@ p {
     isolation: isolate;
 }
 
+/* Soft paper-like texture overlay */
+.hero--mandala::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Subtle full-coverage noise texture - covers entire viewport without tiling */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+}
+
 .mandala-hover-container {
     position: absolute;
     top: 50%;
@@ -441,10 +454,12 @@ p {
     position: absolute;
     width: 17px;
     height: 4px;
-    background-color: var(--color-primary);
-    opacity: 0.2;
+    /* Use hue variation set by JS for color gradient around the ring */
+    background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
+    opacity: 0.4;
     top: 50%;
     border-radius: 2px;
+    box-shadow: 0 0 8px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
 }
 
 .mandala-hover-container .chevron::before {
@@ -469,7 +484,75 @@ p {
 }
 
 .hero--mandala .hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
+}
+
+/* Scroll indicator - hidden on desktop (chevron becomes scroll indicator), shown on mobile */
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    animation: scroll-bounce 2s ease-in-out infinite;
+    z-index: 2;
+    display: none; /* Hidden on desktop - bottom chevron becomes scroll indicator */
+}
+
+/* Show scroll indicator on mobile */
+@media (max-width: 768px) {
+    .scroll-indicator {
+        display: block;
+    }
+}
+
+.scroll-indicator:hover {
+    opacity: 0.7;
+}
+
+.scroll-indicator svg {
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes scroll-bounce {
+    0%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        transform: translateX(-50%) translateY(8px);
+    }
+}
+
+/* Bottom chevron that becomes scroll indicator */
+.mandala-hover-container .chevron.scroll-chevron {
+    cursor: pointer;
+    transition: transform 0.6s ease;
+    animation: chevron-scroll-bounce 2s ease-in-out infinite;
+}
+
+.mandala-hover-container .chevron.scroll-chevron::before,
+.mandala-hover-container .chevron.scroll-chevron::after {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.mandala-hover-container .chevron.scroll-chevron:hover::before,
+.mandala-hover-container .chevron.scroll-chevron:hover::after {
+    opacity: 0.8;
+}
+
+@keyframes chevron-scroll-bounce {
+    0%, 100% {
+        transform: translate(-50%, -50%) rotate(0deg) translateY(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) rotate(0deg) translateY(8px);
+    }
 }
 
 /* Mobile mandala - hidden on desktop, shown inline on mobile */
@@ -1243,7 +1326,8 @@ p {
 
     /* Mandala hero mobile adjustments */
     .hero--mandala {
-        padding: calc(var(--nav-height) + var(--space-lg)) var(--space-sm) var(--space-xl);
+        /* Slightly less top padding, more bottom padding to shift content up */
+        padding: calc(var(--nav-height) + var(--space-md)) var(--space-sm) calc(var(--space-xl) + var(--space-md));
         min-height: auto;
     }
 
@@ -1287,10 +1371,12 @@ p {
         position: absolute;
         width: 10px;
         height: 2.5px;
-        background-color: var(--color-primary);
-        opacity: 0.25;
+        /* Use hue variation set by JS for color gradient around the ring */
+        background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
+        opacity: 0.45;
         top: 50%;
         border-radius: 2px;
+        box-shadow: 0 0 6px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
     }
 
     .mandala-mobile .chevron::before {
