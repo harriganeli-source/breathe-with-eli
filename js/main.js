@@ -538,3 +538,175 @@ function toggleFaq(button) {
     // Start animation
     draw();
 })();
+
+// Interactive Heart Mandala with circles and breathing animation (Inner Beloved page)
+(function() {
+    const isMobile = window.innerWidth <= 768;
+    const container = isMobile
+        ? document.getElementById('hero-heart-mandala-mobile')
+        : document.getElementById('hero-heart-mandala');
+    const heroSection = document.querySelector('.hero--heart');
+    if (!container || !heroSection) return;
+
+    const numDots = isMobile ? 20 : 36;
+    const baseScale = isMobile ? 3.5 : 7;
+    const dotSize = isMobile ? 8 : 12;
+    const breathAmount = 8; // How much the heart "breathes" (percentage)
+    const breathDuration = 8000; // 8 seconds per breath cycle
+    const hoverExpandAmount = 15; // Additional expansion on hover (percentage)
+    const hoverEaseSpeed = 0.02;
+    const dots = [];
+    const dotState = [];
+
+    // Page-load entrance animation settings
+    const entranceDelay = 300;
+    const entranceDuration = 2000;
+    const entranceStartScale = 1.5;
+    const entranceStartTime = Date.now() + entranceDelay;
+    let entranceComplete = false;
+
+    // Heart shape parametric equation
+    // Uses the classic heart curve: x = 16sin³(t), y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
+    function heartPoint(t) {
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        return { x, y };
+    }
+
+    // Create dot elements arranged in heart shape
+    for (let i = 0; i < numDots; i++) {
+        const t = (i / numDots) * Math.PI * 2;
+        const dot = document.createElement('div');
+        dot.className = 'heart-dot';
+
+        // Set dot size
+        dot.style.width = dotSize + 'px';
+        dot.style.height = dotSize + 'px';
+
+        // Start with reduced opacity for entrance animation
+        dot.style.opacity = '0';
+
+        // Set color gradient - warm rose/burgundy hues
+        // Range from deep rose (340) through pink (350) to coral (10)
+        const hueShift = (i / numDots) * 50 - 25; // -25 to +25 range
+        dot.style.setProperty('--dot-hue', 350 + hueShift);
+
+        container.appendChild(dot);
+        dots.push(dot);
+        dotState.push({
+            t: t,
+            currentOffset: 0,
+            targetOffset: 0,
+            collapseTimeout: null,
+            entranceStagger: i * (400 / numDots)
+        });
+    }
+
+    function updateDotPosition(index, breathProgress, now) {
+        const dot = dots[index];
+        const state = dotState[index];
+
+        // Smoothly interpolate current offset toward target
+        state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+
+        // Calculate entrance animation progress
+        let entranceProgress = 1;
+        let entranceScaleMultiplier = 1;
+        let entranceOpacity = 1;
+
+        if (!entranceComplete) {
+            const entranceElapsed = now - entranceStartTime - state.entranceStagger;
+            if (entranceElapsed < 0) {
+                entranceProgress = 0;
+            } else if (entranceElapsed < entranceDuration) {
+                const t = entranceElapsed / entranceDuration;
+                entranceProgress = 1 - Math.pow(1 - t, 3);
+            }
+            entranceScaleMultiplier = entranceStartScale - (entranceStartScale - 1) * entranceProgress;
+            entranceOpacity = Math.min(1, entranceProgress * 3);
+        }
+
+        // Calculate breathing scale (sine wave)
+        const breathScale = 1 + Math.sin(breathProgress * Math.PI * 2) * (breathAmount / 100);
+
+        // Add hover offset
+        const hoverScale = 1 + (state.currentOffset / 100);
+
+        // Get heart position
+        const point = heartPoint(state.t);
+        const totalScale = baseScale * breathScale * hoverScale * entranceScaleMultiplier;
+        const x = point.x * totalScale;
+        const y = point.y * totalScale;
+
+        dot.style.left = `calc(50% + ${x}px)`;
+        dot.style.top = `calc(50% + ${y}px)`;
+        dot.style.transform = 'translate(-50%, -50%)';
+        dot.style.opacity = entranceOpacity * 0.7;
+    }
+
+    // Breathing animation loop
+    function animateBreathing() {
+        const now = Date.now();
+        const breathProgress = (now % breathDuration) / breathDuration;
+
+        for (let i = 0; i < dots.length; i++) {
+            updateDotPosition(i, breathProgress, now);
+        }
+
+        // Check if entrance animation is complete
+        if (!entranceComplete) {
+            const lastDotFinish = entranceStartTime + dotState[dotState.length - 1].entranceStagger + entranceDuration;
+            if (now > lastDotFinish) {
+                entranceComplete = true;
+            }
+        }
+
+        requestAnimationFrame(animateBreathing);
+    }
+
+    function expandDot(index) {
+        const state = dotState[index];
+        state.targetOffset = hoverExpandAmount;
+
+        if (state.collapseTimeout) {
+            clearTimeout(state.collapseTimeout);
+        }
+
+        state.collapseTimeout = setTimeout(() => {
+            collapseDot(index);
+        }, 800);
+    }
+
+    function collapseDot(index) {
+        const state = dotState[index];
+        state.targetOffset = 0;
+        state.collapseTimeout = null;
+    }
+
+    // Mouse interaction on the whole hero section (desktop only)
+    if (!isMobile) {
+        heroSection.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left - rect.width / 2;
+            const mouseY = e.clientY - rect.top - rect.height / 2;
+
+            for (let i = 0; i < dotState.length; i++) {
+                const state = dotState[i];
+                const point = heartPoint(state.t);
+                const checkX = point.x * baseScale;
+                const checkY = point.y * baseScale;
+
+                const dx = mouseX - checkX;
+                const dy = mouseY - checkY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 80) {
+                    expandDot(i);
+                }
+            }
+        });
+    }
+
+    // Start breathing animation
+    animateBreathing();
+})();

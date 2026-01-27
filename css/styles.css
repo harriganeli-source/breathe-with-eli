@@ -1955,3 +1955,86 @@ p {
         animation: none;
     }
 }
+
+/* ============================================
+   HEART MANDALA - Inner Beloved page
+   ============================================ */
+.hero--heart {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, var(--color-bg) 0%, var(--color-bg) 50%, rgba(180, 100, 120, 0.15) 85%);
+    isolation: isolate;
+}
+
+/* Soft paper-like texture overlay */
+.hero--heart::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.heart-mandala-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(700px, 90vw);
+    height: min(700px, 90vw);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.heart-mandala-container .heart-dot {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: auto;
+    /* Warm rose/burgundy color scheme */
+    background-color: hsl(var(--dot-hue, 350), 50%, 55%);
+    box-shadow: 0 0 10px hsla(var(--dot-hue, 350), 50%, 50%, 0.3);
+}
+
+.hero--heart .hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero--heart h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.hero--heart .hero-subtitle {
+    font-size: 1rem;
+    font-style: italic;
+    font-weight: 600;
+}
+
+/* Mobile heart mandala - hidden on desktop, shown inline on mobile */
+.heart-mandala-mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .heart-mandala-container {
+        display: none;
+    }
+
+    .heart-mandala-mobile {
+        display: block;
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin: var(--space-md) auto;
+    }
+
+    .heart-mandala-mobile .heart-dot {
+        position: absolute;
+        border-radius: 50%;
+        background-color: hsl(var(--dot-hue, 350), 50%, 55%);
+        box-shadow: 0 0 8px hsla(var(--dot-hue, 350), 50%, 50%, 0.3);
+    }
+}
