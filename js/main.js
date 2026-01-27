@@ -548,9 +548,9 @@ function toggleFaq(button) {
     const heroSection = document.querySelector('.hero--heart');
     if (!container || !heroSection) return;
 
-    const numDots = isMobile ? 16 : 28;
+    const numDots = isMobile ? 24 : 40;
     const baseScale = isMobile ? 7 : 22;
-    const dotSize = isMobile ? 10 : 16;
+    const dotSize = isMobile ? 10 : 14;
     const breathAmount = 6; // How much the heart "breathes" (percentage)
     const breathDuration = 8000; // 8 seconds per breath cycle
     const hoverExpandAmount = 35; // Additional expansion on hover (percentage)
@@ -573,9 +573,48 @@ function toggleFaq(button) {
         return { x, y };
     }
 
-    // Create dot elements arranged in heart shape
+    // Pre-calculate arc lengths to distribute dots evenly
+    // Sample many points and calculate cumulative distance
+    const sampleCount = 1000;
+    const arcLengths = [0];
+    let prevPoint = heartPoint(0);
+
+    for (let i = 1; i <= sampleCount; i++) {
+        const t = (i / sampleCount) * Math.PI * 2;
+        const point = heartPoint(t);
+        const dx = point.x - prevPoint.x;
+        const dy = point.y - prevPoint.y;
+        arcLengths.push(arcLengths[i - 1] + Math.sqrt(dx * dx + dy * dy));
+        prevPoint = point;
+    }
+
+    const totalLength = arcLengths[sampleCount];
+
+    // Find parameter t for a given arc length fraction
+    function tForArcFraction(fraction) {
+        const targetLength = fraction * totalLength;
+        // Binary search for the right sample index
+        let low = 0, high = sampleCount;
+        while (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            if (arcLengths[mid] < targetLength) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        // Interpolate between samples
+        if (low === 0) return 0;
+        const prevLength = arcLengths[low - 1];
+        const nextLength = arcLengths[low];
+        const segmentFraction = (targetLength - prevLength) / (nextLength - prevLength);
+        return ((low - 1 + segmentFraction) / sampleCount) * Math.PI * 2;
+    }
+
+    // Create dot elements arranged in heart shape with even spacing
     for (let i = 0; i < numDots; i++) {
-        const t = (i / numDots) * Math.PI * 2;
+        const arcFraction = i / numDots;
+        const t = tForArcFraction(arcFraction);
         const dot = document.createElement('div');
         dot.className = 'heart-dot';
 
