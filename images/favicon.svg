@@ -1,25 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Mandala-style favicon with chevrons arranged in a circle -->
-  <defs>
-    <style>
-      .chevron { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    </style>
-  </defs>
-  <!-- 8 chevrons pointing outward in a circle -->
-  <!-- Top -->
-  <path class="chevron" stroke="#5a6b5a" d="M16 4 L13 7 M16 4 L19 7"/>
-  <!-- Top-right -->
-  <path class="chevron" stroke="#4a6a5a" d="M24.5 7.5 L23 11 M24.5 7.5 L28 9"/>
-  <!-- Right -->
-  <path class="chevron" stroke="#4a5d5a" d="M28 16 L25 13 M28 16 L25 19"/>
-  <!-- Bottom-right -->
-  <path class="chevron" stroke="#4a5d6a" d="M24.5 24.5 L28 23 M24.5 24.5 L23 21"/>
-  <!-- Bottom -->
-  <path class="chevron" stroke="#4a5d4a" d="M16 28 L19 25 M16 28 L13 25"/>
-  <!-- Bottom-left -->
-  <path class="chevron" stroke="#5a5d4a" d="M7.5 24.5 L4 23 M7.5 24.5 L9 21"/>
-  <!-- Left -->
-  <path class="chevron" stroke="#6a5d4a" d="M4 16 L7 19 M4 16 L7 13"/>
-  <!-- Top-left -->
-  <path class="chevron" stroke="#6a6b4a" d="M7.5 7.5 L9 11 M7.5 7.5 L4 9"/>
+  <!-- Mandala favicon - symmetrical chevrons radiating outward -->
+  <g fill="none" stroke="#4a5d4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6">
+    <!-- Using transforms for perfect symmetry - each chevron rotated 45° from the last -->
+
+    <!-- Base chevron pointing up, then rotated around center (16,16) -->
+    <polyline points="13,6 16,2 19,6" transform="rotate(0,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(45,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(90,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(135,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(180,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(225,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(270,16,16)"/>
+    <polyline points="13,6 16,2 19,6" transform="rotate(315,16,16)"/>
+  </g>
 </svg>
