@@ -548,9 +548,9 @@ function toggleFaq(button) {
     const heroSection = document.querySelector('.hero--heart');
     if (!container || !heroSection) return;
 
-    const numDots = isMobile ? 20 : 36;
-    const baseScale = isMobile ? 3.5 : 7;
-    const dotSize = isMobile ? 8 : 12;
+    const numDots = isMobile ? 24 : 48;
+    const baseScale = isMobile ? 4 : 12;
+    const dotSize = isMobile ? 8 : 14;
     const breathAmount = 8; // How much the heart "breathes" (percentage)
     const breathDuration = 8000; // 8 seconds per breath cycle
     const hoverExpandAmount = 15; // Additional expansion on hover (percentage)
@@ -586,10 +586,8 @@ function toggleFaq(button) {
         // Start with reduced opacity for entrance animation
         dot.style.opacity = '0';
 
-        // Set color gradient - warm rose/burgundy hues
-        // Range from deep rose (340) through pink (350) to coral (10)
-        const hueShift = (i / numDots) * 50 - 25; // -25 to +25 range
-        dot.style.setProperty('--dot-hue', 350 + hueShift);
+        // Consistent pink color for all dots
+        dot.style.setProperty('--dot-hue', 340);
 
         container.appendChild(dot);
         dots.push(dot);

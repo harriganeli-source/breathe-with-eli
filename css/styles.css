@@ -1983,8 +1983,8 @@ p {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: min(700px, 90vw);
-    height: min(700px, 90vw);
+    width: min(900px, 95vw);
+    height: min(900px, 95vw);
     pointer-events: none;
     z-index: 0;
 }
@@ -2008,9 +2008,56 @@ p {
 }
 
 .hero--heart .hero-subtitle {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-style: italic;
-    font-weight: 600;
+    font-weight: 500;
+    margin-bottom: var(--space-xs);
+}
+
+.hero--heart .hero-facilitators {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--space-xs);
+}
+
+.hero--heart .hero-facilitators a {
+    color: var(--color-primary);
+    transition: color 0.3s ease;
+}
+
+.hero--heart .hero-facilitators a:hover {
+    color: var(--color-primary-dark);
+}
+
+.hero--heart .hero-details {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--space-md);
+}
+
+/* Scroll indicator for heart hero */
+.scroll-indicator--heart {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    color: var(--color-primary);
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    animation: scroll-bounce 2s ease-in-out infinite;
+    z-index: 2;
+    display: block;
+}
+
+.scroll-indicator--heart:hover {
+    opacity: 0.8;
+}
+
+.scroll-indicator--heart svg {
+    width: 100%;
+    height: 100%;
 }
 
 /* Mobile heart mandala - hidden on desktop, shown inline on mobile */
