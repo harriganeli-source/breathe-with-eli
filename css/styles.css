@@ -1983,15 +1983,15 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 85vh;
-    padding: var(--space-xl) var(--space-md);
+    min-height: 70vh;
+    padding: var(--space-lg) var(--space-md) var(--space-sm);
 }
 
 .hero-split-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-xl);
+    gap: var(--space-md);
     max-width: 1200px;
     width: 100%;
     position: relative;
@@ -2001,17 +2001,17 @@ p {
 .hero-content--left {
     flex: 1;
     max-width: 500px;
-    text-align: left;
+    text-align: center;
 }
 
 .hero-content--left h1 {
-    text-align: left;
+    text-align: center;
 }
 
 .hero-content--left .hero-subtitle,
 .hero-content--left .hero-facilitators,
 .hero-content--left .hero-details {
-    text-align: left;
+    text-align: center;
 }
 
 /* Heart mandala in side position */
