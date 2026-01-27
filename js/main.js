@@ -720,28 +720,47 @@ function toggleFaq(button) {
         state.collapseTimeout = null;
     }
 
-    // Mouse interaction on the whole hero section (desktop only)
+    // Interaction handler for both mouse and touch
+    function handleInteraction(clientX, clientY) {
+        const rect = container.getBoundingClientRect();
+        const pointerX = clientX - rect.left - rect.width / 2;
+        const pointerY = clientY - rect.top - rect.height / 2;
+        const interactionRadius = isMobile ? 50 : 80;
+
+        for (let i = 0; i < dotState.length; i++) {
+            const state = dotState[i];
+            const point = heartPoint(state.t);
+            const checkX = point.x * baseScale;
+            const checkY = point.y * baseScale;
+
+            const dx = pointerX - checkX;
+            const dy = pointerY - checkY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < interactionRadius) {
+                expandDot(i);
+            }
+        }
+    }
+
+    // Mouse interaction (desktop)
     if (!isMobile) {
         heroSection.addEventListener('mousemove', (e) => {
-            const rect = container.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left - rect.width / 2;
-            const mouseY = e.clientY - rect.top - rect.height / 2;
-
-            for (let i = 0; i < dotState.length; i++) {
-                const state = dotState[i];
-                const point = heartPoint(state.t);
-                const checkX = point.x * baseScale;
-                const checkY = point.y * baseScale;
-
-                const dx = mouseX - checkX;
-                const dy = mouseY - checkY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 80) {
-                    expandDot(i);
-                }
-            }
+            handleInteraction(e.clientX, e.clientY);
         });
+    }
+
+    // Touch interaction (mobile)
+    if (isMobile) {
+        container.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            handleInteraction(touch.clientX, touch.clientY);
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            handleInteraction(touch.clientX, touch.clientY);
+        }, { passive: true });
     }
 
     // Start breathing animation
