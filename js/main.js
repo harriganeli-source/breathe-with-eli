@@ -548,12 +548,12 @@ function toggleFaq(button) {
     const heroSection = document.querySelector('.hero--heart');
     if (!container || !heroSection) return;
 
-    const numDots = isMobile ? 24 : 48;
-    const baseScale = isMobile ? 4 : 12;
-    const dotSize = isMobile ? 8 : 14;
-    const breathAmount = 8; // How much the heart "breathes" (percentage)
+    const numDots = isMobile ? 16 : 28;
+    const baseScale = isMobile ? 7 : 22;
+    const dotSize = isMobile ? 10 : 16;
+    const breathAmount = 6; // How much the heart "breathes" (percentage)
     const breathDuration = 8000; // 8 seconds per breath cycle
-    const hoverExpandAmount = 15; // Additional expansion on hover (percentage)
+    const hoverExpandAmount = 35; // Additional expansion on hover (percentage)
     const hoverEaseSpeed = 0.02;
     const dots = [];
     const dotState = [];
