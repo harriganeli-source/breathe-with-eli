@@ -1,3 +1,13 @@
+## Git Workflow (CRITICAL)
+
+**Always follow this workflow before making ANY file changes:**
+1. Run `git pull origin main` to get the latest code
+2. Create a feature branch: `git checkout -b feature/description`
+3. Make changes and commit
+4. Push branch and create PR - never push directly to main
+5. Do NOT run `vercel --prod` - Vercel auto-deploys on merge
+
+This prevents overwriting changes that were merged via GitHub.
 
 ## Copy/Content Policy
 
