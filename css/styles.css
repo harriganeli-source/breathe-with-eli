@@ -2122,7 +2122,7 @@ p {
     .hero--split {
         flex-direction: column;
         min-height: auto;
-        padding: var(--space-lg) var(--space-md);
+        padding: var(--space-xl) var(--space-md) var(--space-lg);
     }
 
     .hero-split-container {
@@ -2135,7 +2135,11 @@ p {
         max-width: 100%;
     }
 
-    .hero-content--left h1,
+    .hero-content--left h1 {
+        text-align: center;
+        margin-bottom: var(--space-xs);
+    }
+
     .hero-content--left .hero-subtitle,
     .hero-content--left .hero-facilitators,
     .hero-content--left .hero-details {
