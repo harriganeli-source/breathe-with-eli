@@ -1447,6 +1447,10 @@ p {
     padding: var(--space-xl) 0;
 }
 
+.content-section--tight-bottom {
+    padding-bottom: var(--space-sm);
+}
+
 .content-section:nth-child(even) {
     background-color: var(--color-bg-alt);
 }
