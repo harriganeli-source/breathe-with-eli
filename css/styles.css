@@ -2173,3 +2173,46 @@ p {
         box-shadow: 0 0 8px hsla(var(--dot-hue, 350), 50%, 50%, 0.3);
     }
 }
+
+/* ============================================
+   VALENTINES PAGE - Compact Layout
+   ============================================ */
+.valentines-page .content-section {
+    padding: var(--space-md) 0;
+}
+
+/* Smaller facilitator bios */
+.facilitator-bios {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.facilitator-bios .two-col {
+    gap: var(--space-md);
+    align-items: start;
+}
+
+.facilitator-bios .about-image {
+    max-width: 200px;
+}
+
+.facilitator-bios .about-image img {
+    border-radius: var(--radius-md);
+}
+
+.facilitator-bios h3 {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-xs);
+}
+
+.facilitator-bios p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .facilitator-bios .about-image {
+        max-width: 150px;
+        margin: 0 auto var(--space-sm);
+    }
+}
