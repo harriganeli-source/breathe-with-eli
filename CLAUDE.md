@@ -1,3 +1,40 @@
+## Tech Stack
+- **Static HTML/CSS/JS** (no framework - not Next.js, React, etc.)
+- **Hosting**: Vercel with auto-deploy on merge to main
+- **Forms**: ConvertKit (Kit) for email signups
+
+## Key Files
+- **Stylesheet**: `css/styles.css` (main styles, ~2300 lines)
+- **JavaScript**: `js/main.js` (navigation, animations, mandalas)
+- **Images**: `images/` directory
+
+## Pages
+| File | Purpose |
+|------|---------|
+| `index.html` | Homepage with interactive mandala |
+| `about.html` | Bio, story, testimonials |
+| `work-with-me.html` | Services (breathwork, coaching, men's groups) |
+| `upcoming.html` | Events & workshops calendar |
+| `book.html` | Booking/scheduling |
+| `contact.html` | Contact form |
+| `mensgroup.html` | "The Present Man Project" |
+| `valentines.html` | "The Inner Beloved" couples workshop |
+| `for-teams.html` | Corporate/team offerings |
+
+## Design System
+**Colors:**
+- Primary (sage green): `#4a5d4a`
+- Secondary (warm brown): `#8b7355`
+- Accent (soft gold): `#c4a77d`
+- Text: `#2d2d2d`
+- Background: `#faf9f7`
+
+**Fonts:**
+- Headings: Cormorant Garamond (serif)
+- Body: Inter (sans-serif)
+
+---
+
 ## Git Workflow (CRITICAL)
 
 **Always follow this workflow before making ANY file changes:**
