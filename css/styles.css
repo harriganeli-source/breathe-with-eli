@@ -1582,7 +1582,7 @@ p {
 
 /* Expandable Image Caption - mobile only */
 .image-caption-expandable {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 .image-caption-toggle {
@@ -1591,10 +1591,13 @@ p {
 
 .image-caption-content .image-caption {
     margin-top: 0;
+    border-top: none;
+    padding-top: 0;
 }
 
 @media (max-width: 768px) {
     .image-caption-expandable {
+        margin-top: 1.5rem;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding-top: 0.75rem;
     }
@@ -1638,7 +1641,6 @@ p {
 
     .image-caption-content .image-caption {
         padding-top: 0.5rem;
-        border-top: none;
     }
 
     .image-caption-expandable.active .image-caption-content {
