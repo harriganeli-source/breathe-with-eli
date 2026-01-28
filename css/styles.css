@@ -1451,6 +1451,10 @@ p {
     padding-bottom: var(--space-sm);
 }
 
+.content-section--tight-top {
+    padding-top: var(--space-md);
+}
+
 .content-section:nth-child(even) {
     background-color: var(--color-bg-alt);
 }
