@@ -842,7 +842,7 @@ p {
     bottom: -5%;
     background-image: url('../images/hero-group-session.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: center 40%;
     background-repeat: no-repeat;
     animation: breathe-subtle 8s ease-in-out infinite;
     z-index: -2;
