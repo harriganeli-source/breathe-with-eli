@@ -130,6 +130,13 @@ function toggleFaq(button) {
     faqItem.classList.toggle('active');
 }
 
+// Image Caption Expand Toggle (mobile only)
+function toggleCaption(button) {
+    const expandable = button.parentElement;
+    const isActive = expandable.classList.toggle('active');
+    button.setAttribute('aria-expanded', isActive);
+}
+
 // Kit (ConvertKit) form handling is done by Kit's official script
 // loaded via: https://breathe-with-eli.kit.com/7a97c5385b/index.js
 
