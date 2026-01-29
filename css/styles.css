@@ -961,11 +961,24 @@ p {
     border-radius: 8px;
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    cursor: pointer;
 }
 
 .service-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Stretched link - makes entire card clickable */
+.service-card .link-arrow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
 }
 
 .service-icon {
