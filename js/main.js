@@ -44,16 +44,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Navbar background on scroll
+    // Navbar scroll behavior: transparent at top, glassmorphism when scrolled
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-        window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
+        let lastScrollY = 0;
+        let scrollTimeout = null;
+        let isNavVisible = true;
+        const scrollThreshold = 100; // How far to scroll before hiding
+        const showDelay = 150; // Delay before showing navbar after scroll stops
+
+        function updateNavbar() {
+            const currentScrollY = window.scrollY;
+
+            // At the top of the page - transparent, always visible
+            if (currentScrollY < 50) {
                 navbar.classList.remove('scrolled');
+                navbar.classList.remove('nav-hidden');
+                isNavVisible = true;
+                lastScrollY = currentScrollY;
+                return;
             }
-        });
+
+            // Scrolling down past threshold - hide navbar
+            if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) {
+                if (isNavVisible) {
+                    navbar.classList.add('nav-hidden');
+                    isNavVisible = false;
+                }
+            }
+
+            // Clear any existing timeout
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+
+            // Set timeout to show navbar with glassmorphism after delay
+            scrollTimeout = setTimeout(() => {
+                if (currentScrollY >= 50) {
+                    navbar.classList.add('scrolled');
+                    navbar.classList.remove('nav-hidden');
+                    isNavVisible = true;
+                }
+            }, showDelay);
+
+            lastScrollY = currentScrollY;
+        }
+
+        window.addEventListener('scroll', updateNavbar, { passive: true });
     }
 
     // Simple fade-in animation on scroll
@@ -116,7 +153,7 @@ style.textContent = `
         transform: translateY(0);
     }
     .navbar.scrolled {
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
     }
     body.nav-open {
         overflow: hidden;
