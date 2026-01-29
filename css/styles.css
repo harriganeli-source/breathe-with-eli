@@ -237,10 +237,10 @@ p {
 }
 
 .navbar.scrolled {
-    background-color: rgba(250, 249, 247, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: rgba(250, 249, 247, 0.7);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .navbar.nav-hidden {
@@ -347,6 +347,8 @@ p {
     background: transparent;
     border: none;
     cursor: pointer;
+    position: relative;
+    z-index: 10;
 }
 
 .nav-toggle span {
@@ -355,6 +357,8 @@ p {
     height: 2px;
     background-color: var(--color-text);
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 11;
 }
 
 /* ============================================
@@ -830,6 +834,11 @@ p {
     flex-wrap: wrap;
     position: relative;
     z-index: 2;
+}
+
+.hero-buttons .btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
 }
 
 /* ============================================

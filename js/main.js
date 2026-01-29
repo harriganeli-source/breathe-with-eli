@@ -47,47 +47,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar scroll behavior: transparent at top, glassmorphism when scrolled
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-        let lastScrollY = 0;
-        let scrollTimeout = null;
-        let isNavVisible = true;
-        const scrollThreshold = 100; // How far to scroll before hiding
-        const showDelay = 150; // Delay before showing navbar after scroll stops
+        let hasAnimatedIn = false; // Track if navbar has animated in once
+        const scrollThreshold = 80; // How far to scroll before triggering animation
 
         function updateNavbar() {
             const currentScrollY = window.scrollY;
 
-            // At the top of the page - transparent, always visible
+            // At the top of the page - transparent, reset state
             if (currentScrollY < 50) {
                 navbar.classList.remove('scrolled');
                 navbar.classList.remove('nav-hidden');
-                isNavVisible = true;
-                lastScrollY = currentScrollY;
+                hasAnimatedIn = false;
                 return;
             }
 
-            // Scrolling down past threshold - hide navbar
-            if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) {
-                if (isNavVisible) {
-                    navbar.classList.add('nav-hidden');
-                    isNavVisible = false;
-                }
-            }
-
-            // Clear any existing timeout
-            if (scrollTimeout) {
-                clearTimeout(scrollTimeout);
-            }
-
-            // Set timeout to show navbar with glassmorphism after delay
-            scrollTimeout = setTimeout(() => {
-                if (currentScrollY >= 50) {
+            // Past threshold and haven't animated in yet - hide then show
+            if (currentScrollY > scrollThreshold && !hasAnimatedIn) {
+                navbar.classList.add('nav-hidden');
+                // Short delay then animate in with glassmorphism
+                setTimeout(() => {
                     navbar.classList.add('scrolled');
                     navbar.classList.remove('nav-hidden');
-                    isNavVisible = true;
-                }
-            }, showDelay);
-
-            lastScrollY = currentScrollY;
+                    hasAnimatedIn = true;
+                }, 100);
+            }
         }
 
         window.addEventListener('scroll', updateNavbar, { passive: true });
@@ -187,7 +170,7 @@ function toggleCaption(button) {
     if (!container || !heroSection) return;
 
     const numChevrons = isMobile ? 12 : 24;
-    const baseRadius = isMobile ? 60 : 340;
+    const baseRadius = isMobile ? 60 : 290;
     const breathAmount = 6; // How much the radius changes during breathing
     const hoverExpandAmount = 40; // Additional expansion on hover
     const breathDuration = 8000; // 8 seconds per breath cycle
