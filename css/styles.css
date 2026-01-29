@@ -237,10 +237,17 @@ p {
 }
 
 .navbar.scrolled {
-    background-color: rgba(250, 249, 247, 0.7);
+    background-color: rgba(250, 249, 247, 0.85);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(20px)) {
+    .navbar.scrolled {
+        background-color: rgba(250, 249, 247, 0.95);
+    }
 }
 
 .navbar.nav-hidden {
@@ -1256,6 +1263,17 @@ p {
     /* Mobile Navigation */
     .nav-toggle {
         display: flex;
+    }
+
+    /* Ensure hamburger icon is visible on mobile with glassmorphism */
+    .navbar.scrolled .nav-toggle span {
+        background-color: var(--color-text);
+        opacity: 1;
+    }
+
+    .nav-container {
+        position: relative;
+        z-index: 10;
     }
 
     .nav-menu {
