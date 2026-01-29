@@ -289,21 +289,28 @@ function toggleCaption(button) {
                 // On mobile: keep the separate scroll-indicator visible instead
                 if (!isMobile) {
                     setTimeout(() => {
-                        bottomChevronFlipped = true;
                         const bottomChevron = chevrons[bottomChevronIndex];
-                        bottomChevron.classList.add('scroll-chevron');
-                        // Make it clickable to scroll to intro section
-                        bottomChevron.addEventListener('click', () => {
-                            const intro = document.getElementById('intro');
-                            if (intro) {
-                                const navHeight = document.querySelector('.navbar').offsetHeight;
-                                const targetPosition = intro.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                                window.scrollTo({
-                                    top: targetPosition,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        });
+                        // Start spin animation
+                        bottomChevron.classList.add('chevron-spinning');
+
+                        // After spin completes, switch to scroll indicator
+                        setTimeout(() => {
+                            bottomChevronFlipped = true;
+                            bottomChevron.classList.remove('chevron-spinning');
+                            bottomChevron.classList.add('scroll-chevron');
+                            // Make it clickable to scroll to intro section
+                            bottomChevron.addEventListener('click', () => {
+                                const intro = document.getElementById('intro');
+                                if (intro) {
+                                    const navHeight = document.querySelector('.navbar').offsetHeight;
+                                    const targetPosition = intro.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                                    window.scrollTo({
+                                        top: targetPosition,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            });
+                        }, 1000); // Wait for spin animation to complete
                     }, 1500); // 1.5 second delay after entrance completes
                 }
             }

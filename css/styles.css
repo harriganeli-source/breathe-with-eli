@@ -252,7 +252,6 @@ p {
 
 .navbar.nav-hidden {
     transform: translateY(-100%);
-    opacity: 0;
 }
 
 .nav-container {
@@ -549,6 +548,20 @@ p {
     }
     50% {
         transform: translateX(-50%) translateY(8px);
+    }
+}
+
+/* Bottom chevron spin animation before becoming scroll indicator */
+.mandala-hover-container .chevron.chevron-spinning {
+    animation: chevron-spin 1s ease-in-out forwards;
+}
+
+@keyframes chevron-spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(180deg);
+    }
+    100% {
+        transform: translate(-50%, -50%) rotate(540deg);
     }
 }
 
@@ -1265,10 +1278,20 @@ p {
         display: flex;
     }
 
-    /* Ensure hamburger icon is visible on mobile with glassmorphism */
+    /* Ensure navbar content is visible on mobile with glassmorphism */
+    .navbar.scrolled {
+        background-color: rgba(250, 249, 247, 0.92);
+    }
+
+    .navbar.scrolled .nav-logo,
+    .navbar.scrolled .nav-toggle,
+    .navbar.scrolled .nav-toggle span {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .navbar.scrolled .nav-toggle span {
         background-color: var(--color-text);
-        opacity: 1;
     }
 
     .nav-container {
