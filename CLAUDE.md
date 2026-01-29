@@ -54,3 +54,17 @@ This prevents overwriting changes that were merged via GitHub.
 3. Only proceed after receiving approval
 
 This applies to all content on the site - always preserve the original copy from breathewitheli.com unless explicitly asked to change it.
+
+## Content Sync Requirements
+
+**The following sections must be kept in sync across pages:**
+
+1. **Upcoming Events** - When events are updated on `upcoming.html`, copy the same content to:
+   - `book.html` (Upcoming Events section)
+   - `work-with-me.html` (Upcoming Events section at bottom)
+
+2. **Booking Cards** - The investment/booking cards must match across:
+   - `book.html` (booking-options cards)
+   - `work-with-me.html` (Investment section cards)
+   - Same order: Virtual Consultation, Private Breathwork, Coaching Session
+   - Same names, prices, durations, and descriptions
