@@ -1046,11 +1046,10 @@ p {
 /* Screenshot testimonials gallery */
 .screenshot-testimonials {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     gap: 2rem;
-    flex-wrap: wrap;
-    max-width: 900px;
+    max-width: 400px;
     margin: 0 auto;
 }
 
@@ -1059,16 +1058,7 @@ p {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Sarah's longer message - narrower width */
-.screenshot-testimonial:first-child {
-    max-width: 280px;
-}
-
-/* Shorter message - can be wider */
-.screenshot-testimonial:last-child {
-    max-width: 380px;
+    max-width: 100%;
 }
 
 .screenshot-testimonial:hover {
