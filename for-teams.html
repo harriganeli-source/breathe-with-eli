@@ -28,6 +28,15 @@
                 gap: 2rem !important;
             }
         }
+        /* Force three-column testimonials on desktop */
+        .testimonials-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        @media (max-width: 992px) {
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
