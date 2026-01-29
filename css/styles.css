@@ -551,17 +551,17 @@ p {
     }
 }
 
-/* Bottom chevron spin animation before becoming scroll indicator */
+/* Bottom chevron flip animation before becoming scroll indicator */
 .mandala-hover-container .chevron.chevron-spinning {
-    animation: chevron-spin 1s ease-in-out forwards;
+    animation: chevron-flip 0.6s ease-in-out forwards;
 }
 
-@keyframes chevron-spin {
+@keyframes chevron-flip {
     0% {
         transform: translate(-50%, -50%) rotate(180deg);
     }
     100% {
-        transform: translate(-50%, -50%) rotate(540deg);
+        transform: translate(-50%, -50%) rotate(0deg);
     }
 }
 
@@ -1280,7 +1280,7 @@ p {
 
     /* Ensure navbar content is visible on mobile with glassmorphism */
     .navbar.scrolled {
-        background-color: rgba(250, 249, 247, 0.92);
+        background-color: rgba(250, 249, 247, 0.75);
     }
 
     .navbar.scrolled .nav-logo,
