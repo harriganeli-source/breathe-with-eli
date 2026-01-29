@@ -570,6 +570,9 @@ p {
     cursor: pointer;
     transition: transform 0.6s ease;
     animation: chevron-scroll-bounce 2s ease-in-out infinite;
+    /* Expand clickable area vertically without affecting visual */
+    padding: 30px 20px;
+    margin: -30px -20px;
 }
 
 .mandala-hover-container .chevron.scroll-chevron::before,
