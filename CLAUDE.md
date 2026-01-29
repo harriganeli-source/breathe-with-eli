@@ -59,8 +59,9 @@ This applies to all content on the site - always preserve the original copy from
 
 **When ANY event is added, changed, or removed, update ALL locations where it appears:**
 
-1. **Upcoming Events** - These three pages must have identical event listings:
+1. **Upcoming Events** - These four pages must have identical event listings:
    - `upcoming.html` (primary source - Groups & Workshops page)
+   - `index.html` (Upcoming Events section on homepage)
    - `book.html` (Upcoming Events section)
    - `work-with-me.html` (Upcoming Events section at bottom)
 
