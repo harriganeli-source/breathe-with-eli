@@ -55,15 +55,30 @@ This prevents overwriting changes that were merged via GitHub.
 
 This applies to all content on the site - always preserve the original copy from breathewitheli.com unless explicitly asked to change it.
 
-## Content Sync Requirements
+## Content Sync Requirements (CRITICAL)
 
-**The following sections must be kept in sync across pages:**
+**When ANY event is added, changed, or removed, update ALL locations where it appears:**
 
-1. **Upcoming Events** - When events are updated on `upcoming.html`, copy the same content to:
+1. **Upcoming Events** - These three pages must have identical event listings:
+   - `upcoming.html` (primary source - Groups & Workshops page)
    - `book.html` (Upcoming Events section)
    - `work-with-me.html` (Upcoming Events section at bottom)
 
-2. **Booking Cards** - The investment/booking cards must match across:
+   **Sync these details for each event:**
+   - Event name
+   - Day of week, date, and time
+   - Location
+   - Description text
+   - Registration/info links
+
+2. **Individual Event Pages** - Must match the event listings above:
+   - `valentines.html` - The Inner Beloved workshop details
+   - `mens-weekend.html` - Men's Weekend Workshop details
+   - `mensgroup.html` - The Present Man Project details
+
+   When dates, times, or details change on an individual event page, update the corresponding event card on all three listing pages (and vice versa).
+
+3. **Booking Cards** - The investment/booking cards must match across:
    - `book.html` (booking-options cards)
    - `work-with-me.html` (Investment section cards)
    - Same order: Virtual Consultation, Private Breathwork, Coaching Session
