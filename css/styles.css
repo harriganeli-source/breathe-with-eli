@@ -572,10 +572,10 @@ p {
 
 @keyframes chevron-scroll-bounce {
     0%, 100% {
-        transform: translate(-50%, -50%) rotate(0deg) translateY(0);
+        transform: translate(-50%, -50%) rotate(0deg) translateY(0) scale(1);
     }
     50% {
-        transform: translate(-50%, -50%) rotate(0deg) translateY(8px);
+        transform: translate(-50%, -50%) rotate(0deg) translateY(14px) scale(1.1);
     }
 }
 
