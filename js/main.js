@@ -298,8 +298,18 @@ function toggleCaption(button) {
                             bottomChevronFlipped = true;
                             bottomChevron.classList.remove('chevron-spinning');
                             bottomChevron.classList.add('scroll-chevron');
-                            // Make it clickable to scroll to intro section
-                            bottomChevron.addEventListener('click', () => {
+
+                            // Create invisible click overlay for easier clicking
+                            const clickOverlay = document.createElement('div');
+                            clickOverlay.className = 'scroll-chevron-clickarea';
+                            // Position at bottom center of mandala
+                            clickOverlay.style.left = '50%';
+                            clickOverlay.style.bottom = '0';
+                            clickOverlay.style.transform = 'translateX(-50%)';
+                            container.appendChild(clickOverlay);
+
+                            // Scroll function for both chevron and overlay
+                            const scrollToIntro = () => {
                                 const intro = document.getElementById('intro');
                                 if (intro) {
                                     const navHeight = document.querySelector('.navbar').offsetHeight;
@@ -309,7 +319,11 @@ function toggleCaption(button) {
                                         behavior: 'smooth'
                                     });
                                 }
-                            });
+                            };
+
+                            // Make both clickable
+                            bottomChevron.addEventListener('click', scrollToIntro);
+                            clickOverlay.addEventListener('click', scrollToIntro);
                         }, 600); // Wait for flip animation to complete
                     }, 1500); // 1.5 second delay after entrance completes
                 }

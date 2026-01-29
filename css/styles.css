@@ -570,9 +570,17 @@ p {
     cursor: pointer;
     transition: transform 0.6s ease;
     animation: chevron-scroll-bounce 2s ease-in-out infinite;
-    /* Expand clickable area vertically without affecting visual */
-    padding: 30px 20px;
-    margin: -30px -20px;
+}
+
+/* Invisible click overlay for easier clicking on bouncing chevron */
+.scroll-chevron-clickarea {
+    position: absolute;
+    width: 80px;
+    height: 100px;
+    cursor: pointer;
+    z-index: 10;
+    /* Debug: uncomment to see the click area */
+    /* background: rgba(255, 0, 0, 0.2); */
 }
 
 .mandala-hover-container .chevron.scroll-chevron::before,
