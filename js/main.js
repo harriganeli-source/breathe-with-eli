@@ -293,7 +293,7 @@ function toggleCaption(button) {
                         // Start spin animation
                         bottomChevron.classList.add('chevron-spinning');
 
-                        // After spin completes, switch to scroll indicator
+                        // After flip completes, switch to scroll indicator
                         setTimeout(() => {
                             bottomChevronFlipped = true;
                             bottomChevron.classList.remove('chevron-spinning');
@@ -310,7 +310,7 @@ function toggleCaption(button) {
                                     });
                                 }
                             });
-                        }, 1000); // Wait for spin animation to complete
+                        }, 600); // Wait for flip animation to complete
                     }, 1500); // 1.5 second delay after entrance completes
                 }
             }
