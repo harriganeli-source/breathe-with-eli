@@ -256,19 +256,17 @@ function toggleCaption(button) {
         const x = Math.cos(state.angle) * currentRadius;
         const y = Math.sin(state.angle) * currentRadius;
 
-        chevron.style.left = `calc(50% + ${x}px)`;
-        chevron.style.top = `calc(50% + ${y}px)`;
-        chevron.style.opacity = entranceOpacity;
-
         // Handle bottom chevron flip to become scroll indicator
         if (index === bottomChevronIndex && bottomChevronFlipped) {
-            // The chevron base shape ">" points right at 0deg
-            // But the bottom chevron already has 180deg rotation applied (pointing left/outward)
-            // To flip it to point DOWN as a scroll indicator, we need to rotate it
-            // from pointing outward (away from center) to pointing down
-            // Testing with 0deg - the raw chevron shape points right, let's see what we get
+            // Fix position at bottom center of mandala
+            chevron.style.left = '50%';
+            chevron.style.top = `calc(50% + ${baseRadius}px)`;
             chevron.style.transform = `translate(-50%, -50%) rotate(0deg)`;
+        } else {
+            chevron.style.left = `calc(50% + ${x}px)`;
+            chevron.style.top = `calc(50% + ${y}px)`;
         }
+        chevron.style.opacity = entranceOpacity;
     }
 
     // Breathing animation loop
