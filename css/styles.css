@@ -1043,6 +1043,35 @@ p {
     color: var(--color-text-light);
 }
 
+/* Screenshot testimonials gallery */
+.screenshot-testimonials {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.screenshot-testimonial {
+    max-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screenshot-testimonial:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.screenshot-testimonial img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* ============================================
    CTA SECTION
    ============================================ */
