@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     navbar.classList.add('scrolled');
                     navbar.classList.remove('nav-hidden');
                     hasAnimatedIn = true;
-                }, 100);
+                }, 300);
             }
         }
 
