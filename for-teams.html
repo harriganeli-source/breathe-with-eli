@@ -611,17 +611,19 @@
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
-            // Squeeze/stretch factor - organism changes shape over time
-            const squeezePhase = (time % 15000) / 15000;  // 15 second cycle
-            const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
-            // When squeezeFactor is positive: wider and shorter
-            // When squeezeFactor is negative: taller and narrower
-            // VERY flat when at starting scale (1.0), becomes regular as it grows
-            // At scale 1.0: initialSquash = 0.6 (very flat)
-            // At scale 1.5+: initialSquash = 0 (normal)
-            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);  // Much flatter when small
-            const scaleX = 1 + squeezeFactor * 0.15 + initialSquash;  // Much wider when small
-            const scaleY = 1 - squeezeFactor * 0.15 - initialSquash * 0.7;  // Much shorter when small
+            // Squeeze/stretch factor - organism changes shape dramatically over time
+            // Multiple overlapping cycles for more organic, unpredictable distortion
+            const squeezePhase1 = (time % 12000) / 12000;  // Primary 12 second cycle
+            const squeezePhase2 = (time % 8000) / 8000;    // Secondary 8 second cycle
+            const squeezePhase3 = (time % 19000) / 19000;  // Tertiary 19 second cycle (prime for variation)
+            const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.6
+                                + Math.sin(squeezePhase2 * Math.PI * 2) * 0.3
+                                + Math.sin(squeezePhase3 * Math.PI * 2) * 0.25;
+            // Base squash that persists even at larger scales (reduced but still present)
+            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);
+            const baseDistortion = 0.15;  // Always have some distortion
+            const scaleX = 1 + squeezeFactor * 0.35 + initialSquash + baseDistortion * Math.sin(squeezePhase2 * Math.PI * 4);
+            const scaleY = 1 - squeezeFactor * 0.35 - initialSquash * 0.7 - baseDistortion * Math.sin(squeezePhase3 * Math.PI * 4);
 
             // Color shift based on organism movement and rotation
             // Subtle shift: rotation affects overall hue, wander affects individual dots
@@ -629,11 +631,11 @@
 
             // Update dot positions
             dots.forEach((dot, i) => {
-                // LOTS of wander for crawling movement between dots (EVEN SLOWER)
-                // Each dot has its own unique wander pattern
-                dot.phase += 0.0025 + (i * 0.0006);  // Even slower speeds per dot
-                const wanderX = Math.sin(dot.phase) * 28 + Math.sin(dot.phase * 1.7) * 15 + Math.sin(dot.phase * 0.3) * 10;
-                const wanderY = Math.cos(dot.phase * 0.7) * 28 + Math.cos(dot.phase * 1.3) * 15 + Math.cos(dot.phase * 0.5) * 10;
+                // LOTS of wander for crawling movement - dots can overlap and cross paths
+                // Each dot has its own unique wander pattern with large amplitude
+                dot.phase += 0.0025 + (i * 0.0006);  // Slow speeds per dot
+                const wanderX = Math.sin(dot.phase) * 45 + Math.sin(dot.phase * 1.7) * 25 + Math.sin(dot.phase * 0.3) * 18;
+                const wanderY = Math.cos(dot.phase * 0.7) * 45 + Math.cos(dot.phase * 1.3) * 25 + Math.cos(dot.phase * 0.5) * 18;
 
                 // Dynamic hue shift based on dot's wander movement
                 // Each dot's hue shifts slightly based on its phase
@@ -868,20 +870,22 @@
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
-            // Squeeze/stretch morphing
-            const squeezePhase = (time % 12000) / 12000;
-            const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
-            const scaleX = 1 + squeezeFactor * 0.12;
-            const scaleY = 1 - squeezeFactor * 0.12;
+            // Squeeze/stretch morphing - more dramatic distortion
+            const squeezePhase1 = (time % 10000) / 10000;
+            const squeezePhase2 = (time % 7000) / 7000;
+            const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.5
+                                + Math.sin(squeezePhase2 * Math.PI * 2) * 0.3;
+            const scaleX = 1 + squeezeFactor * 0.3 + 0.1 * Math.sin(squeezePhase2 * Math.PI * 4);
+            const scaleY = 1 - squeezeFactor * 0.3 - 0.1 * Math.sin(squeezePhase1 * Math.PI * 4);
 
             // Color shift based on movement and rotation
             const rotationHueShift = Math.sin(continuousRotation * 0.01) * 25;
 
             dots.forEach((dot, i) => {
-                // Wander movement
+                // Wander movement - larger amplitude for overlapping
                 dot.phase += 0.003 + (i * 0.0005);
-                const wanderX = Math.sin(dot.phase) * 15 + Math.sin(dot.phase * 1.5) * 8;
-                const wanderY = Math.cos(dot.phase * 0.8) * 15 + Math.cos(dot.phase * 1.2) * 8;
+                const wanderX = Math.sin(dot.phase) * 25 + Math.sin(dot.phase * 1.5) * 15;
+                const wanderY = Math.cos(dot.phase * 0.8) * 25 + Math.cos(dot.phase * 1.2) * 15;
 
                 // Dynamic hue shift
                 const wanderHueShift = Math.sin(dot.phase * 0.5) * 18;
