@@ -48,7 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         let hasAnimatedIn = false; // Track if navbar has animated in once
-        const scrollThreshold = 80; // How far to scroll before triggering animation
+        let scrollTimeout = null; // Timer for showing navbar after scroll stops
+        const showDelay = 1500; // How long to wait after scrolling stops
 
         function updateNavbar() {
             const currentScrollY = window.scrollY;
@@ -58,18 +59,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 navbar.classList.remove('scrolled');
                 navbar.classList.remove('nav-hidden');
                 hasAnimatedIn = false;
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = null;
+                }
                 return;
             }
 
-            // Past threshold and haven't animated in yet - hide then show
-            if (currentScrollY > scrollThreshold && !hasAnimatedIn) {
+            // User is scrolling and we're past the top - hide navbar immediately
+            if (!hasAnimatedIn) {
                 navbar.classList.add('nav-hidden');
-                // Short delay then animate in with glassmorphism
-                setTimeout(() => {
+
+                // Clear any existing timeout
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+
+                // Start timer to show navbar after user stops scrolling
+                scrollTimeout = setTimeout(() => {
                     navbar.classList.add('scrolled');
                     navbar.classList.remove('nav-hidden');
                     hasAnimatedIn = true;
-                }, 1000);
+                }, showDelay);
             }
         }
 
