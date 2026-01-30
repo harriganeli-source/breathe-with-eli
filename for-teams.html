@@ -733,13 +733,13 @@
         // Organism position in SVG viewBox coordinates
         // viewBox is 0-400 x, 0-3000 y (maps to full page width, ~3000px page height)
         let organismX = 200;  // Start centered
-        let organismY = 550;  // Well below intro text and image
+        let organismY = 700;  // Will be set properly by updateSectionPositions
         let organismRotation = 0;
         let currentScale = 1.0;
 
         // Target position the organism drifts toward (in SVG coords)
         let targetX = 200;
-        let targetY = 550;
+        let targetY = 700;
         let targetRotation = 0;
         let targetScale = 1.0;
 
@@ -806,7 +806,7 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 200,  // Centered horizontally
-                    targetY: toSvgY(introTop + 800),  // Well below the intro text and image
+                    targetY: toSvgY(introTop + 1000),  // Well below the intro text and image
                     rotation: 0,
                     scale: 1.0
                 },
@@ -877,6 +877,8 @@
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('resize', updateSectionPositions);
         setTimeout(updateSectionPositions, 100);
+        // Also trigger scroll handler on load to set initial position
+        setTimeout(handleScroll, 150);
 
         let continuousRotation = 0;
 
