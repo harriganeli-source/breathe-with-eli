@@ -357,18 +357,25 @@
 
             // Initialize dots
             for (let i = 0; i < numDots; i++) {
+                const isCenter = positions[i].isCenter || false;
                 const dot = {
                     x: positions[i].x,
                     y: positions[i].y,
                     baseX: positions[i].x,
                     baseY: positions[i].y,
-                    phase: Math.random() * Math.PI * 2
+                    phase: Math.random() * Math.PI * 2,
+                    isCenter: isCenter
                 };
                 dots.push(dot);
 
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('class', 'dot');
-                circle.setAttribute('r', dotRadius);
+                // Center dot is slightly larger
+                circle.setAttribute('r', isCenter ? dotRadius * 1.3 : dotRadius);
+                // Center dot is slightly darker
+                if (isCenter) {
+                    circle.style.opacity = '0.85';
+                }
                 circle.setAttribute('cx', dot.x);
                 circle.setAttribute('cy', dot.y);
                 dotElements.push(circle);
@@ -445,51 +452,46 @@
             requestAnimationFrame(animate);
         }
 
-        // Desktop configuration (8 dots - symmetrical with 8th dot on left)
+        // Desktop configuration (7 dots - hexagon with center dot)
+        // Hexagon vertices at 60° intervals, center at (200, 200), radius ~120
         initConnectedDots('connected-dots-svg', {
             positions: [
-                { x: 80, y: 60 },    // 0: top left
-                { x: 320, y: 60 },   // 1: top right (mirrored)
-                { x: 140, y: 140 },  // 2: upper middle left
-                { x: 260, y: 140 },  // 3: upper middle right (mirrored)
-                { x: 60, y: 240 },   // 4: lower left
-                { x: 340, y: 240 },  // 5: lower right (mirrored)
-                { x: 140, y: 320 },  // 6: bottom middle left
-                { x: 260, y: 320 }   // 7: bottom middle right (8th dot, left-side mirror)
+                { x: 200, y: 80 },    // 0: top
+                { x: 304, y: 140 },   // 1: top right
+                { x: 304, y: 260 },   // 2: bottom right
+                { x: 200, y: 320 },   // 3: bottom
+                { x: 96, y: 260 },    // 4: bottom left
+                { x: 96, y: 140 },    // 5: top left
+                { x: 200, y: 200, isCenter: true }  // 6: center dot
             ],
             connections: [
-                [0, 1], [0, 2], [1, 3],  // Top connections
-                [2, 3], [2, 4], [3, 5],  // Middle connections
-                [2, 6], [3, 7],          // Diagonal to bottom
-                [4, 6], [5, 7],          // Side to bottom
-                [6, 7]                   // Bottom connection
+                // Hexagon edges
+                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
+                // Spokes to center
+                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5]
             ],
             centerX: 200,
             centerY: 200,
             bounds: { minX: 20, maxX: 380, minY: 20, maxY: 380 }
         });
 
-        // Mobile configuration (8 dots, symmetrical)
+        // Mobile configuration (7 dots - hexagon with center, smaller)
         initConnectedDots('connected-dots-mobile-svg', {
             positions: [
-                { x: 80, y: 40 },
-                { x: 320, y: 40 },
-                { x: 120, y: 110 },
-                { x: 280, y: 110 },
-                { x: 60, y: 180 },
-                { x: 340, y: 180 },
-                { x: 140, y: 250 },
-                { x: 260, y: 250 }
+                { x: 200, y: 60 },    // 0: top
+                { x: 287, y: 110 },   // 1: top right
+                { x: 287, y: 210 },   // 2: bottom right
+                { x: 200, y: 260 },   // 3: bottom
+                { x: 113, y: 210 },   // 4: bottom left
+                { x: 113, y: 110 },   // 5: top left
+                { x: 200, y: 160, isCenter: true }  // 6: center dot
             ],
             connections: [
-                [0, 1], [0, 2], [1, 3],
-                [2, 3], [2, 4], [3, 5],
-                [2, 6], [3, 7],
-                [4, 6], [5, 7],
-                [6, 7]
+                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
+                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5]
             ],
             centerX: 200,
-            centerY: 150,
+            centerY: 160,
             bounds: { minX: 20, maxX: 380, minY: 20, maxY: 280 }
         });
     })();
