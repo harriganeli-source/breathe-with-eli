@@ -88,12 +88,16 @@
             transition-delay: 0.8s;
         }
         .connected-dots .dot {
-            fill: var(--color-primary);
+            /* Dynamic hue set by JS - base sage green (100) shifts based on position */
+            fill: hsl(var(--dot-hue, 100), 30%, 40%);
+            transition: fill 0.3s ease;
         }
         .connected-dots .line {
-            stroke: var(--color-primary);
+            /* Lines use gradient between connected dots' hues */
+            stroke: hsl(var(--line-hue, 100), 30%, 40%);
             stroke-width: 1.5;
             opacity: 0.6;
+            transition: stroke 0.3s ease;
         }
         .intro-section-teams {
             position: relative;
@@ -128,12 +132,16 @@
             overflow: visible;
         }
         .connected-dots-mobile .dot {
-            fill: var(--color-primary);
+            /* Dynamic hue set by JS - base sage green (100) shifts based on position */
+            fill: hsl(var(--dot-hue, 100), 30%, 40%);
+            transition: fill 0.3s ease;
         }
         .connected-dots-mobile .line {
-            stroke: var(--color-primary);
+            /* Lines use gradient between connected dots' hues */
+            stroke: hsl(var(--line-hue, 100), 30%, 40%);
             stroke-width: 1.2;
             opacity: 0.6;
+            transition: stroke 0.3s ease;
         }
         .who-this-is-for {
             position: relative;
@@ -425,14 +433,22 @@
         let pageHeight = 3000;
 
         // Initialize dots
+        // Base hue is sage green (100), with ±30 range around the hexagon
+        // Creates subtle warm (gold/olive) to cool (teal) gradient
         basePositions.forEach((pos, i) => {
+            // Calculate base hue for this dot (outer dots shift, center stays at base)
+            // i: 0=top, 1=top-right, 2=bottom-right, 3=bottom, 4=bottom-left, 5=top-left, 6=center
+            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 60 - 30; // Range: 70-130
+
             const dot = {
                 baseX: pos.x,
                 baseY: pos.y,
                 x: 700 + pos.x,
                 y: 400 + pos.y,
                 phase: Math.random() * Math.PI * 2,
-                isCenter: pos.isCenter || false
+                isCenter: pos.isCenter || false,
+                baseHue: baseHue,
+                currentHue: baseHue
             };
             dots.push(dot);
 
@@ -442,6 +458,8 @@
             if (dot.isCenter) circle.style.opacity = '0.85';
             circle.setAttribute('cx', dot.x);
             circle.setAttribute('cy', dot.y);
+            // Set initial hue
+            circle.style.setProperty('--dot-hue', baseHue);
             dotElements.push(circle);
         });
 
@@ -453,6 +471,9 @@
             line.setAttribute('y1', dots[i].y);
             line.setAttribute('x2', dots[i].x);
             line.setAttribute('y2', dots[i].y);
+            // Set line hue as average of connected dots
+            const lineHue = (dots[i].baseHue + dots[j].baseHue) / 2;
+            line.style.setProperty('--line-hue', lineHue);
             lineElements.push({ element: line, from: i, to: j, index: idx });
             svg.appendChild(line);
         });
@@ -602,6 +623,10 @@
             const scaleX = 1 + squeezeFactor * 0.15 + initialSquash;  // Much wider when small
             const scaleY = 1 - squeezeFactor * 0.15 - initialSquash * 0.7;  // Much shorter when small
 
+            // Color shift based on organism movement and rotation
+            // Subtle shift: rotation affects overall hue, wander affects individual dots
+            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 15;
+
             // Update dot positions
             dots.forEach((dot, i) => {
                 // LOTS of wander for crawling movement between dots (EVEN SLOWER)
@@ -609,6 +634,12 @@
                 dot.phase += 0.0025 + (i * 0.0006);  // Even slower speeds per dot
                 const wanderX = Math.sin(dot.phase) * 28 + Math.sin(dot.phase * 1.7) * 15 + Math.sin(dot.phase * 0.3) * 10;
                 const wanderY = Math.cos(dot.phase * 0.7) * 28 + Math.cos(dot.phase * 1.3) * 15 + Math.cos(dot.phase * 0.5) * 10;
+
+                // Dynamic hue shift based on dot's wander movement
+                // Each dot's hue shifts slightly based on its phase
+                const wanderHueShift = Math.sin(dot.phase * 0.5) * 10;
+                dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
+                dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
 
                 // Breathing expansion (small)
                 const breathExpand = breathFactor * 2;
@@ -630,10 +661,14 @@
                 dotElements[i].setAttribute('cy', dot.y);
             });
 
-            // Update lines with growth animation
+            // Update lines with growth animation and dynamic hue
             lineElements.forEach(({ element, from, to, index }) => {
                 const fromDot = dots[from];
                 const toDot = dots[to];
+
+                // Update line hue as average of connected dots' current hues
+                const lineHue = (fromDot.currentHue + toDot.currentHue) / 2;
+                element.style.setProperty('--line-hue', lineHue);
 
                 const thisLineDelay = lineGrowDelay + (index * lineStagger);
                 let growProgress = 0;
@@ -708,14 +743,20 @@
         let pageHeight = 3000;
 
         // Initialize dots
+        // Base hue is sage green (100), with ±30 range around the hexagon
         basePositions.forEach((pos, i) => {
+            // Calculate base hue for this dot
+            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 60 - 30; // Range: 70-130
+
             const dot = {
                 baseX: pos.x,
                 baseY: pos.y,
                 x: organismX + pos.x,
                 y: organismY + pos.y,
                 phase: Math.random() * Math.PI * 2,
-                isCenter: pos.isCenter || false
+                isCenter: pos.isCenter || false,
+                baseHue: baseHue,
+                currentHue: baseHue
             };
             dots.push(dot);
 
@@ -725,6 +766,7 @@
             if (dot.isCenter) circle.style.opacity = '0.85';
             circle.setAttribute('cx', dot.x);
             circle.setAttribute('cy', dot.y);
+            circle.style.setProperty('--dot-hue', baseHue);
             dotElements.push(circle);
         });
 
@@ -736,6 +778,8 @@
             line.setAttribute('y1', dots[i].y);
             line.setAttribute('x2', dots[i].x);
             line.setAttribute('y2', dots[i].y);
+            const lineHue = (dots[i].baseHue + dots[j].baseHue) / 2;
+            line.style.setProperty('--line-hue', lineHue);
             lineElements.push({ element: line, from: i, to: j, index: idx });
             mobileSvg.appendChild(line);
         });
@@ -830,11 +874,19 @@
             const scaleX = 1 + squeezeFactor * 0.12 + initialSquash;
             const scaleY = 1 - squeezeFactor * 0.12 - initialSquash;
 
+            // Color shift based on movement and rotation
+            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 15;
+
             dots.forEach((dot, i) => {
                 // Simpler wander for mobile performance
                 dot.phase += 0.003 + (i * 0.0005);
                 const wanderX = Math.sin(dot.phase) * 15 + Math.sin(dot.phase * 1.5) * 8;
                 const wanderY = Math.cos(dot.phase * 0.8) * 15 + Math.cos(dot.phase * 1.2) * 8;
+
+                // Dynamic hue shift based on movement
+                const wanderHueShift = Math.sin(dot.phase * 0.5) * 10;
+                dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
+                dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
 
                 const breathExpand = breathFactor * 2;
                 const breathScale = 1 + breathExpand * 0.01;
@@ -855,6 +907,10 @@
             lineElements.forEach(({ element, from, to, index }) => {
                 const fromDot = dots[from];
                 const toDot = dots[to];
+
+                // Update line hue dynamically
+                const lineHue = (fromDot.currentHue + toDot.currentHue) / 2;
+                element.style.setProperty('--line-hue', lineHue);
 
                 const thisLineDelay = lineGrowDelay + (index * lineStagger);
                 let growProgress = elapsed > thisLineDelay ? Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration) : 0;
