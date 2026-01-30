@@ -186,13 +186,6 @@
             opacity: 0.6;
             transition: stroke 0.3s ease;
         }
-        .who-this-is-for {
-            position: relative;
-        }
-        .who-this-is-for .container {
-            position: relative;
-            z-index: 1;
-        }
     </style>
 </head>
 <body>
@@ -363,18 +356,6 @@
         </div>
     </section>
 
-    <!-- Who This Is For Section -->
-    <section class="content-section who-this-is-for" style="background-color: var(--color-bg-alt);">
-        <div class="container" style="max-width: 800px;">
-            <h2 style="text-align: center; margin-bottom: 2rem;">Who This Is For</h2>
-            <ul style="list-style: disc; padding-left: 1.5rem; color: var(--color-text-light);">
-                <li>Teams in high-pressure environments: healthcare, production, startups, nonprofits, sports</li>
-                <li>Leaders who sense something's missing in how people relate at work</li>
-                <li>Organizations who want their people to thrive, not just perform</li>
-            </ul>
-        </div>
-    </section>
-
     <!-- CTA Section -->
     <section class="cta">
         <div class="container" style="text-align: center;">
@@ -439,16 +420,18 @@
         // Configuration
         const dotRadius = 5;
         const breathCycle = 10000;
-        const lineGrowDuration = 2500;
-        const lineStagger = 150;
+        const lineGrowDuration = 3500;  // Slower line growth
+        const lineGrowDelay = 1300;     // Delay before lines start growing
+        const lineStagger = 350;        // Delay between each line
 
         // Growth stages - organism gains complexity as it moves down
         // Stage 0: Initial hexagon (7 dots, 12 connections)
-        // Stage 1: Add outer ring (6 more dots, more connections) - at testimonials
-        // Stage 2: Add even more dots and connections - at what I offer
+        // Stage 1: Add 3 dots at testimonials (with delay)
+        // Stage 2: Add 3 more dots at What I Offer
 
         const baseScale = 1.0;
         let currentScale = baseScale;
+        const stageActivationDelay = 2000;  // Delay before new dots appear after reaching section
 
         // All possible dot positions (will be revealed progressively)
         const allDotPositions = [
@@ -461,23 +444,15 @@
             { x: -95, y: -55, stage: 0 },     // 5: top left
             { x: 0, y: 0, isCenter: true, stage: 0 },  // 6: center
 
-            // Stage 1: Outer ring (indices 7-12) - between existing points
-            { x: 55, y: -95, stage: 1 },      // 7: between top and top-right
-            { x: 115, y: 0, stage: 1 },       // 8: far right
-            { x: 55, y: 95, stage: 1 },       // 9: between bottom-right and bottom
-            { x: -55, y: 95, stage: 1 },      // 10: between bottom and bottom-left
-            { x: -115, y: 0, stage: 1 },      // 11: far left
-            { x: -55, y: -95, stage: 1 },     // 12: between top-left and top
+            // Stage 1: 3 additional dots at testimonials (indices 7-9)
+            { x: 130, y: 0, stage: 1 },       // 7: far right
+            { x: -130, y: 0, stage: 1 },      // 8: far left
+            { x: 0, y: -150, stage: 1 },      // 9: far top
 
-            // Stage 2: Extended network (indices 13-20)
-            { x: 0, y: -170, stage: 2 },      // 13: far top
-            { x: 150, y: -85, stage: 2 },     // 14: far top-right
-            { x: 150, y: 85, stage: 2 },      // 15: far bottom-right
-            { x: 0, y: 170, stage: 2 },       // 16: far bottom
-            { x: -150, y: 85, stage: 2 },     // 17: far bottom-left
-            { x: -150, y: -85, stage: 2 },    // 18: far top-left
-            { x: 45, y: -35, stage: 2 },      // 19: inner right
-            { x: -45, y: 35, stage: 2 }       // 20: inner left
+            // Stage 2: 3 more dots at What I Offer (indices 10-12)
+            { x: 0, y: 150, stage: 2 },       // 10: far bottom
+            { x: 75, y: -120, stage: 2 },     // 11: upper right
+            { x: -75, y: -120, stage: 2 }     // 12: upper left
         ];
 
         // All possible connections (will be revealed progressively)
@@ -488,34 +463,16 @@
             { from: 0, to: 1, stage: 0 }, { from: 1, to: 2, stage: 0 }, { from: 2, to: 3, stage: 0 },
             { from: 3, to: 4, stage: 0 }, { from: 4, to: 5, stage: 0 }, { from: 5, to: 0, stage: 0 },
 
-            // Stage 1: Connect outer ring to core
-            { from: 0, to: 7, stage: 1 }, { from: 1, to: 7, stage: 1 },
-            { from: 1, to: 8, stage: 1 }, { from: 2, to: 8, stage: 1 },
-            { from: 2, to: 9, stage: 1 }, { from: 3, to: 9, stage: 1 },
-            { from: 3, to: 10, stage: 1 }, { from: 4, to: 10, stage: 1 },
-            { from: 4, to: 11, stage: 1 }, { from: 5, to: 11, stage: 1 },
-            { from: 5, to: 12, stage: 1 }, { from: 0, to: 12, stage: 1 },
-            // Outer ring connections
-            { from: 7, to: 8, stage: 1 }, { from: 8, to: 9, stage: 1 },
-            { from: 9, to: 10, stage: 1 }, { from: 10, to: 11, stage: 1 },
-            { from: 11, to: 12, stage: 1 }, { from: 12, to: 7, stage: 1 },
+            // Stage 1: Connect new dots to core
+            { from: 1, to: 7, stage: 1 }, { from: 2, to: 7, stage: 1 },
+            { from: 4, to: 8, stage: 1 }, { from: 5, to: 8, stage: 1 },
+            { from: 0, to: 9, stage: 1 }, { from: 1, to: 9, stage: 1 }, { from: 5, to: 9, stage: 1 },
 
-            // Stage 2: Extended network connections
-            { from: 0, to: 13, stage: 2 }, { from: 7, to: 13, stage: 2 }, { from: 12, to: 13, stage: 2 },
-            { from: 1, to: 14, stage: 2 }, { from: 7, to: 14, stage: 2 }, { from: 8, to: 14, stage: 2 },
-            { from: 2, to: 15, stage: 2 }, { from: 8, to: 15, stage: 2 }, { from: 9, to: 15, stage: 2 },
-            { from: 3, to: 16, stage: 2 }, { from: 9, to: 16, stage: 2 }, { from: 10, to: 16, stage: 2 },
-            { from: 4, to: 17, stage: 2 }, { from: 10, to: 17, stage: 2 }, { from: 11, to: 17, stage: 2 },
-            { from: 5, to: 18, stage: 2 }, { from: 11, to: 18, stage: 2 }, { from: 12, to: 18, stage: 2 },
-            // Inner connections
-            { from: 6, to: 19, stage: 2 }, { from: 6, to: 20, stage: 2 },
-            { from: 1, to: 19, stage: 2 }, { from: 2, to: 19, stage: 2 },
-            { from: 4, to: 20, stage: 2 }, { from: 5, to: 20, stage: 2 },
-            { from: 19, to: 20, stage: 2 },
-            // Cross connections for complexity
-            { from: 13, to: 14, stage: 2 }, { from: 14, to: 15, stage: 2 },
-            { from: 15, to: 16, stage: 2 }, { from: 16, to: 17, stage: 2 },
-            { from: 17, to: 18, stage: 2 }, { from: 18, to: 13, stage: 2 }
+            // Stage 2: Connect new dots
+            { from: 3, to: 10, stage: 2 }, { from: 2, to: 10, stage: 2 }, { from: 4, to: 10, stage: 2 },
+            { from: 0, to: 11, stage: 2 }, { from: 1, to: 11, stage: 2 }, { from: 9, to: 11, stage: 2 },
+            { from: 0, to: 12, stage: 2 }, { from: 5, to: 12, stage: 2 }, { from: 9, to: 12, stage: 2 },
+            { from: 11, to: 12, stage: 2 }
         ];
 
         // State
@@ -525,6 +482,7 @@
         const startTime = performance.now();
         let currentStage = 0;
         let stageChangeTime = 0;
+        let animationStartTime = null;  // Track when animation actually starts
 
         // Organism position
         let organismX = 700;
@@ -553,9 +511,9 @@
                 baseHue: baseHue,
                 currentHue: baseHue,
                 stage: pos.stage,
-                opacity: pos.stage === 0 ? 1 : 0,
+                opacity: 0,  // Start invisible, will fade in
                 targetOpacity: pos.stage === 0 ? 1 : 0,
-                birthTime: pos.stage === 0 ? 0 : null
+                birthTime: null  // Will be set when animation starts
             };
 
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -565,7 +523,7 @@
             circle.setAttribute('cx', dot.x);
             circle.setAttribute('cy', dot.y);
             circle.style.setProperty('--dot-hue', baseHue);
-            circle.style.opacity = dot.opacity;
+            circle.style.opacity = '0';  // Start invisible
 
             return { dot, circle };
         }
@@ -582,14 +540,14 @@
                 to: conn.to,
                 stage: conn.stage,
                 index: index,
-                opacity: conn.stage === 0 ? 0.6 : 0,
+                opacity: 0,
                 targetOpacity: conn.stage === 0 ? 0.6 : 0,
-                birthTime: conn.stage === 0 ? 0 : null,
+                birthTime: null,  // Will be set when animation starts
                 growProgress: 0
             };
         }
 
-        // Initialize all dots and lines (but only stage 0 visible)
+        // Initialize all dots and lines (all start invisible)
         allDotPositions.forEach((pos, i) => {
             const { dot, circle } = createDot(pos, i);
             dots.push(dot);
@@ -604,18 +562,20 @@
 
         dotElements.forEach(el => svg.appendChild(el));
 
-        // Activate dots and lines for a stage
+        // Activate dots and lines for a stage (with delay for stages > 0)
         function activateStage(stage, time) {
+            const delay = stage === 0 ? 0 : stageActivationDelay;
+
             dots.forEach((dot, i) => {
                 if (dot.stage === stage && dot.birthTime === null) {
-                    dot.birthTime = time;
+                    dot.birthTime = time + delay;
                     dot.targetOpacity = 1;
                 }
             });
 
             lineElements.forEach((line, i) => {
                 if (line.stage === stage && line.birthTime === null) {
-                    line.birthTime = time + 500; // Slight delay after dots appear
+                    line.birthTime = time + delay + 800; // Additional delay after dots appear
                     line.targetOpacity = 0.6;
                 }
             });
@@ -650,7 +610,7 @@
                     targetY: toSvgY(testimonialsTop + 300),
                     rotation: 45,
                     scale: 1.4,
-                    stage: 1
+                    stage: 1  // Add first expansion at testimonials (with delay)
                 },
                 {
                     el: whatIOfferSection,
@@ -659,7 +619,7 @@
                     targetY: toSvgY(whatIOfferTop + 400),
                     rotation: 90,
                     scale: 1.6,
-                    stage: 2
+                    stage: 2  // Add second expansion at What I Offer
                 }
             ];
 
@@ -727,9 +687,16 @@
         let continuousRotation = 0;
 
         function animate(time) {
-            const elapsed = time - startTime;
+            // Initialize animation start time and activate stage 0 on first frame
+            if (animationStartTime === null) {
+                animationStartTime = time;
+                activateStage(0, time);
+            }
 
-            const lerpSpeed = 0.002;
+            const elapsed = time - animationStartTime;
+
+            // Faster movement speed (increased from 0.002)
+            const lerpSpeed = 0.005;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
@@ -759,7 +726,7 @@
 
             // Update dot positions and opacity
             dots.forEach((dot, i) => {
-                // Fade in new dots
+                // Fade in dots from their birth time
                 if (dot.birthTime !== null && dot.opacity < dot.targetOpacity) {
                     const fadeProgress = Math.min(1, (time - dot.birthTime) / 1500);
                     dot.opacity = fadeProgress * dot.targetOpacity;
