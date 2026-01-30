@@ -424,56 +424,93 @@
         const lineGrowDelay = 1300;     // Delay before lines start growing
         const lineStagger = 350;        // Delay between each line
 
-        // Growth stages - organism gains complexity as it moves down
-        // Stage 0: Initial hexagon (7 dots, 12 connections)
-        // Stage 1: Add 3 dots at testimonials (with delay)
-        // Stage 2: Add 3 more dots at What I Offer
+        // Growth stages - organism gains complexity and coherence as it moves down
+        // Starts chaotic, ends as flower of life pattern
+        // Stage 0: Scattered dots that will form core
+        // Stage 1: More dots appear at testimonials
+        // Stage 2: Final dots complete flower of life at What I Offer
 
         const baseScale = 1.0;
         let currentScale = baseScale;
-        const stageActivationDelay = 2000;  // Delay before new dots appear after reaching section
+        const stageActivationDelay = 1500;  // Delay before new dots appear after reaching section
 
-        // All possible dot positions (will be revealed progressively)
-        const allDotPositions = [
-            // Stage 0: Core hexagon (indices 0-6)
-            { x: 0, y: -110, stage: 0 },      // 0: top
-            { x: 95, y: -55, stage: 0 },      // 1: top right
-            { x: 95, y: 55, stage: 0 },       // 2: bottom right
-            { x: 0, y: 110, stage: 0 },       // 3: bottom
-            { x: -95, y: 55, stage: 0 },      // 4: bottom left
-            { x: -95, y: -55, stage: 0 },     // 5: top left
-            { x: 0, y: 0, isCenter: true, stage: 0 },  // 6: center
+        // Chaos factor - decreases as user scrolls (1 = chaotic, 0 = structured)
+        let chaosFactor = 1.0;
+        let targetChaosFactor = 1.0;
 
-            // Stage 1: 3 additional dots at testimonials (indices 7-9)
-            { x: 130, y: 0, stage: 1 },       // 7: far right
-            { x: -130, y: 0, stage: 1 },      // 8: far left
-            { x: 0, y: -150, stage: 1 },      // 9: far top
+        // Flower of Life positions (final structured form)
+        // Center + 6 surrounding circles pattern
+        const r = 80;  // Base radius for flower of life
+        const flowerPositions = [
+            // Stage 0: Core - center and inner ring (7 dots)
+            { x: 0, y: 0, isCenter: true, stage: 0 },  // 0: center
+            { x: 0, y: -r, stage: 0 },                  // 1: top
+            { x: r * 0.866, y: -r * 0.5, stage: 0 },    // 2: top right
+            { x: r * 0.866, y: r * 0.5, stage: 0 },     // 3: bottom right
+            { x: 0, y: r, stage: 0 },                   // 4: bottom
+            { x: -r * 0.866, y: r * 0.5, stage: 0 },    // 5: bottom left
+            { x: -r * 0.866, y: -r * 0.5, stage: 0 },   // 6: top left
 
-            // Stage 2: 3 more dots at What I Offer (indices 10-12)
-            { x: 0, y: 150, stage: 2 },       // 10: far bottom
-            { x: 75, y: -120, stage: 2 },     // 11: upper right
-            { x: -75, y: -120, stage: 2 }     // 12: upper left
+            // Stage 1: Outer petals (6 dots)
+            { x: r * 0.866, y: -r * 1.5, stage: 1 },    // 7: top right outer
+            { x: r * 1.732, y: 0, stage: 1 },           // 8: right outer
+            { x: r * 0.866, y: r * 1.5, stage: 1 },     // 9: bottom right outer
+            { x: -r * 0.866, y: r * 1.5, stage: 1 },    // 10: bottom left outer
+            { x: -r * 1.732, y: 0, stage: 1 },          // 11: left outer
+            { x: -r * 0.866, y: -r * 1.5, stage: 1 },   // 12: top left outer
+
+            // Stage 2: Final connecting dots (3 dots to complete pattern)
+            { x: 0, y: -r * 2, stage: 2 },              // 13: far top
+            { x: 0, y: r * 2, stage: 2 },               // 14: far bottom
+            { x: r * 1.732, y: -r, stage: 2 }           // 15: far right upper
         ];
 
-        // All possible connections (will be revealed progressively)
+        // Chaotic starting positions (will interpolate toward flower positions)
+        const chaoticOffsets = [
+            { x: 20, y: -30 },    // 0
+            { x: -50, y: 40 },    // 1
+            { x: 70, y: 20 },     // 2
+            { x: -30, y: -60 },   // 3
+            { x: 45, y: 55 },     // 4
+            { x: -65, y: -15 },   // 5
+            { x: 35, y: -45 },    // 6
+            { x: -40, y: 70 },    // 7
+            { x: 60, y: -35 },    // 8
+            { x: -55, y: 25 },    // 9
+            { x: 25, y: 65 },     // 10
+            { x: -70, y: -50 },   // 11
+            { x: 50, y: 30 },     // 12
+            { x: -25, y: -70 },   // 13
+            { x: 40, y: 45 },     // 14
+            { x: -60, y: 10 }     // 15
+        ];
+
+        // All possible connections (flower of life pattern)
         const allConnections = [
-            // Stage 0: Core hexagon connections
-            { from: 6, to: 0, stage: 0 }, { from: 6, to: 1, stage: 0 }, { from: 6, to: 2, stage: 0 },
-            { from: 6, to: 3, stage: 0 }, { from: 6, to: 4, stage: 0 }, { from: 6, to: 5, stage: 0 },
-            { from: 0, to: 1, stage: 0 }, { from: 1, to: 2, stage: 0 }, { from: 2, to: 3, stage: 0 },
-            { from: 3, to: 4, stage: 0 }, { from: 4, to: 5, stage: 0 }, { from: 5, to: 0, stage: 0 },
+            // Stage 0: Core connections (center to inner ring + inner ring connections)
+            { from: 0, to: 1, stage: 0 }, { from: 0, to: 2, stage: 0 }, { from: 0, to: 3, stage: 0 },
+            { from: 0, to: 4, stage: 0 }, { from: 0, to: 5, stage: 0 }, { from: 0, to: 6, stage: 0 },
+            { from: 1, to: 2, stage: 0 }, { from: 2, to: 3, stage: 0 }, { from: 3, to: 4, stage: 0 },
+            { from: 4, to: 5, stage: 0 }, { from: 5, to: 6, stage: 0 }, { from: 6, to: 1, stage: 0 },
 
-            // Stage 1: Connect new dots to core
+            // Stage 1: Connect outer petals
             { from: 1, to: 7, stage: 1 }, { from: 2, to: 7, stage: 1 },
-            { from: 4, to: 8, stage: 1 }, { from: 5, to: 8, stage: 1 },
-            { from: 0, to: 9, stage: 1 }, { from: 1, to: 9, stage: 1 }, { from: 5, to: 9, stage: 1 },
+            { from: 2, to: 8, stage: 1 }, { from: 3, to: 8, stage: 1 },
+            { from: 3, to: 9, stage: 1 }, { from: 4, to: 9, stage: 1 },
+            { from: 4, to: 10, stage: 1 }, { from: 5, to: 10, stage: 1 },
+            { from: 5, to: 11, stage: 1 }, { from: 6, to: 11, stage: 1 },
+            { from: 6, to: 12, stage: 1 }, { from: 1, to: 12, stage: 1 },
 
-            // Stage 2: Connect new dots
-            { from: 3, to: 10, stage: 2 }, { from: 2, to: 10, stage: 2 }, { from: 4, to: 10, stage: 2 },
-            { from: 0, to: 11, stage: 2 }, { from: 1, to: 11, stage: 2 }, { from: 9, to: 11, stage: 2 },
-            { from: 0, to: 12, stage: 2 }, { from: 5, to: 12, stage: 2 }, { from: 9, to: 12, stage: 2 },
-            { from: 11, to: 12, stage: 2 }
+            // Stage 2: Final connections
+            { from: 7, to: 12, stage: 2 }, { from: 7, to: 13, stage: 2 }, { from: 12, to: 13, stage: 2 },
+            { from: 1, to: 13, stage: 2 },
+            { from: 9, to: 10, stage: 2 }, { from: 9, to: 14, stage: 2 }, { from: 10, to: 14, stage: 2 },
+            { from: 4, to: 14, stage: 2 },
+            { from: 7, to: 15, stage: 2 }, { from: 8, to: 15, stage: 2 }
         ];
+
+        // Use flower positions as allDotPositions
+        const allDotPositions = flowerPositions;
 
         // State
         const dots = [];
@@ -640,12 +677,20 @@
 
         let currentSectionIndex = 0;
         let lastSectionChangeTime = 0;
-        const sectionChangeCooldown = 3000;
+        const sectionChangeCooldown = 1500;  // Reduced cooldown for more responsive movement
+        const initialAnimationDelay = 1500;  // Delay before animation starts
 
         function handleScroll() {
             const scrollY = window.scrollY;
             const viewportMiddle = scrollY + window.innerHeight * 0.4;
             const now = performance.now();
+
+            // Calculate scroll progress (0 = top, 1 = bottom)
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const scrollProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
+
+            // Update chaos factor based on scroll (1 at top, 0 at bottom)
+            targetChaosFactor = Math.max(0, 1 - scrollProgress * 1.5);
 
             let newSectionIndex = 0;
             for (let i = sections.length - 1; i >= 0; i--) {
@@ -657,25 +702,28 @@
                 }
             }
 
+            // More responsive - immediately update target position
+            const section = sections[newSectionIndex];
+            if (section) {
+                targetX = section.targetX;
+                targetY = section.targetY;
+                targetRotation = section.rotation;
+                targetScale = section.scale || 1.0;
+            }
+
+            // Stage activation still has cooldown to prevent rapid switching
             if (newSectionIndex !== currentSectionIndex &&
                 (now - lastSectionChangeTime) > sectionChangeCooldown) {
                 currentSectionIndex = newSectionIndex;
                 lastSectionChangeTime = now;
-                const section = sections[currentSectionIndex];
-                if (section) {
-                    targetX = section.targetX;
-                    targetY = section.targetY;
-                    targetRotation = section.rotation;
-                    targetScale = section.scale || 1.0;
 
-                    // Activate new stage if moving forward
-                    if (section.stage > currentStage) {
-                        for (let s = currentStage + 1; s <= section.stage; s++) {
-                            activateStage(s, now);
-                        }
-                        currentStage = section.stage;
-                        stageChangeTime = now;
+                // Activate new stage if moving forward
+                if (section && section.stage > currentStage) {
+                    for (let s = currentStage + 1; s <= section.stage; s++) {
+                        activateStage(s, now);
                     }
+                    currentStage = section.stage;
+                    stageChangeTime = now;
                 }
             }
         }
@@ -687,20 +735,27 @@
         let continuousRotation = 0;
 
         function animate(time) {
-            // Initialize animation start time and activate stage 0 on first frame
+            // Initialize animation start time on first frame
             if (animationStartTime === null) {
                 animationStartTime = time;
-                activateStage(0, time);
             }
 
             const elapsed = time - animationStartTime;
 
-            // Faster movement speed (increased from 0.002)
-            const lerpSpeed = 0.005;
+            // Wait for initial delay before activating stage 0
+            if (elapsed > initialAnimationDelay && currentStage === 0 && dots[0].birthTime === null) {
+                activateStage(0, time);
+            }
+
+            // More responsive movement (increased from 0.005)
+            const lerpSpeed = 0.015;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
             currentScale += (targetScale - currentScale) * lerpSpeed;
+
+            // Smoothly interpolate chaos factor
+            chaosFactor += (targetChaosFactor - chaosFactor) * 0.02;
 
             continuousRotation += 0.015;
 
@@ -711,14 +766,15 @@
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
+            // Reduce distortion as chaos decreases (more structured at bottom)
             const squeezePhase1 = (time % 12000) / 12000;
             const squeezePhase2 = (time % 8000) / 8000;
             const squeezePhase3 = (time % 19000) / 19000;
-            const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.6
+            const squeezeFactor = (Math.sin(squeezePhase1 * Math.PI * 2) * 0.6
                                 + Math.sin(squeezePhase2 * Math.PI * 2) * 0.3
-                                + Math.sin(squeezePhase3 * Math.PI * 2) * 0.25;
-            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);
-            const baseDistortion = 0.15;
+                                + Math.sin(squeezePhase3 * Math.PI * 2) * 0.25) * (0.3 + chaosFactor * 0.7);
+            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2) * chaosFactor;
+            const baseDistortion = 0.15 * chaosFactor;
             const scaleX = 1 + squeezeFactor * 0.35 + initialSquash + baseDistortion * Math.sin(squeezePhase2 * Math.PI * 4);
             const scaleY = 1 - squeezeFactor * 0.35 - initialSquash * 0.7 - baseDistortion * Math.sin(squeezePhase3 * Math.PI * 4);
 
@@ -733,8 +789,16 @@
                 }
 
                 dot.phase += 0.0025 + (i * 0.0004);
-                const wanderX = Math.sin(dot.phase) * 45 + Math.sin(dot.phase * 1.7) * 25 + Math.sin(dot.phase * 0.3) * 18;
-                const wanderY = Math.cos(dot.phase * 0.7) * 45 + Math.cos(dot.phase * 1.3) * 25 + Math.cos(dot.phase * 0.5) * 18;
+
+                // Wander decreases as chaos decreases (more stable at bottom)
+                const wanderAmount = 0.3 + chaosFactor * 0.7;
+                const wanderX = (Math.sin(dot.phase) * 45 + Math.sin(dot.phase * 1.7) * 25 + Math.sin(dot.phase * 0.3) * 18) * wanderAmount;
+                const wanderY = (Math.cos(dot.phase * 0.7) * 45 + Math.cos(dot.phase * 1.3) * 25 + Math.cos(dot.phase * 0.5) * 18) * wanderAmount;
+
+                // Interpolate between chaotic offset and structured flower position
+                const chaoticOffset = chaoticOffsets[i] || { x: 0, y: 0 };
+                const chaosX = chaoticOffset.x * chaosFactor * 1.5;
+                const chaosY = chaoticOffset.y * chaosFactor * 1.5;
 
                 const wanderHueShift = Math.sin(dot.phase * 0.5) * 18;
                 dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
@@ -743,8 +807,14 @@
                 const breathExpand = breathFactor * 2;
                 const breathScale = 1 + breathExpand * 0.01;
 
-                const expandedX = dot.baseX * currentScale * scaleX * breathScale;
-                const expandedY = dot.baseY * currentScale * scaleY * breathScale;
+                // Add chaos offset to base position
+                const baseWithChaos = {
+                    x: dot.baseX + chaosX,
+                    y: dot.baseY + chaosY
+                };
+
+                const expandedX = baseWithChaos.x * currentScale * scaleX * breathScale;
+                const expandedY = baseWithChaos.y * currentScale * scaleY * breathScale;
 
                 const rotatedX = expandedX * cosR - expandedY * sinR;
                 const rotatedY = expandedX * sinR + expandedY * cosR;
