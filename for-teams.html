@@ -788,34 +788,33 @@
         });
         dotElements.forEach(el => mobileSvg.appendChild(el));
 
-        // Scroll-based movement - organism follows scroll position smoothly
+        // Scroll-based movement - directly set position (no lerp delay)
         function handleScroll() {
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            const scrollProgress = Math.min(1, scrollY / maxScroll);
+            const scrollProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
 
-            // Move organism based on scroll progress - more dramatic movement
+            // DIRECTLY set organism position based on scroll
             // X: swing between left (80) and right (320)
-            targetX = 200 + Math.sin(scrollProgress * Math.PI * 3) * 120;
+            organismX = 200 + Math.sin(scrollProgress * Math.PI * 3) * 120;
             // Y: move up and down in viewport
-            targetY = 200 + Math.sin(scrollProgress * Math.PI * 2) * 150;
-            targetRotation = scrollProgress * 180;  // Full half rotation
-            targetScale = 1.0 + scrollProgress * 0.5;  // Grow more noticeably
+            organismY = 200 + Math.sin(scrollProgress * Math.PI * 2) * 150;
+            // Also update targets for lerp (rotation/scale still use lerp)
+            targetRotation = scrollProgress * 180;
+            targetScale = 1.0 + scrollProgress * 0.5;
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         // Set initial position
-        setTimeout(handleScroll, 100);
+        handleScroll();
 
         let continuousRotation = 0;
 
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Move toward target position - fast enough to track scroll
+            // Position is set directly by handleScroll, just lerp rotation/scale
             const lerpSpeed = 0.08;
-            organismX += (targetX - organismX) * lerpSpeed;
-            organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
             currentScale += (targetScale - currentScale) * lerpSpeed;
 
