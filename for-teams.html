@@ -39,12 +39,20 @@
             background: var(--color-bg);
             border-radius: 12px;
         }
+        .featured-testimonial {
+            position: relative;
+            z-index: 2;
+        }
         .featured-testimonial .testimonial-photo {
             flex-shrink: 0;
-        }
-        .featured-testimonial .testimonial-photo img {
             width: 140px;
             height: 140px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .featured-testimonial .testimonial-photo img {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
         }
@@ -96,7 +104,11 @@
             z-index: 1;
             overflow: visible;
         }
-        /* Testimonial cards need to be above the organism */
+        /* Testimonials section and cards need to be above the organism */
+        #testimonials {
+            position: relative;
+            z-index: 2;
+        }
         #testimonials .testimonial-card {
             position: relative;
             z-index: 2;
