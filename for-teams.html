@@ -127,7 +127,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            opacity: 0.14;
+            opacity: 0.20;
             z-index: 1;
             overflow: visible;
         }
@@ -733,13 +733,13 @@
         // Organism position in SVG viewBox coordinates
         // viewBox is 0-400 x, 0-3000 y (maps to full page width, ~3000px page height)
         let organismX = 200;  // Start centered
-        let organismY = 300;  // Will be set properly by updateSectionPositions
+        let organismY = 500;  // Will be set properly by updateSectionPositions
         let organismRotation = 0;
         let currentScale = 1.2;  // Start at normal size (no squash on mobile)
 
         // Target position the organism drifts toward (in SVG coords)
         let targetX = 200;
-        let targetY = 300;
+        let targetY = 500;
         let targetRotation = 0;
         let targetScale = 1.2;
 
@@ -806,7 +806,7 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 200,  // Centered horizontally
-                    targetY: toSvgY(introTop + 350),  // Behind the intro text
+                    targetY: toSvgY(introTop + 500),  // Behind the intro text area
                     rotation: 0,
                     scale: 1.2
                 },
@@ -814,7 +814,7 @@
                     el: testimonialsSection,
                     scrollThreshold: testimonialsTop - 100,  // Trigger earlier
                     targetX: 100,  // Left side
-                    targetY: toSvgY(testimonialsTop + 300),
+                    targetY: toSvgY(testimonialsTop + 350),
                     rotation: 45,
                     scale: 1.3
                 },
@@ -822,7 +822,7 @@
                     el: whatIOfferSection,
                     scrollThreshold: whatIOfferTop - 100,  // Trigger earlier
                     targetX: 300,  // Right side
-                    targetY: toSvgY(whatIOfferTop + 350),
+                    targetY: toSvgY(whatIOfferTop + 400),
                     rotation: 90,
                     scale: 1.4
                 }
