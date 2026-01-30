@@ -59,7 +59,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.35;
+            opacity: 0.2;
         }
         .connected-dots .dot {
             fill: var(--color-primary);
@@ -81,6 +81,41 @@
             .connected-dots {
                 display: none;
             }
+            .connected-dots-mobile {
+                display: block;
+            }
+        }
+        @media (min-width: 769px) {
+            .connected-dots-mobile {
+                display: none;
+            }
+        }
+        /* Mobile version for Who This Is For section */
+        .connected-dots-mobile {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+        .connected-dots-mobile .dot {
+            fill: var(--color-primary);
+        }
+        .connected-dots-mobile .line {
+            stroke: var(--color-primary);
+            stroke-width: 1;
+            opacity: 0.6;
+        }
+        .who-this-is-for {
+            position: relative;
+            overflow: hidden;
+        }
+        .who-this-is-for .container {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -232,7 +267,11 @@
     </section>
 
     <!-- Who This Is For Section -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
+    <section class="content-section who-this-is-for" style="background-color: var(--color-bg-alt);">
+        <!-- Mobile Connected Dots -->
+        <svg class="connected-dots-mobile" id="connected-dots-mobile-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <!-- Lines and dots will be created by JavaScript -->
+        </svg>
         <div class="container" style="max-width: 800px;">
             <h2 style="text-align: center; margin-bottom: 2rem;">Who This Is For</h2>
             <ul style="list-style: disc; padding-left: 1.5rem; color: var(--color-text-light);">
@@ -298,123 +337,154 @@
     <!-- Connected Dots Animation -->
     <script>
     (function() {
-        const svg = document.getElementById('connected-dots-svg');
-        if (!svg) return;
+        // Shared animation function for both desktop and mobile
+        function initConnectedDots(svgId, config) {
+            const svg = document.getElementById(svgId);
+            if (!svg) return;
 
-        // Configuration
-        const numDots = 7;
-        const connectionDistance = 150;
-        const dotRadius = 5;
-        const moveSpeed = 0.3;
-        const breathCycle = 8000; // 8 seconds
+            const { positions, connections, centerX, centerY, bounds } = config;
+            const numDots = positions.length;
+            const dotRadius = 5;
+            const breathCycle = 8000;
+            const lineGrowDuration = 2000; // 2 seconds for lines to grow
+            const lineGrowDelay = 500; // Wait 0.5s before lines start growing
 
-        // Initialize dots with positions and velocities
-        const dots = [];
-        const dotElements = [];
-        const lineElements = [];
+            const dots = [];
+            const dotElements = [];
+            const lineElements = [];
+            const startTime = performance.now();
 
-        // Define connections (which dots connect to which)
-        const connections = [
-            [0, 1], [0, 2], [1, 2], [1, 3],
-            [2, 4], [2, 5], [3, 5], [4, 6], [5, 6]
-        ];
+            // Initialize dots
+            for (let i = 0; i < numDots; i++) {
+                const dot = {
+                    x: positions[i].x,
+                    y: positions[i].y,
+                    baseX: positions[i].x,
+                    baseY: positions[i].y,
+                    phase: Math.random() * Math.PI * 2
+                };
+                dots.push(dot);
 
-        // Create initial dot positions spread across the viewBox
-        const positions = [
-            { x: 80, y: 60 },
-            { x: 200, y: 40 },
-            { x: 140, y: 140 },
-            { x: 280, y: 100 },
-            { x: 60, y: 240 },
-            { x: 220, y: 220 },
-            { x: 140, y: 320 }
-        ];
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('class', 'dot');
+                circle.setAttribute('r', dotRadius);
+                circle.setAttribute('cx', dot.x);
+                circle.setAttribute('cy', dot.y);
+                dotElements.push(circle);
+            }
 
-        // Initialize dots
-        for (let i = 0; i < numDots; i++) {
-            const dot = {
-                x: positions[i].x,
-                y: positions[i].y,
-                baseX: positions[i].x,
-                baseY: positions[i].y,
-                vx: (Math.random() - 0.5) * moveSpeed,
-                vy: (Math.random() - 0.5) * moveSpeed,
-                phase: Math.random() * Math.PI * 2
-            };
-            dots.push(dot);
+            // Create line elements (initially at dot positions - zero length)
+            for (const [i, j] of connections) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('class', 'line');
+                // Start both ends at the "from" dot position (zero length)
+                line.setAttribute('x1', dots[i].x);
+                line.setAttribute('y1', dots[i].y);
+                line.setAttribute('x2', dots[i].x);
+                line.setAttribute('y2', dots[i].y);
+                lineElements.push({ element: line, from: i, to: j });
+                svg.appendChild(line);
+            }
 
-            // Create SVG circle element
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('class', 'dot');
-            circle.setAttribute('r', dotRadius);
-            circle.setAttribute('cx', dot.x);
-            circle.setAttribute('cy', dot.y);
-            dotElements.push(circle);
-        }
+            // Add dots on top of lines
+            dotElements.forEach(el => svg.appendChild(el));
 
-        // Create line elements for connections
-        for (const [i, j] of connections) {
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('class', 'line');
-            line.setAttribute('x1', dots[i].x);
-            line.setAttribute('y1', dots[i].y);
-            line.setAttribute('x2', dots[j].x);
-            line.setAttribute('y2', dots[j].y);
-            lineElements.push({ element: line, from: i, to: j });
-            svg.appendChild(line);
-        }
+            function animate(time) {
+                const elapsed = time - startTime;
 
-        // Add dots on top of lines
-        dotElements.forEach(el => svg.appendChild(el));
+                // Breathing factor
+                const breathPhase = (time % breathCycle) / breathCycle;
+                const breathFactor = Math.sin(breathPhase * Math.PI * 2);
 
-        // Animation loop
-        let lastTime = 0;
-        function animate(time) {
-            const delta = time - lastTime;
-            lastTime = time;
+                // Update dot positions
+                dots.forEach((dot, i) => {
+                    dot.phase += 0.01;
+                    const wanderX = Math.sin(dot.phase) * 20;
+                    const wanderY = Math.cos(dot.phase * 0.7) * 20;
 
-            // Breathing factor (0 to 1)
-            const breathPhase = (time % breathCycle) / breathCycle;
-            const breathFactor = Math.sin(breathPhase * Math.PI * 2);
+                    const breathExpand = breathFactor * 15;
+                    const dirX = (dot.baseX - centerX) / 200;
+                    const dirY = (dot.baseY - centerY) / 200;
 
-            // Update dot positions
-            dots.forEach((dot, i) => {
-                // Gentle wandering motion
-                dot.phase += 0.01;
-                const wanderX = Math.sin(dot.phase) * 20;
-                const wanderY = Math.cos(dot.phase * 0.7) * 20;
+                    dot.x = dot.baseX + wanderX + dirX * breathExpand;
+                    dot.y = dot.baseY + wanderY + dirY * breathExpand;
 
-                // Breathing expansion/contraction from center
-                const centerX = 200;
-                const centerY = 200;
-                const breathExpand = breathFactor * 15;
-                const dirX = (dot.baseX - centerX) / 200;
-                const dirY = (dot.baseY - centerY) / 200;
+                    dot.x = Math.max(bounds.minX, Math.min(bounds.maxX, dot.x));
+                    dot.y = Math.max(bounds.minY, Math.min(bounds.maxY, dot.y));
 
-                dot.x = dot.baseX + wanderX + dirX * breathExpand;
-                dot.y = dot.baseY + wanderY + dirY * breathExpand;
+                    dotElements[i].setAttribute('cx', dot.x);
+                    dotElements[i].setAttribute('cy', dot.y);
+                });
 
-                // Keep within bounds
-                dot.x = Math.max(20, Math.min(380, dot.x));
-                dot.y = Math.max(20, Math.min(380, dot.y));
+                // Update line positions with growth animation
+                lineElements.forEach(({ element, from, to }) => {
+                    const fromDot = dots[from];
+                    const toDot = dots[to];
 
-                // Update circle position
-                dotElements[i].setAttribute('cx', dot.x);
-                dotElements[i].setAttribute('cy', dot.y);
-            });
+                    // Calculate line growth progress
+                    let growProgress = 0;
+                    if (elapsed > lineGrowDelay) {
+                        growProgress = Math.min(1, (elapsed - lineGrowDelay) / lineGrowDuration);
+                        // Ease out for smoother animation
+                        growProgress = 1 - Math.pow(1 - growProgress, 3);
+                    }
 
-            // Update line positions
-            lineElements.forEach(({ element, from, to }) => {
-                element.setAttribute('x1', dots[from].x);
-                element.setAttribute('y1', dots[from].y);
-                element.setAttribute('x2', dots[to].x);
-                element.setAttribute('y2', dots[to].y);
-            });
+                    // Line starts at fromDot, grows toward toDot
+                    element.setAttribute('x1', fromDot.x);
+                    element.setAttribute('y1', fromDot.y);
+                    element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
+                    element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
+                });
+
+                requestAnimationFrame(animate);
+            }
 
             requestAnimationFrame(animate);
         }
 
-        requestAnimationFrame(animate);
+        // Desktop configuration (8 dots)
+        initConnectedDots('connected-dots-svg', {
+            positions: [
+                { x: 80, y: 60 },
+                { x: 200, y: 40 },
+                { x: 140, y: 140 },
+                { x: 280, y: 100 },
+                { x: 60, y: 240 },
+                { x: 220, y: 220 },
+                { x: 140, y: 320 },
+                { x: 320, y: 280 }  // 8th dot
+            ],
+            connections: [
+                [0, 1], [0, 2], [1, 2], [1, 3],
+                [2, 4], [2, 5], [3, 5], [4, 6], [5, 6],
+                [3, 7], [5, 7], [6, 7]  // New connections to 8th dot
+            ],
+            centerX: 200,
+            centerY: 200,
+            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 380 }
+        });
+
+        // Mobile configuration (8 dots, adjusted for wider viewBox)
+        initConnectedDots('connected-dots-mobile-svg', {
+            positions: [
+                { x: 60, y: 50 },
+                { x: 150, y: 30 },
+                { x: 100, y: 120 },
+                { x: 220, y: 80 },
+                { x: 40, y: 200 },
+                { x: 170, y: 180 },
+                { x: 100, y: 260 },
+                { x: 280, y: 220 }
+            ],
+            connections: [
+                [0, 1], [0, 2], [1, 2], [1, 3],
+                [2, 4], [2, 5], [3, 5], [4, 6], [5, 6],
+                [3, 7], [5, 7], [6, 7]
+            ],
+            centerX: 200,
+            centerY: 150,
+            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 280 }
+        });
     })();
     </script>
 
