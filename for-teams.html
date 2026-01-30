@@ -59,7 +59,7 @@
             height: 100vh;
             pointer-events: none;
             opacity: 0.25;
-            z-index: 0;
+            z-index: 1;
             overflow: visible;
         }
         .connected-dots .dot {
@@ -478,8 +478,8 @@
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Smoothly interpolate organism position
-            const lerpSpeed = 0.02;
+            // Smoothly interpolate organism position (very slow, amoeba-like)
+            const lerpSpeed = 0.003;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
