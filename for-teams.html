@@ -89,12 +89,12 @@
         }
         .connected-dots .dot {
             /* Dynamic hue set by JS - base sage green (100) shifts based on position */
-            fill: hsl(var(--dot-hue, 100), 30%, 40%);
+            fill: hsl(var(--dot-hue, 100), 45%, 38%);
             transition: fill 0.3s ease;
         }
         .connected-dots .line {
             /* Lines use gradient between connected dots' hues */
-            stroke: hsl(var(--line-hue, 100), 30%, 40%);
+            stroke: hsl(var(--line-hue, 100), 45%, 38%);
             stroke-width: 1.5;
             opacity: 0.6;
             transition: stroke 0.3s ease;
@@ -133,12 +133,12 @@
         }
         .connected-dots-mobile .dot {
             /* Dynamic hue set by JS - base sage green (100) shifts based on position */
-            fill: hsl(var(--dot-hue, 100), 30%, 40%);
+            fill: hsl(var(--dot-hue, 100), 45%, 38%);
             transition: fill 0.3s ease;
         }
         .connected-dots-mobile .line {
             /* Lines use gradient between connected dots' hues */
-            stroke: hsl(var(--line-hue, 100), 30%, 40%);
+            stroke: hsl(var(--line-hue, 100), 45%, 38%);
             stroke-width: 1.2;
             opacity: 0.6;
             transition: stroke 0.3s ease;
@@ -438,7 +438,7 @@
         basePositions.forEach((pos, i) => {
             // Calculate base hue for this dot (outer dots shift, center stays at base)
             // i: 0=top, 1=top-right, 2=bottom-right, 3=bottom, 4=bottom-left, 5=top-left, 6=center
-            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 60 - 30; // Range: 70-130
+            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 90 - 45; // Range: 55-145 (wider spread)
 
             const dot = {
                 baseX: pos.x,
@@ -625,7 +625,7 @@
 
             // Color shift based on organism movement and rotation
             // Subtle shift: rotation affects overall hue, wander affects individual dots
-            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 15;
+            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 25;
 
             // Update dot positions
             dots.forEach((dot, i) => {
@@ -637,7 +637,7 @@
 
                 // Dynamic hue shift based on dot's wander movement
                 // Each dot's hue shifts slightly based on its phase
-                const wanderHueShift = Math.sin(dot.phase * 0.5) * 10;
+                const wanderHueShift = Math.sin(dot.phase * 0.5) * 18;
                 dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
                 dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
 
@@ -875,7 +875,7 @@
             const scaleY = 1 - squeezeFactor * 0.12;
 
             // Color shift based on movement and rotation
-            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 15;
+            const rotationHueShift = Math.sin(continuousRotation * 0.01) * 25;
 
             dots.forEach((dot, i) => {
                 // Wander movement
@@ -884,7 +884,7 @@
                 const wanderY = Math.cos(dot.phase * 0.8) * 15 + Math.cos(dot.phase * 1.2) * 8;
 
                 // Dynamic hue shift
-                const wanderHueShift = Math.sin(dot.phase * 0.5) * 10;
+                const wanderHueShift = Math.sin(dot.phase * 0.5) * 18;
                 dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
                 dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
 
