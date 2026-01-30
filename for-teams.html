@@ -28,9 +28,9 @@
                 gap: 2rem !important;
             }
         }
-        /* Force three-column testimonials on desktop */
+        /* Force four-column testimonials on desktop */
         .testimonials-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
         }
         /* Stack photo and text vertically in the grid */
@@ -111,7 +111,7 @@
                 display: none;
             }
             #connected-dots-mobile-container {
-                display: block;
+                display: none;
             }
         }
         @media (min-width: 769px) {
@@ -235,7 +235,7 @@
                     </div>
                     <div class="testimonial-content">
                         <p>"Eli created a supportive environment for our team throughout the entire experience. We were able to bond, reflect about our work, and develop renewed appreciation for the value of the mind-body connection."</p>
-                        <cite>— Andrea M. Garroway, Ph.D.</cite>
+                        <cite>— Andrea M. Garroway, Ph.D., Clinical Psychologist</cite>
                     </div>
                 </div>
                 <div class="testimonial-card testimonial-card--with-photo">
@@ -254,6 +254,15 @@
                     <div class="testimonial-content">
                         <p>"The concepts Eli teaches about acknowledging feelings have literally changed how I move through every single day."</p>
                         <cite>— Melissa O'Loughlin, DC, CACCP</cite>
+                    </div>
+                </div>
+                <div class="testimonial-card testimonial-card--with-photo">
+                    <div class="testimonial-photo">
+                        <img src="images/testimonial-matt-rohrer.jpg" alt="Matthew L. Rohrer">
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
+                        <cite>— Matthew L. Rohrer, LCSW, Psychotherapist & Executive Coach</cite>
                     </div>
                 </div>
             </div>
@@ -501,7 +510,7 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 700,  // Right side (70% of 1000)
-                    targetY: toSvgY(introTop + 520),  // Even lower, well below text
+                    targetY: toSvgY(introTop + 420),  // Below text but higher up
                     rotation: 0,
                     scale: 1.0  // Start very flat (initialSquash makes it wide/short)
                 },
