@@ -47,40 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar scroll behavior: transparent at top, glassmorphism when scrolled
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-        let hasAnimatedIn = false; // Track if navbar has animated in once
-        let scrollTimeout = null; // Timer for showing navbar after scroll stops
-        const showDelay = 1500; // How long to wait after scrolling stops
-
         function updateNavbar() {
-            const currentScrollY = window.scrollY;
-
-            // At the top of the page - transparent, reset state
-            if (currentScrollY < 50) {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
                 navbar.classList.remove('scrolled');
-                navbar.classList.remove('nav-hidden');
-                hasAnimatedIn = false;
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                    scrollTimeout = null;
-                }
-                return;
-            }
-
-            // User is scrolling and we're past the top - hide navbar immediately
-            if (!hasAnimatedIn) {
-                navbar.classList.add('nav-hidden');
-
-                // Clear any existing timeout
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-
-                // Start timer to show navbar after user stops scrolling
-                scrollTimeout = setTimeout(() => {
-                    navbar.classList.add('scrolled');
-                    navbar.classList.remove('nav-hidden');
-                    hasAnimatedIn = true;
-                }, showDelay);
             }
         }
 
