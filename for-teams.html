@@ -103,19 +103,19 @@
             z-index: 1;
         }
         @media (max-width: 768px) {
-            .connected-dots {
+            #connected-dots-container {
                 display: none;
             }
-            .connected-dots-mobile {
+            #connected-dots-mobile-container {
                 display: block;
             }
         }
         @media (min-width: 769px) {
-            .connected-dots-mobile {
+            #connected-dots-mobile-container {
                 display: none;
             }
         }
-        /* Mobile version for Who This Is For section */
+        /* Mobile version - full page like desktop but smaller */
         .connected-dots-mobile {
             position: absolute;
             top: 0;
@@ -123,15 +123,16 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
-            opacity: 0.15;
+            opacity: 0.10;
+            z-index: 1;
+            overflow: visible;
         }
         .connected-dots-mobile .dot {
             fill: var(--color-primary);
         }
         .connected-dots-mobile .line {
             stroke: var(--color-primary);
-            stroke-width: 1;
+            stroke-width: 1.2;
             opacity: 0.6;
         }
         .who-this-is-for {
@@ -178,9 +179,16 @@
         </div>
     </header>
 
-    <!-- Connected Dots Container - spans full page for absolute positioning -->
+    <!-- Connected Dots Container - spans full page for absolute positioning (Desktop) -->
     <div id="connected-dots-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible;">
         <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 1000 3000" preserveAspectRatio="xMidYMin slice" style="width: 100%; height: 100%;">
+            <!-- Lines and dots will be created by JavaScript -->
+        </svg>
+    </div>
+
+    <!-- Connected Dots Container - Mobile version -->
+    <div id="connected-dots-mobile-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; display: none;">
+        <svg class="connected-dots-mobile" id="connected-dots-mobile-svg" viewBox="0 0 400 3000" preserveAspectRatio="xMidYMin slice" style="width: 100%; height: 100%;">
             <!-- Lines and dots will be created by JavaScript -->
         </svg>
     </div>
@@ -295,10 +303,6 @@
 
     <!-- Who This Is For Section -->
     <section class="content-section who-this-is-for" style="background-color: var(--color-bg-alt);">
-        <!-- Mobile Connected Dots -->
-        <svg class="connected-dots-mobile" id="connected-dots-mobile-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
-            <!-- Lines and dots will be created by JavaScript -->
-        </svg>
         <div class="container" style="max-width: 800px;">
             <h2 style="text-align: center; margin-bottom: 2rem;">Who This Is For</h2>
             <ul style="list-style: disc; padding-left: 1.5rem; color: var(--color-text-light);">
@@ -591,8 +595,10 @@
             const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
             // When squeezeFactor is positive: wider and shorter
             // When squeezeFactor is negative: taller and narrower
-            const scaleX = 1 + squeezeFactor * 0.15;  // 0.85 to 1.15
-            const scaleY = 1 - squeezeFactor * 0.15;  // 1.15 to 0.85
+            // Base squeeze affected by scale - starts wider/shorter, becomes more regular as it grows
+            const initialSquash = Math.max(0, (1.5 - currentScale) * 0.4);  // Extra squash when small
+            const scaleX = 1 + squeezeFactor * 0.15 + initialSquash;  // Wider when small
+            const scaleY = 1 - squeezeFactor * 0.15 - initialSquash;  // Shorter when small
 
             // Update dot positions
             dots.forEach((dot, i) => {
@@ -644,87 +650,224 @@
         }
 
         requestAnimationFrame(animate);
+    })();
 
-        // Mobile fallback (simpler static version)
+    // ==================== MOBILE VERSION ====================
+    (function() {
+        // Only run on mobile
+        if (window.innerWidth > 768) return;
+
         const mobileSvg = document.getElementById('connected-dots-mobile-svg');
-        if (mobileSvg) {
-            initMobileAnimation(mobileSvg);
-        }
+        const mobileContainer = document.getElementById('connected-dots-mobile-container');
+        if (!mobileSvg || !mobileContainer) return;
 
-        function initMobileAnimation(svg) {
-            const mobilePositions = [
-                { x: 200, y: 30 },
-                { x: 320, y: 75 },
-                { x: 320, y: 175 },
-                { x: 200, y: 220 },
-                { x: 80, y: 175 },
-                { x: 80, y: 75 },
-                { x: 200, y: 125, isCenter: true }
+        // Configuration (simpler for mobile performance)
+        const dotRadius = 4;
+        const breathCycle = 10000;
+        const lineGrowDuration = 3000;
+        const lineGrowDelay = 1000;
+        const lineStagger = 250;
+
+        // Smaller hexagon for mobile
+        const basePositions = [
+            { x: 0, y: -60 },      // 0: top
+            { x: 52, y: -30 },     // 1: top right
+            { x: 52, y: 30 },      // 2: bottom right
+            { x: 0, y: 60 },       // 3: bottom
+            { x: -52, y: 30 },     // 4: bottom left
+            { x: -52, y: -30 },    // 5: top left
+            { x: 0, y: 0, isCenter: true }  // 6: center
+        ];
+
+        const connections = [
+            [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
+            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
+        ];
+
+        // State
+        const dots = [];
+        const dotElements = [];
+        const lineElements = [];
+        const startTime = performance.now();
+
+        // Organism position (viewBox is 0-400 x, 0-3000 y for mobile)
+        let organismX = 300;
+        let organismY = 300;
+        let organismRotation = 0;
+        let currentScale = 0.8;
+
+        // Target position
+        let targetX = 300;
+        let targetY = 300;
+        let targetRotation = 0;
+        let targetScale = 0.8;
+
+        let sections = [];
+        let pageHeight = 3000;
+
+        // Initialize dots
+        basePositions.forEach((pos, i) => {
+            const dot = {
+                baseX: pos.x,
+                baseY: pos.y,
+                x: organismX + pos.x,
+                y: organismY + pos.y,
+                phase: Math.random() * Math.PI * 2,
+                isCenter: pos.isCenter || false
+            };
+            dots.push(dot);
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('class', 'dot');
+            circle.setAttribute('r', dot.isCenter ? dotRadius * 1.3 : dotRadius);
+            if (dot.isCenter) circle.style.opacity = '0.85';
+            circle.setAttribute('cx', dot.x);
+            circle.setAttribute('cy', dot.y);
+            dotElements.push(circle);
+        });
+
+        // Initialize lines
+        connections.forEach(([i, j], idx) => {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('class', 'line');
+            line.setAttribute('x1', dots[i].x);
+            line.setAttribute('y1', dots[i].y);
+            line.setAttribute('x2', dots[i].x);
+            line.setAttribute('y2', dots[i].y);
+            lineElements.push({ element: line, from: i, to: j, index: idx });
+            mobileSvg.appendChild(line);
+        });
+        dotElements.forEach(el => mobileSvg.appendChild(el));
+
+        function updateSectionPositions() {
+            const introSection = document.querySelector('.intro-section-teams');
+            const testimonialsSection = document.getElementById('testimonials');
+            const whatIOfferSection = document.querySelectorAll('.content-section')[2];
+
+            pageHeight = document.body.scrollHeight || 3000;
+            const introTop = introSection ? introSection.offsetTop : 0;
+            const testimonialsTop = testimonialsSection ? testimonialsSection.offsetTop : 600;
+            const whatIOfferTop = whatIOfferSection ? whatIOfferSection.offsetTop : 1200;
+
+            const toSvgY = (pageY) => (pageY / pageHeight) * 3000;
+
+            sections = [
+                { scrollThreshold: introTop, targetX: 300, targetY: toSvgY(introTop + 400), rotation: 0, scale: 0.8 },
+                { scrollThreshold: testimonialsTop + 50, targetX: 80, targetY: toSvgY(testimonialsTop + 250), rotation: 30, scale: 1.0 },
+                { scrollThreshold: whatIOfferTop + 50, targetX: 320, targetY: toSvgY(whatIOfferTop + 350), rotation: 60, scale: 1.2 }
             ];
 
-            const mobileDots = [];
-            const mobileDotElements = [];
-            const mobileLineElements = [];
-            const mobileStartTime = performance.now();
-
-            mobilePositions.forEach((pos, i) => {
-                const dot = { x: pos.x, y: pos.y, baseX: pos.x, baseY: pos.y, phase: Math.random() * Math.PI * 2, isCenter: pos.isCenter || false };
-                mobileDots.push(dot);
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('class', 'dot');
-                circle.setAttribute('r', dot.isCenter ? dotRadius * 1.3 : dotRadius);
-                if (dot.isCenter) circle.style.opacity = '0.85';
-                circle.setAttribute('cx', dot.x);
-                circle.setAttribute('cy', dot.y);
-                mobileDotElements.push(circle);
-            });
-
-            connections.forEach(([i, j], idx) => {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('class', 'line');
-                line.setAttribute('x1', mobileDots[i].x);
-                line.setAttribute('y1', mobileDots[i].y);
-                line.setAttribute('x2', mobileDots[i].x);
-                line.setAttribute('y2', mobileDots[i].y);
-                mobileLineElements.push({ element: line, from: i, to: j, index: idx });
-                svg.appendChild(line);
-            });
-            mobileDotElements.forEach(el => svg.appendChild(el));
-
-            function mobileAnimate(time) {
-                const elapsed = time - mobileStartTime;
-                const breathPhase = (time % breathCycle) / breathCycle;
-                const breathFactor = Math.sin(breathPhase * Math.PI * 2);
-
-                mobileDots.forEach((dot, i) => {
-                    dot.phase += 0.003;
-                    const wanderX = Math.sin(dot.phase) * 12;
-                    const wanderY = Math.cos(dot.phase * 0.7) * 12;
-                    const breathExpand = breathFactor * 10;
-                    const dirX = (dot.baseX - 200) / 200;
-                    const dirY = (dot.baseY - 125) / 200;
-                    dot.x = dot.baseX + wanderX + dirX * breathExpand;
-                    dot.y = dot.baseY + wanderY + dirY * breathExpand;
-                    mobileDotElements[i].setAttribute('cx', dot.x);
-                    mobileDotElements[i].setAttribute('cy', dot.y);
-                });
-
-                mobileLineElements.forEach(({ element, from, to, index }) => {
-                    const fromDot = mobileDots[from];
-                    const toDot = mobileDots[to];
-                    const thisLineDelay = lineGrowDelay + (index * lineStagger);
-                    let growProgress = elapsed > thisLineDelay ? Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration) : 0;
-                    growProgress = 1 - Math.pow(1 - growProgress, 3);
-                    element.setAttribute('x1', fromDot.x);
-                    element.setAttribute('y1', fromDot.y);
-                    element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
-                    element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
-                });
-
-                requestAnimationFrame(mobileAnimate);
+            if (sections[0]) {
+                targetX = sections[0].targetX;
+                targetY = sections[0].targetY;
+                targetScale = sections[0].scale;
+                organismX = targetX;
+                organismY = targetY;
+                currentScale = targetScale;
             }
-            requestAnimationFrame(mobileAnimate);
+
+            mobileContainer.style.height = pageHeight + 'px';
         }
+
+        let currentSectionIndex = 0;
+        let lastSectionChangeTime = 0;
+        const sectionChangeCooldown = 2500;
+
+        function handleScroll() {
+            const scrollY = window.scrollY;
+            const viewportMiddle = scrollY + window.innerHeight * 0.4;
+            const now = performance.now();
+
+            let newSectionIndex = 0;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                if (viewportMiddle >= sections[i].scrollThreshold) {
+                    newSectionIndex = i;
+                    break;
+                }
+            }
+
+            if (newSectionIndex !== currentSectionIndex && (now - lastSectionChangeTime) > sectionChangeCooldown) {
+                currentSectionIndex = newSectionIndex;
+                lastSectionChangeTime = now;
+                const section = sections[currentSectionIndex];
+                targetX = section.targetX;
+                targetY = section.targetY;
+                targetRotation = section.rotation;
+                targetScale = section.scale;
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        setTimeout(updateSectionPositions, 100);
+
+        let continuousRotation = 0;
+
+        function animate(time) {
+            const elapsed = time - startTime;
+
+            // Smooth movement (slightly faster on mobile for responsiveness)
+            const lerpSpeed = 0.005;
+            organismX += (targetX - organismX) * lerpSpeed;
+            organismY += (targetY - organismY) * lerpSpeed;
+            organismRotation += (targetRotation - organismRotation) * lerpSpeed;
+            currentScale += (targetScale - currentScale) * lerpSpeed;
+
+            continuousRotation += 0.012;
+
+            const breathPhase = (time % breathCycle) / breathCycle;
+            const breathFactor = Math.sin(breathPhase * Math.PI * 2);
+
+            const rotRad = ((organismRotation + continuousRotation) * Math.PI) / 180;
+            const cosR = Math.cos(rotRad);
+            const sinR = Math.sin(rotRad);
+
+            // Simpler squeeze/stretch for mobile
+            const squeezePhase = (time % 12000) / 12000;
+            const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
+            const initialSquash = Math.max(0, (1.0 - currentScale) * 0.3);
+            const scaleX = 1 + squeezeFactor * 0.12 + initialSquash;
+            const scaleY = 1 - squeezeFactor * 0.12 - initialSquash;
+
+            dots.forEach((dot, i) => {
+                // Simpler wander for mobile performance
+                dot.phase += 0.003 + (i * 0.0005);
+                const wanderX = Math.sin(dot.phase) * 15 + Math.sin(dot.phase * 1.5) * 8;
+                const wanderY = Math.cos(dot.phase * 0.8) * 15 + Math.cos(dot.phase * 1.2) * 8;
+
+                const breathExpand = breathFactor * 2;
+                const breathScale = 1 + breathExpand * 0.01;
+
+                const expandedX = dot.baseX * currentScale * scaleX * breathScale;
+                const expandedY = dot.baseY * currentScale * scaleY * breathScale;
+
+                const rotatedX = expandedX * cosR - expandedY * sinR;
+                const rotatedY = expandedX * sinR + expandedY * cosR;
+
+                dot.x = organismX + rotatedX + wanderX;
+                dot.y = organismY + rotatedY + wanderY;
+
+                dotElements[i].setAttribute('cx', dot.x);
+                dotElements[i].setAttribute('cy', dot.y);
+            });
+
+            lineElements.forEach(({ element, from, to, index }) => {
+                const fromDot = dots[from];
+                const toDot = dots[to];
+
+                const thisLineDelay = lineGrowDelay + (index * lineStagger);
+                let growProgress = elapsed > thisLineDelay ? Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration) : 0;
+                growProgress = 1 - Math.pow(1 - growProgress, 3);
+
+                element.setAttribute('x1', fromDot.x);
+                element.setAttribute('y1', fromDot.y);
+                element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
+                element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
     })();
     </script>
 
