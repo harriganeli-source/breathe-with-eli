@@ -480,25 +480,25 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 700,  // Right side (70% of 1000)
-                    targetY: toSvgY(introTop + 450),  // Lower, in empty space below text
+                    targetY: toSvgY(introTop + 520),  // Even lower, well below text
                     rotation: 0,
-                    scale: 1.0  // Start smaller
+                    scale: 1.0  // Start very flat (initialSquash makes it wide/short)
                 },
                 {
                     el: testimonialsSection,
-                    scrollThreshold: testimonialsTop + 100,  // More delay - trigger later
+                    scrollThreshold: testimonialsTop + 150,  // More delay - trigger later
                     targetX: 120, // Far left side (12% of 1000)
                     targetY: toSvgY(testimonialsTop + 300),
                     rotation: 45,
-                    scale: 1.5  // Grow as it moves down
+                    scale: 1.6  // Grow and become more regular shaped
                 },
                 {
                     el: whatIOfferSection,
-                    scrollThreshold: whatIOfferTop + 100,  // More delay - trigger later
+                    scrollThreshold: whatIOfferTop + 150,  // More delay - trigger later
                     targetX: 880, // Right side (88% of 1000)
                     targetY: toSvgY(whatIOfferTop + 400),
                     rotation: 90,
-                    scale: 1.8  // Fully expanded
+                    scale: 1.9  // Fully expanded, normal hexagon shape
                 }
             ];
 
@@ -595,10 +595,12 @@
             const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
             // When squeezeFactor is positive: wider and shorter
             // When squeezeFactor is negative: taller and narrower
-            // Base squeeze affected by scale - starts wider/shorter, becomes more regular as it grows
-            const initialSquash = Math.max(0, (1.5 - currentScale) * 0.4);  // Extra squash when small
-            const scaleX = 1 + squeezeFactor * 0.15 + initialSquash;  // Wider when small
-            const scaleY = 1 - squeezeFactor * 0.15 - initialSquash;  // Shorter when small
+            // VERY flat when at starting scale (1.0), becomes regular as it grows
+            // At scale 1.0: initialSquash = 0.6 (very flat)
+            // At scale 1.5+: initialSquash = 0 (normal)
+            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);  // Much flatter when small
+            const scaleX = 1 + squeezeFactor * 0.15 + initialSquash;  // Much wider when small
+            const scaleY = 1 - squeezeFactor * 0.15 - initialSquash * 0.7;  // Much shorter when small
 
             // Update dot positions
             dots.forEach((dot, i) => {
