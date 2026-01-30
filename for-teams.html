@@ -345,9 +345,10 @@
             const { positions, connections, centerX, centerY, bounds } = config;
             const numDots = positions.length;
             const dotRadius = 5;
-            const breathCycle = 8000;
-            const lineGrowDuration = 2000; // 2 seconds for lines to grow
-            const lineGrowDelay = 500; // Wait 0.5s before lines start growing
+            const breathCycle = 10000; // Slower breathing cycle
+            const lineGrowDuration = 4000; // 4 seconds per line to grow
+            const lineGrowDelay = 1500; // Wait 1.5s before lines start growing
+            const lineStagger = 400; // 400ms between each line starting
 
             const dots = [];
             const dotElements = [];
@@ -374,7 +375,8 @@
             }
 
             // Create line elements (initially at dot positions - zero length)
-            for (const [i, j] of connections) {
+            for (let idx = 0; idx < connections.length; idx++) {
+                const [i, j] = connections[idx];
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('class', 'line');
                 // Start both ends at the "from" dot position (zero length)
@@ -382,7 +384,7 @@
                 line.setAttribute('y1', dots[i].y);
                 line.setAttribute('x2', dots[i].x);
                 line.setAttribute('y2', dots[i].y);
-                lineElements.push({ element: line, from: i, to: j });
+                lineElements.push({ element: line, from: i, to: j, index: idx });
                 svg.appendChild(line);
             }
 
@@ -396,13 +398,13 @@
                 const breathPhase = (time % breathCycle) / breathCycle;
                 const breathFactor = Math.sin(breathPhase * Math.PI * 2);
 
-                // Update dot positions
+                // Update dot positions - slower wandering
                 dots.forEach((dot, i) => {
-                    dot.phase += 0.01;
-                    const wanderX = Math.sin(dot.phase) * 20;
-                    const wanderY = Math.cos(dot.phase * 0.7) * 20;
+                    dot.phase += 0.003; // Much slower movement
+                    const wanderX = Math.sin(dot.phase) * 12; // Smaller movement range
+                    const wanderY = Math.cos(dot.phase * 0.7) * 12;
 
-                    const breathExpand = breathFactor * 15;
+                    const breathExpand = breathFactor * 10;
                     const dirX = (dot.baseX - centerX) / 200;
                     const dirY = (dot.baseY - centerY) / 200;
 
@@ -416,15 +418,16 @@
                     dotElements[i].setAttribute('cy', dot.y);
                 });
 
-                // Update line positions with growth animation
-                lineElements.forEach(({ element, from, to }) => {
+                // Update line positions with staggered growth animation
+                lineElements.forEach(({ element, from, to, index }) => {
                     const fromDot = dots[from];
                     const toDot = dots[to];
 
-                    // Calculate line growth progress
+                    // Calculate line growth progress with staggered start
+                    const thisLineDelay = lineGrowDelay + (index * lineStagger);
                     let growProgress = 0;
-                    if (elapsed > lineGrowDelay) {
-                        growProgress = Math.min(1, (elapsed - lineGrowDelay) / lineGrowDuration);
+                    if (elapsed > thisLineDelay) {
+                        growProgress = Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration);
                         // Ease out for smoother animation
                         growProgress = 1 - Math.pow(1 - growProgress, 3);
                     }
@@ -442,44 +445,48 @@
             requestAnimationFrame(animate);
         }
 
-        // Desktop configuration (8 dots)
+        // Desktop configuration (8 dots - symmetrical with 8th dot on left)
         initConnectedDots('connected-dots-svg', {
             positions: [
-                { x: 80, y: 60 },
-                { x: 200, y: 40 },
-                { x: 140, y: 140 },
-                { x: 280, y: 100 },
-                { x: 60, y: 240 },
-                { x: 220, y: 220 },
-                { x: 140, y: 320 },
-                { x: 320, y: 280 }  // 8th dot
+                { x: 80, y: 60 },    // 0: top left
+                { x: 320, y: 60 },   // 1: top right (mirrored)
+                { x: 140, y: 140 },  // 2: upper middle left
+                { x: 260, y: 140 },  // 3: upper middle right (mirrored)
+                { x: 60, y: 240 },   // 4: lower left
+                { x: 340, y: 240 },  // 5: lower right (mirrored)
+                { x: 140, y: 320 },  // 6: bottom middle left
+                { x: 260, y: 320 }   // 7: bottom middle right (8th dot, left-side mirror)
             ],
             connections: [
-                [0, 1], [0, 2], [1, 2], [1, 3],
-                [2, 4], [2, 5], [3, 5], [4, 6], [5, 6],
-                [3, 7], [5, 7], [6, 7]  // New connections to 8th dot
+                [0, 1], [0, 2], [1, 3],  // Top connections
+                [2, 3], [2, 4], [3, 5],  // Middle connections
+                [2, 6], [3, 7],          // Diagonal to bottom
+                [4, 6], [5, 7],          // Side to bottom
+                [6, 7]                   // Bottom connection
             ],
             centerX: 200,
             centerY: 200,
             bounds: { minX: 20, maxX: 380, minY: 20, maxY: 380 }
         });
 
-        // Mobile configuration (8 dots, adjusted for wider viewBox)
+        // Mobile configuration (8 dots, symmetrical)
         initConnectedDots('connected-dots-mobile-svg', {
             positions: [
-                { x: 60, y: 50 },
-                { x: 150, y: 30 },
-                { x: 100, y: 120 },
-                { x: 220, y: 80 },
-                { x: 40, y: 200 },
-                { x: 170, y: 180 },
-                { x: 100, y: 260 },
-                { x: 280, y: 220 }
+                { x: 80, y: 40 },
+                { x: 320, y: 40 },
+                { x: 120, y: 110 },
+                { x: 280, y: 110 },
+                { x: 60, y: 180 },
+                { x: 340, y: 180 },
+                { x: 140, y: 250 },
+                { x: 260, y: 250 }
             ],
             connections: [
-                [0, 1], [0, 2], [1, 2], [1, 3],
-                [2, 4], [2, 5], [3, 5], [4, 6], [5, 6],
-                [3, 7], [5, 7], [6, 7]
+                [0, 1], [0, 2], [1, 3],
+                [2, 3], [2, 4], [3, 5],
+                [2, 6], [3, 7],
+                [4, 6], [5, 7],
+                [6, 7]
             ],
             centerX: 200,
             centerY: 150,
