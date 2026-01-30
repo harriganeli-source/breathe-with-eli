@@ -47,29 +47,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navbar scroll behavior: transparent at top, glassmorphism when scrolled
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-        let hasAnimatedIn = false; // Track if navbar has animated in once
-        const scrollThreshold = 80; // How far to scroll before triggering animation
-
         function updateNavbar() {
-            const currentScrollY = window.scrollY;
-
-            // At the top of the page - transparent, reset state
-            if (currentScrollY < 50) {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
                 navbar.classList.remove('scrolled');
-                navbar.classList.remove('nav-hidden');
-                hasAnimatedIn = false;
-                return;
-            }
-
-            // Past threshold and haven't animated in yet - hide then show
-            if (currentScrollY > scrollThreshold && !hasAnimatedIn) {
-                navbar.classList.add('nav-hidden');
-                // Short delay then animate in with glassmorphism
-                setTimeout(() => {
-                    navbar.classList.add('scrolled');
-                    navbar.classList.remove('nav-hidden');
-                    hasAnimatedIn = true;
-                }, 1000);
             }
         }
 
