@@ -119,13 +119,13 @@
                 display: none;
             }
         }
-        /* Mobile version - full page like desktop but smaller */
+        /* Mobile version - FIXED to viewport, slides in from top when scroll stops */
         .connected-dots-mobile {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             pointer-events: none;
             opacity: 0.10;
             z-index: 1;
@@ -194,9 +194,9 @@
         </svg>
     </div>
 
-    <!-- Connected Dots Container - Mobile version -->
-    <div id="connected-dots-mobile-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible;">
-        <svg class="connected-dots-mobile" id="connected-dots-mobile-svg" viewBox="0 0 400 3000" preserveAspectRatio="xMidYMin slice" style="width: 100%; height: 100%;">
+    <!-- Connected Dots Container - Mobile version (fixed to viewport, slides in from top) -->
+    <div id="connected-dots-mobile-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; pointer-events: none; z-index: 1; overflow: visible;">
+        <svg class="connected-dots-mobile" id="connected-dots-mobile-svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 100%;">
             <!-- Lines and dots will be created by JavaScript -->
         </svg>
     </div>
@@ -690,6 +690,7 @@
     })();
 
     // ==================== MOBILE VERSION ====================
+    // Viewport-fixed organism that slides in from top when user stops scrolling
     (function() {
         // Only run on mobile
         if (window.innerWidth > 768) return;
@@ -698,14 +699,14 @@
         const mobileContainer = document.getElementById('connected-dots-mobile-container');
         if (!mobileSvg || !mobileContainer) return;
 
-        // Configuration (simpler for mobile performance)
+        // Configuration
         const dotRadius = 4;
         const breathCycle = 10000;
         const lineGrowDuration = 3000;
         const lineGrowDelay = 1000;
         const lineStagger = 250;
 
-        // Smaller hexagon for mobile
+        // Hexagon positions (in SVG viewBox coords - viewBox is 0-400 x, 0-400 y for viewport)
         const basePositions = [
             { x: 0, y: -60 },      // 0: top
             { x: 52, y: -30 },     // 1: top right
@@ -727,26 +728,38 @@
         const lineElements = [];
         const startTime = performance.now();
 
-        // Organism position (viewBox is 0-400 x, 0-3000 y for mobile)
-        let organismX = 300;
-        let organismY = 300;
+        // Organism position in viewport-relative SVG coords
+        // viewBox is now 0-400 x, 0-400 y (maps to viewport)
+        // Start above viewport (negative Y = above top of screen)
+        let organismX = 300;       // Right side of viewport
+        let organismY = -100;      // Above viewport (hidden)
         let organismRotation = 0;
-        let currentScale = 0.8;
+        let currentScale = 1.0;
 
-        // Target position
+        // Target position - where organism drifts toward
         let targetX = 300;
-        let targetY = 300;
+        let targetY = -100;        // Start hidden above
         let targetRotation = 0;
-        let targetScale = 0.8;
+        let targetScale = 1.0;
 
-        let sections = [];
-        let pageHeight = 3000;
+        // Scroll state detection
+        let lastScrollY = window.scrollY;
+        let lastScrollTime = performance.now();
+        let isScrolling = false;
+        let scrollStopTimeout = null;
+        const scrollStopDelay = 400; // ms after scroll stops before organism appears
+
+        // Visible position (where organism goes when not scrolling)
+        // Alternates sides based on scroll direction
+        let visibleX = 320;        // Right side
+        let visibleY = 150;        // Upper portion of viewport
+
+        // Update viewBox to be viewport-sized (square aspect ratio for simplicity)
+        mobileSvg.setAttribute('viewBox', '0 0 400 400');
 
         // Initialize dots
-        // Base hue is sage green (100), with ±30 range around the hexagon
         basePositions.forEach((pos, i) => {
-            // Calculate base hue for this dot
-            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 60 - 30; // Range: 70-130
+            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 60 - 30;
 
             const dot = {
                 baseX: pos.x,
@@ -785,74 +798,62 @@
         });
         dotElements.forEach(el => mobileSvg.appendChild(el));
 
-        function updateSectionPositions() {
-            const introSection = document.querySelector('.intro-section-teams');
-            const testimonialsSection = document.getElementById('testimonials');
-            const whatIOfferSection = document.querySelectorAll('.content-section')[2];
-
-            pageHeight = document.body.scrollHeight || 3000;
-            const introTop = introSection ? introSection.offsetTop : 0;
-            const testimonialsTop = testimonialsSection ? testimonialsSection.offsetTop : 600;
-            const whatIOfferTop = whatIOfferSection ? whatIOfferSection.offsetTop : 1200;
-
-            const toSvgY = (pageY) => (pageY / pageHeight) * 3000;
-
-            sections = [
-                { scrollThreshold: introTop, targetX: 300, targetY: toSvgY(introTop + 400), rotation: 0, scale: 0.8 },
-                { scrollThreshold: testimonialsTop + 50, targetX: 80, targetY: toSvgY(testimonialsTop + 250), rotation: 30, scale: 1.0 },
-                { scrollThreshold: whatIOfferTop + 50, targetX: 320, targetY: toSvgY(whatIOfferTop + 350), rotation: 60, scale: 1.2 }
-            ];
-
-            if (sections[0]) {
-                targetX = sections[0].targetX;
-                targetY = sections[0].targetY;
-                targetScale = sections[0].scale;
-                organismX = targetX;
-                organismY = targetY;
-                currentScale = targetScale;
-            }
-
-            mobileContainer.style.height = pageHeight + 'px';
-        }
-
-        let currentSectionIndex = 0;
-        let lastSectionChangeTime = 0;
-        const sectionChangeCooldown = 2500;
-
+        // Scroll handler - detect when scrolling starts/stops
         function handleScroll() {
-            const scrollY = window.scrollY;
-            const viewportMiddle = scrollY + window.innerHeight * 0.4;
             const now = performance.now();
+            const scrollY = window.scrollY;
+            const scrollDelta = scrollY - lastScrollY;
 
-            let newSectionIndex = 0;
-            for (let i = sections.length - 1; i >= 0; i--) {
-                if (viewportMiddle >= sections[i].scrollThreshold) {
-                    newSectionIndex = i;
-                    break;
+            // Mark as scrolling
+            isScrolling = true;
+
+            // Hide organism (send it above viewport)
+            targetY = -100;
+
+            // Determine which side to appear on based on scroll direction
+            // Scrolling down = appear on right, scrolling up = appear on left
+            if (Math.abs(scrollDelta) > 5) {
+                if (scrollDelta > 0) {
+                    visibleX = 320;  // Right side when scrolling down
+                } else {
+                    visibleX = 80;   // Left side when scrolling up
                 }
             }
 
-            if (newSectionIndex !== currentSectionIndex && (now - lastSectionChangeTime) > sectionChangeCooldown) {
-                currentSectionIndex = newSectionIndex;
-                lastSectionChangeTime = now;
-                const section = sections[currentSectionIndex];
-                targetX = section.targetX;
-                targetY = section.targetY;
-                targetRotation = section.rotation;
-                targetScale = section.scale;
+            // Clear existing timeout
+            if (scrollStopTimeout) {
+                clearTimeout(scrollStopTimeout);
             }
+
+            // Set timeout to detect scroll stop
+            scrollStopTimeout = setTimeout(() => {
+                isScrolling = false;
+                // Bring organism into view
+                targetX = visibleX;
+                targetY = visibleY;
+            }, scrollStopDelay);
+
+            lastScrollY = scrollY;
+            lastScrollTime = now;
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-        setTimeout(updateSectionPositions, 100);
+
+        // Initially show the organism after a brief delay (page load)
+        setTimeout(() => {
+            if (!isScrolling) {
+                targetX = visibleX;
+                targetY = visibleY;
+            }
+        }, 800);
 
         let continuousRotation = 0;
 
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Smooth movement (slightly faster on mobile for responsiveness)
-            const lerpSpeed = 0.005;
+            // Smooth movement - faster when entering/exiting, smooth when idle
+            const lerpSpeed = isScrolling ? 0.02 : 0.008;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
@@ -867,23 +868,22 @@
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
-            // Simpler squeeze/stretch for mobile
+            // Squeeze/stretch morphing
             const squeezePhase = (time % 12000) / 12000;
             const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
-            const initialSquash = Math.max(0, (1.0 - currentScale) * 0.3);
-            const scaleX = 1 + squeezeFactor * 0.12 + initialSquash;
-            const scaleY = 1 - squeezeFactor * 0.12 - initialSquash;
+            const scaleX = 1 + squeezeFactor * 0.12;
+            const scaleY = 1 - squeezeFactor * 0.12;
 
             // Color shift based on movement and rotation
             const rotationHueShift = Math.sin(continuousRotation * 0.01) * 15;
 
             dots.forEach((dot, i) => {
-                // Simpler wander for mobile performance
+                // Wander movement
                 dot.phase += 0.003 + (i * 0.0005);
                 const wanderX = Math.sin(dot.phase) * 15 + Math.sin(dot.phase * 1.5) * 8;
                 const wanderY = Math.cos(dot.phase * 0.8) * 15 + Math.cos(dot.phase * 1.2) * 8;
 
-                // Dynamic hue shift based on movement
+                // Dynamic hue shift
                 const wanderHueShift = Math.sin(dot.phase * 0.5) * 10;
                 dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
                 dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
