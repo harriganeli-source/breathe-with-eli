@@ -54,18 +54,18 @@
         .breathing-circles {
             position: absolute;
             top: 50%;
-            left: 25%;
-            transform: translate(-50%, -50%);
+            right: 10%;
+            transform: translateY(-50%);
             width: 500px;
             height: 500px;
             pointer-events: none;
             z-index: 0;
-            opacity: 0.12;
+            opacity: 0.25;
         }
         .breathing-circles circle {
             fill: none;
             stroke: var(--color-primary);
-            stroke-width: 1;
+            stroke-width: 1.5;
         }
         .breathing-circles .circle-1 {
             animation: breathe-circle 8s ease-in-out infinite;
