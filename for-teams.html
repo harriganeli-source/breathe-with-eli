@@ -127,7 +127,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            opacity: 0.25;
+            opacity: 0.18;
             z-index: 1;
             overflow: visible;
         }
@@ -732,14 +732,14 @@
 
         // Organism position in SVG viewBox coordinates
         // viewBox is 0-400 x, 0-3000 y (maps to full page width, ~3000px page height)
-        let organismX = 300;  // Start right side
-        let organismY = 350;  // Near top of page
+        let organismX = 200;  // Start centered
+        let organismY = 400;  // Below intro text
         let organismRotation = 0;
         let currentScale = 1.0;
 
         // Target position the organism drifts toward (in SVG coords)
-        let targetX = 300;
-        let targetY = 350;
+        let targetX = 200;
+        let targetY = 400;
         let targetRotation = 0;
         let targetScale = 1.0;
 
@@ -805,26 +805,26 @@
                 {
                     el: introSection,
                     scrollThreshold: introTop,
-                    targetX: 300,  // Center-right
-                    targetY: toSvgY(introTop + 450),
+                    targetX: 200,  // Centered horizontally
+                    targetY: toSvgY(introTop + 550),  // Below the intro text
                     rotation: 0,
                     scale: 1.0
                 },
                 {
                     el: testimonialsSection,
                     scrollThreshold: testimonialsTop + 100,
-                    targetX: 80,  // Left side
-                    targetY: toSvgY(testimonialsTop + 250),
+                    targetX: 100,  // Left side
+                    targetY: toSvgY(testimonialsTop + 300),
                     rotation: 45,
-                    scale: 1.4
+                    scale: 1.3
                 },
                 {
                     el: whatIOfferSection,
                     scrollThreshold: whatIOfferTop + 100,
-                    targetX: 320,  // Right side
+                    targetX: 300,  // Right side
                     targetY: toSvgY(whatIOfferTop + 350),
                     rotation: 90,
-                    scale: 1.6
+                    scale: 1.5
                 }
             ];
 
