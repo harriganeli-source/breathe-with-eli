@@ -426,7 +426,7 @@
 
     <script src="js/main.js"></script>
 
-    <!-- Connected Dots Animation - Scroll-linked floating organism -->
+    <!-- Connected Dots Animation - Scroll-linked floating organism that grows -->
     <script>
     (function() {
         // Only run on desktop
@@ -438,27 +438,83 @@
         // Configuration
         const dotRadius = 5;
         const breathCycle = 10000;
-        const lineGrowDuration = 3500;  // Slower line growth
-        const lineGrowDelay = 1300;     // A bit more delay before starting
-        const lineStagger = 350;        // More delay between lines
+        const lineGrowDuration = 2500;
+        const lineStagger = 150;
 
-        // Initial hexagon positions (base size, will be scaled dynamically)
-        const baseScale = 1.0;  // Base scale - will grow as organism moves down page
-        const maxScale = 1.8;   // Maximum scale when fully expanded
-        let currentScale = baseScale;  // Current dynamic scale
-        const basePositions = [
-            { x: 0, y: -110 },     // 0: top
-            { x: 95, y: -55 },     // 1: top right
-            { x: 95, y: 55 },      // 2: bottom right
-            { x: 0, y: 110 },      // 3: bottom
-            { x: -95, y: 55 },     // 4: bottom left
-            { x: -95, y: -55 },    // 5: top left
-            { x: 0, y: 0, isCenter: true }  // 6: center
+        // Growth stages - organism gains complexity as it moves down
+        // Stage 0: Initial hexagon (7 dots, 12 connections)
+        // Stage 1: Add outer ring (6 more dots, more connections) - at testimonials
+        // Stage 2: Add even more dots and connections - at what I offer
+
+        const baseScale = 1.0;
+        let currentScale = baseScale;
+
+        // All possible dot positions (will be revealed progressively)
+        const allDotPositions = [
+            // Stage 0: Core hexagon (indices 0-6)
+            { x: 0, y: -110, stage: 0 },      // 0: top
+            { x: 95, y: -55, stage: 0 },      // 1: top right
+            { x: 95, y: 55, stage: 0 },       // 2: bottom right
+            { x: 0, y: 110, stage: 0 },       // 3: bottom
+            { x: -95, y: 55, stage: 0 },      // 4: bottom left
+            { x: -95, y: -55, stage: 0 },     // 5: top left
+            { x: 0, y: 0, isCenter: true, stage: 0 },  // 6: center
+
+            // Stage 1: Outer ring (indices 7-12) - between existing points
+            { x: 55, y: -95, stage: 1 },      // 7: between top and top-right
+            { x: 115, y: 0, stage: 1 },       // 8: far right
+            { x: 55, y: 95, stage: 1 },       // 9: between bottom-right and bottom
+            { x: -55, y: 95, stage: 1 },      // 10: between bottom and bottom-left
+            { x: -115, y: 0, stage: 1 },      // 11: far left
+            { x: -55, y: -95, stage: 1 },     // 12: between top-left and top
+
+            // Stage 2: Extended network (indices 13-20)
+            { x: 0, y: -170, stage: 2 },      // 13: far top
+            { x: 150, y: -85, stage: 2 },     // 14: far top-right
+            { x: 150, y: 85, stage: 2 },      // 15: far bottom-right
+            { x: 0, y: 170, stage: 2 },       // 16: far bottom
+            { x: -150, y: 85, stage: 2 },     // 17: far bottom-left
+            { x: -150, y: -85, stage: 2 },    // 18: far top-left
+            { x: 45, y: -35, stage: 2 },      // 19: inner right
+            { x: -45, y: 35, stage: 2 }       // 20: inner left
         ];
 
-        const connections = [
-            [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
-            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
+        // All possible connections (will be revealed progressively)
+        const allConnections = [
+            // Stage 0: Core hexagon connections
+            { from: 6, to: 0, stage: 0 }, { from: 6, to: 1, stage: 0 }, { from: 6, to: 2, stage: 0 },
+            { from: 6, to: 3, stage: 0 }, { from: 6, to: 4, stage: 0 }, { from: 6, to: 5, stage: 0 },
+            { from: 0, to: 1, stage: 0 }, { from: 1, to: 2, stage: 0 }, { from: 2, to: 3, stage: 0 },
+            { from: 3, to: 4, stage: 0 }, { from: 4, to: 5, stage: 0 }, { from: 5, to: 0, stage: 0 },
+
+            // Stage 1: Connect outer ring to core
+            { from: 0, to: 7, stage: 1 }, { from: 1, to: 7, stage: 1 },
+            { from: 1, to: 8, stage: 1 }, { from: 2, to: 8, stage: 1 },
+            { from: 2, to: 9, stage: 1 }, { from: 3, to: 9, stage: 1 },
+            { from: 3, to: 10, stage: 1 }, { from: 4, to: 10, stage: 1 },
+            { from: 4, to: 11, stage: 1 }, { from: 5, to: 11, stage: 1 },
+            { from: 5, to: 12, stage: 1 }, { from: 0, to: 12, stage: 1 },
+            // Outer ring connections
+            { from: 7, to: 8, stage: 1 }, { from: 8, to: 9, stage: 1 },
+            { from: 9, to: 10, stage: 1 }, { from: 10, to: 11, stage: 1 },
+            { from: 11, to: 12, stage: 1 }, { from: 12, to: 7, stage: 1 },
+
+            // Stage 2: Extended network connections
+            { from: 0, to: 13, stage: 2 }, { from: 7, to: 13, stage: 2 }, { from: 12, to: 13, stage: 2 },
+            { from: 1, to: 14, stage: 2 }, { from: 7, to: 14, stage: 2 }, { from: 8, to: 14, stage: 2 },
+            { from: 2, to: 15, stage: 2 }, { from: 8, to: 15, stage: 2 }, { from: 9, to: 15, stage: 2 },
+            { from: 3, to: 16, stage: 2 }, { from: 9, to: 16, stage: 2 }, { from: 10, to: 16, stage: 2 },
+            { from: 4, to: 17, stage: 2 }, { from: 10, to: 17, stage: 2 }, { from: 11, to: 17, stage: 2 },
+            { from: 5, to: 18, stage: 2 }, { from: 11, to: 18, stage: 2 }, { from: 12, to: 18, stage: 2 },
+            // Inner connections
+            { from: 6, to: 19, stage: 2 }, { from: 6, to: 20, stage: 2 },
+            { from: 1, to: 19, stage: 2 }, { from: 2, to: 19, stage: 2 },
+            { from: 4, to: 20, stage: 2 }, { from: 5, to: 20, stage: 2 },
+            { from: 19, to: 20, stage: 2 },
+            // Cross connections for complexity
+            { from: 13, to: 14, stage: 2 }, { from: 14, to: 15, stage: 2 },
+            { from: 15, to: 16, stage: 2 }, { from: 16, to: 17, stage: 2 },
+            { from: 17, to: 18, stage: 2 }, { from: 18, to: 13, stage: 2 }
         ];
 
         // State
@@ -466,44 +522,40 @@
         const dotElements = [];
         const lineElements = [];
         const startTime = performance.now();
+        let currentStage = 0;
+        let stageChangeTime = 0;
 
-        // Organism position in SVG viewBox coordinates
-        // viewBox is 0-1000 x, 0-3000 y (maps to full page width, ~3000px page height)
-        let organismX = 700;  // Start right side
-        let organismY = 400;  // Near top of page
+        // Organism position
+        let organismX = 700;
+        let organismY = 400;
         let organismRotation = 0;
 
-        // Target position the organism drifts toward (in SVG coords)
         let targetX = 700;
         let targetY = 400;
         let targetRotation = 0;
-        let targetScale = 1.0;  // Target scale for expansion
+        let targetScale = 1.0;
 
-        // Section positions (will be calculated)
         let sections = [];
-
-        // Page dimensions for coordinate conversion
         let pageHeight = 3000;
 
-        // Initialize dots
-        // Base hue is sage green (100), with ±30 range around the hexagon
-        // Creates subtle warm (gold/olive) to cool (teal) gradient
-        basePositions.forEach((pos, i) => {
-            // Calculate base hue for this dot (outer dots shift, center stays at base)
-            // i: 0=top, 1=top-right, 2=bottom-right, 3=bottom, 4=bottom-left, 5=top-left, 6=center
-            const baseHue = pos.isCenter ? 100 : 100 + (i / 6) * 90 - 45; // Range: 55-145 (wider spread)
+        // Create a dot element
+        function createDot(pos, index) {
+            const baseHue = pos.isCenter ? 100 : 100 + (index % 7) * 15 - 45;
 
             const dot = {
                 baseX: pos.x,
                 baseY: pos.y,
-                x: 700 + pos.x,
-                y: 400 + pos.y,
+                x: organismX + pos.x,
+                y: organismY + pos.y,
                 phase: Math.random() * Math.PI * 2,
                 isCenter: pos.isCenter || false,
                 baseHue: baseHue,
-                currentHue: baseHue
+                currentHue: baseHue,
+                stage: pos.stage,
+                opacity: pos.stage === 0 ? 1 : 0,
+                targetOpacity: pos.stage === 0 ? 1 : 0,
+                birthTime: pos.stage === 0 ? 0 : null
             };
-            dots.push(dot);
 
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
             circle.setAttribute('class', 'dot');
@@ -511,72 +563,105 @@
             if (dot.isCenter) circle.style.opacity = '0.85';
             circle.setAttribute('cx', dot.x);
             circle.setAttribute('cy', dot.y);
-            // Set initial hue
             circle.style.setProperty('--dot-hue', baseHue);
+            circle.style.opacity = dot.opacity;
+
+            return { dot, circle };
+        }
+
+        // Create a line element
+        function createLine(conn, index) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('class', 'line');
+            line.style.opacity = '0';
+
+            return {
+                element: line,
+                from: conn.from,
+                to: conn.to,
+                stage: conn.stage,
+                index: index,
+                opacity: conn.stage === 0 ? 0.6 : 0,
+                targetOpacity: conn.stage === 0 ? 0.6 : 0,
+                birthTime: conn.stage === 0 ? 0 : null,
+                growProgress: 0
+            };
+        }
+
+        // Initialize all dots and lines (but only stage 0 visible)
+        allDotPositions.forEach((pos, i) => {
+            const { dot, circle } = createDot(pos, i);
+            dots.push(dot);
             dotElements.push(circle);
         });
 
-        // Initialize lines
-        connections.forEach(([i, j], idx) => {
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('class', 'line');
-            line.setAttribute('x1', dots[i].x);
-            line.setAttribute('y1', dots[i].y);
-            line.setAttribute('x2', dots[i].x);
-            line.setAttribute('y2', dots[i].y);
-            // Set line hue as average of connected dots
-            const lineHue = (dots[i].baseHue + dots[j].baseHue) / 2;
-            line.style.setProperty('--line-hue', lineHue);
-            lineElements.push({ element: line, from: i, to: j, index: idx });
-            svg.appendChild(line);
+        allConnections.forEach((conn, i) => {
+            const lineData = createLine(conn, i);
+            lineElements.push(lineData);
+            svg.appendChild(lineData.element);
         });
 
         dotElements.forEach(el => svg.appendChild(el));
 
-        // Calculate section positions for scroll-based movement
-        // All positions are in SVG viewBox coordinates (0-1000 x, 0-3000 y)
+        // Activate dots and lines for a stage
+        function activateStage(stage, time) {
+            dots.forEach((dot, i) => {
+                if (dot.stage === stage && dot.birthTime === null) {
+                    dot.birthTime = time;
+                    dot.targetOpacity = 1;
+                }
+            });
+
+            lineElements.forEach((line, i) => {
+                if (line.stage === stage && line.birthTime === null) {
+                    line.birthTime = time + 500; // Slight delay after dots appear
+                    line.targetOpacity = 0.6;
+                }
+            });
+        }
+
         function updateSectionPositions() {
             const introSection = document.querySelector('.intro-section-teams');
             const testimonialsSection = document.getElementById('testimonials');
             const whatIOfferSection = document.querySelectorAll('.content-section')[2];
 
-            // Get page height and section positions
             pageHeight = document.body.scrollHeight || 3000;
             const introTop = introSection ? introSection.offsetTop : 0;
             const testimonialsTop = testimonialsSection ? testimonialsSection.offsetTop : 600;
             const whatIOfferTop = whatIOfferSection ? whatIOfferSection.offsetTop : 1200;
 
-            // Convert page pixels to SVG Y coordinates (page pixels * 3000 / pageHeight)
             const toSvgY = (pageY) => (pageY / pageHeight) * 3000;
 
             sections = [
                 {
                     el: introSection,
                     scrollThreshold: introTop,
-                    targetX: 700,  // Right side (70% of 1000)
-                    targetY: toSvgY(introTop + 520),  // Below text
+                    targetX: 700,
+                    targetY: toSvgY(introTop + 520),
                     rotation: 0,
-                    scale: 1.0  // Start very flat (initialSquash makes it wide/short)
+                    scale: 1.0,
+                    stage: 0
                 },
                 {
                     el: testimonialsSection,
-                    scrollThreshold: testimonialsTop + 150,  // More delay - trigger later
-                    targetX: 120, // Far left side (12% of 1000)
+                    scrollThreshold: testimonialsTop + 150,
+                    targetX: 120,
                     targetY: toSvgY(testimonialsTop + 300),
                     rotation: 45,
-                    scale: 1.6  // Grow and become more regular shaped
+                    scale: 1.4,
+                    stage: 1
                 },
                 {
                     el: whatIOfferSection,
-                    scrollThreshold: whatIOfferTop + 150,  // More delay - trigger later
-                    targetX: 880, // Right side (88% of 1000)
+                    scrollThreshold: whatIOfferTop + 150,
+                    targetX: 880,
                     targetY: toSvgY(whatIOfferTop + 400),
                     rotation: 90,
-                    scale: 1.9  // Fully expanded, normal hexagon shape
+                    scale: 1.6,
+                    stage: 2
                 }
             ];
 
-            // Set initial target position
             if (sections[0]) {
                 targetX = sections[0].targetX;
                 targetY = sections[0].targetY;
@@ -586,40 +671,31 @@
                 currentScale = targetScale;
             }
 
-            // Update container height to match page
             const container = document.getElementById('connected-dots-container');
             if (container) {
                 container.style.height = pageHeight + 'px';
             }
         }
 
-        // Track which section we're targeting and when we last changed
         let currentSectionIndex = 0;
         let lastSectionChangeTime = 0;
-        const sectionChangeCooldown = 3000;  // 3 second cooldown before accepting new target
+        const sectionChangeCooldown = 3000;
 
-        // Scroll handler - updates target position based on which section is in view
-        // But with a cooldown to prevent bouncing
         function handleScroll() {
             const scrollY = window.scrollY;
             const viewportMiddle = scrollY + window.innerHeight * 0.4;
             const now = performance.now();
 
-            // Find which section the viewport middle is in
             let newSectionIndex = 0;
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = sections[i];
                 if (!section.el) continue;
-
                 if (viewportMiddle >= section.scrollThreshold) {
                     newSectionIndex = i;
                     break;
                 }
             }
 
-            // Only change target if:
-            // 1. It's a different section than current
-            // 2. Enough time has passed since last change (cooldown)
             if (newSectionIndex !== currentSectionIndex &&
                 (now - lastSectionChangeTime) > sectionChangeCooldown) {
                 currentSectionIndex = newSectionIndex;
@@ -630,112 +706,128 @@
                     targetY = section.targetY;
                     targetRotation = section.rotation;
                     targetScale = section.scale || 1.0;
+
+                    // Activate new stage if moving forward
+                    if (section.stage > currentStage) {
+                        for (let s = currentStage + 1; s <= section.stage; s++) {
+                            activateStage(s, now);
+                        }
+                        currentStage = section.stage;
+                        stageChangeTime = now;
+                    }
                 }
             }
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('resize', updateSectionPositions);
-        // Delay initial setup to ensure page is laid out
         setTimeout(updateSectionPositions, 100);
 
-        // Continuous rotation for crawling effect
         let continuousRotation = 0;
 
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Smoothly drift toward target position
             const lerpSpeed = 0.002;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
-            currentScale += (targetScale - currentScale) * lerpSpeed;  // Smooth scale transition
+            currentScale += (targetScale - currentScale) * lerpSpeed;
 
-            // Add continuous slow rotation for "crawling" effect
             continuousRotation += 0.015;
 
-            // Breathing factor - REDUCED amplitude, stays larger
             const breathPhase = (time % breathCycle) / breathCycle;
             const breathFactor = Math.sin(breathPhase * Math.PI * 2);
 
-            // Convert rotation to radians (target rotation + continuous crawl rotation)
             const rotRad = ((organismRotation + continuousRotation) * Math.PI) / 180;
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
-            // Squeeze/stretch factor - organism changes shape dramatically over time
-            // Multiple overlapping cycles for more organic, unpredictable distortion
-            const squeezePhase1 = (time % 12000) / 12000;  // Primary 12 second cycle
-            const squeezePhase2 = (time % 8000) / 8000;    // Secondary 8 second cycle
-            const squeezePhase3 = (time % 19000) / 19000;  // Tertiary 19 second cycle (prime for variation)
+            const squeezePhase1 = (time % 12000) / 12000;
+            const squeezePhase2 = (time % 8000) / 8000;
+            const squeezePhase3 = (time % 19000) / 19000;
             const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.6
                                 + Math.sin(squeezePhase2 * Math.PI * 2) * 0.3
                                 + Math.sin(squeezePhase3 * Math.PI * 2) * 0.25;
-            // Base squash that persists even at larger scales (reduced but still present)
             const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);
-            const baseDistortion = 0.15;  // Always have some distortion
+            const baseDistortion = 0.15;
             const scaleX = 1 + squeezeFactor * 0.35 + initialSquash + baseDistortion * Math.sin(squeezePhase2 * Math.PI * 4);
             const scaleY = 1 - squeezeFactor * 0.35 - initialSquash * 0.7 - baseDistortion * Math.sin(squeezePhase3 * Math.PI * 4);
 
-            // Color shift based on organism movement and rotation
-            // Subtle shift: rotation affects overall hue, wander affects individual dots
             const rotationHueShift = Math.sin(continuousRotation * 0.01) * 25;
 
-            // Update dot positions
+            // Update dot positions and opacity
             dots.forEach((dot, i) => {
-                // LOTS of wander for crawling movement - dots can overlap and cross paths
-                // Each dot has its own unique wander pattern with large amplitude
-                dot.phase += 0.0025 + (i * 0.0006);  // Slow speeds per dot
+                // Fade in new dots
+                if (dot.birthTime !== null && dot.opacity < dot.targetOpacity) {
+                    const fadeProgress = Math.min(1, (time - dot.birthTime) / 1500);
+                    dot.opacity = fadeProgress * dot.targetOpacity;
+                }
+
+                dot.phase += 0.0025 + (i * 0.0004);
                 const wanderX = Math.sin(dot.phase) * 45 + Math.sin(dot.phase * 1.7) * 25 + Math.sin(dot.phase * 0.3) * 18;
                 const wanderY = Math.cos(dot.phase * 0.7) * 45 + Math.cos(dot.phase * 1.3) * 25 + Math.cos(dot.phase * 0.5) * 18;
 
-                // Dynamic hue shift based on dot's wander movement
-                // Each dot's hue shifts slightly based on its phase
                 const wanderHueShift = Math.sin(dot.phase * 0.5) * 18;
                 dot.currentHue = dot.baseHue + rotationHueShift + wanderHueShift;
                 dotElements[i].style.setProperty('--dot-hue', dot.currentHue);
 
-                // Breathing expansion (small)
                 const breathExpand = breathFactor * 2;
                 const breathScale = 1 + breathExpand * 0.01;
 
-                // Apply squeeze/stretch to base positions, plus dynamic scale
                 const expandedX = dot.baseX * currentScale * scaleX * breathScale;
                 const expandedY = dot.baseY * currentScale * scaleY * breathScale;
 
-                // Apply rotation
                 const rotatedX = expandedX * cosR - expandedY * sinR;
                 const rotatedY = expandedX * sinR + expandedY * cosR;
 
-                // Final position in SVG coordinates (absolute on page)
                 dot.x = organismX + rotatedX + wanderX;
                 dot.y = organismY + rotatedY + wanderY;
 
                 dotElements[i].setAttribute('cx', dot.x);
                 dotElements[i].setAttribute('cy', dot.y);
+                dotElements[i].style.opacity = dot.isCenter ? dot.opacity * 0.85 : dot.opacity;
             });
 
-            // Update lines with growth animation and dynamic hue
-            lineElements.forEach(({ element, from, to, index }) => {
+            // Update lines
+            lineElements.forEach((lineData) => {
+                const { element, from, to, birthTime } = lineData;
                 const fromDot = dots[from];
                 const toDot = dots[to];
 
-                // Update line hue as average of connected dots' current hues
+                // Only draw if both dots are visible
+                if (fromDot.opacity < 0.1 || toDot.opacity < 0.1) {
+                    element.style.opacity = '0';
+                    return;
+                }
+
+                // Fade in and grow new lines
+                if (birthTime !== null) {
+                    const lineAge = time - birthTime;
+                    if (lineAge > 0) {
+                        const fadeProgress = Math.min(1, lineAge / 1000);
+                        lineData.opacity = fadeProgress * lineData.targetOpacity;
+                        lineData.growProgress = Math.min(1, lineAge / lineGrowDuration);
+                        lineData.growProgress = 1 - Math.pow(1 - lineData.growProgress, 3);
+                    }
+                } else if (lineData.stage === 0) {
+                    // Initial lines grow from start
+                    const thisLineDelay = 1300 + (lineData.index * lineStagger);
+                    if (elapsed > thisLineDelay) {
+                        lineData.growProgress = Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration);
+                        lineData.growProgress = 1 - Math.pow(1 - lineData.growProgress, 3);
+                        lineData.opacity = 0.6;
+                    }
+                }
+
                 const lineHue = (fromDot.currentHue + toDot.currentHue) / 2;
                 element.style.setProperty('--line-hue', lineHue);
 
-                const thisLineDelay = lineGrowDelay + (index * lineStagger);
-                let growProgress = 0;
-                if (elapsed > thisLineDelay) {
-                    growProgress = Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration);
-                    growProgress = 1 - Math.pow(1 - growProgress, 3);
-                }
-
                 element.setAttribute('x1', fromDot.x);
                 element.setAttribute('y1', fromDot.y);
-                element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
-                element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
+                element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * lineData.growProgress);
+                element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * lineData.growProgress);
+                element.style.opacity = lineData.opacity;
             });
 
             requestAnimationFrame(animate);
