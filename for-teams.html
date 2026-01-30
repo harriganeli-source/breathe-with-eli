@@ -794,13 +794,13 @@
             const maxScroll = document.body.scrollHeight - window.innerHeight;
             const scrollProgress = Math.min(1, scrollY / maxScroll);
 
-            // Move organism based on scroll progress
-            // X: oscillate between left (100) and right (300) as we scroll
-            // Y: stays roughly centered but shifts slightly
-            targetX = 200 + Math.sin(scrollProgress * Math.PI * 2) * 80;
-            targetY = 280 + scrollProgress * 40;  // Drift down slightly
-            targetRotation = scrollProgress * 120;  // Rotate as we scroll
-            targetScale = 1.2 + scrollProgress * 0.3;  // Grow slightly
+            // Move organism based on scroll progress - more dramatic movement
+            // X: swing between left (80) and right (320)
+            targetX = 200 + Math.sin(scrollProgress * Math.PI * 3) * 120;
+            // Y: move up and down in viewport
+            targetY = 200 + Math.sin(scrollProgress * Math.PI * 2) * 150;
+            targetRotation = scrollProgress * 180;  // Full half rotation
+            targetScale = 1.0 + scrollProgress * 0.5;  // Grow more noticeably
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true });
@@ -812,8 +812,8 @@
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Smoothly drift toward target position (same as desktop)
-            const lerpSpeed = 0.004;
+            // Move toward target position - fast enough to track scroll
+            const lerpSpeed = 0.08;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
