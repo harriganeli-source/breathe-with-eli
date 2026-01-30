@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Teams | Eli Harrigan</title>
-    <meta name="description" content="Breathwork sessions, workshops, and group coaching for teams. Help your people down-regulate stress, build connection, and thrive at work.">
+    <title>Helping the Helpers | Eli Harrigan</title>
+    <meta name="description" content="Breathwork and nervous system training for healthcare workers, therapists, and caregivers. Prevent burnout, stay grounded, and sustain the work you do for others.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="For Teams | Eli Harrigan">
-    <meta property="og:description" content="Breathwork sessions, workshops, and group coaching for teams. Help your people down-regulate stress, build connection, and thrive at work.">
+    <meta property="og:title" content="Helping the Helpers | Eli Harrigan">
+    <meta property="og:description" content="Breathwork and nervous system training for healthcare workers, therapists, and caregivers. Prevent burnout, stay grounded, and sustain the work you do for others.">
     <meta property="og:image" content="https://breathewitheli.com/images/team-workshop.jpg">
     <meta property="og:url" content="https://breathewitheli.com/for-teams">
     <meta name="twitter:card" content="summary_large_image">
@@ -28,9 +28,43 @@
                 gap: 2rem !important;
             }
         }
-        /* Force four-column testimonials on desktop */
+        /* Featured testimonial styling */
+        .featured-testimonial {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+            background: var(--color-bg);
+            border-radius: 12px;
+        }
+        .featured-testimonial .testimonial-photo {
+            flex-shrink: 0;
+        }
+        .featured-testimonial .testimonial-photo img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .featured-testimonial .testimonial-content p {
+            font-size: 1.15rem;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        .featured-testimonial .testimonial-content cite {
+            font-size: 1rem;
+        }
+        @media (max-width: 768px) {
+            .featured-testimonial {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        /* Force three-column testimonials on desktop */
         .testimonials-grid {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
         }
         /* Stack photo and text vertically in the grid */
@@ -183,7 +217,7 @@
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1>For Teams</h1>
+            <h1>Helping the Helpers</h1>
         </div>
     </header>
 
@@ -211,10 +245,10 @@
                 </div>
                 <!-- Intro Text -->
                 <div style="font-size: 0.95rem;">
-                    <p>The world is changing fast, and what sets people apart is changing with it.</p>
-                    <p>It's less about what you know and more about how you are. Your presence. Your steadiness. The ability to stay grounded when things get hard and stay connected to the people around you. This is trainable.</p>
-                    <p>Through breathwork and nervous system training, your people learn to down-regulate stress in real time, recover more fully between intense periods, and stay present with each other when the pressure rises.</p>
-                    <p>There's something that happens when people breathe together in a room. They come out of it feeling more like a team than when they walked in.</p>
+                    <p>You spend your days holding space for others. But who holds space for you?</p>
+                    <p>Healthcare workers, therapists, coaches, and caregivers carry more than most people realize. The weight of other people's pain. The pressure to stay steady when everything around you is falling apart. The slow drain of giving more than you get back.</p>
+                    <p>Burnout isn't a character flaw. It's what happens when the nervous system runs on empty for too long.</p>
+                    <p>Through breathwork and somatic practices, you can learn to discharge stress in real time, restore your capacity, and stay connected to the reason you do this work in the first place.</p>
                 </div>
             </div>
         </div>
@@ -228,16 +262,18 @@
     <!-- Testimonials Section -->
     <section id="testimonials" class="content-section" style="background-color: var(--color-bg-alt);">
         <div class="container">
-            <div class="testimonials-grid">
-                <div class="testimonial-card testimonial-card--with-photo">
-                    <div class="testimonial-photo">
-                        <img src="images/andrea.jpg" alt="Andrea M. Garroway, Ph.D.">
-                    </div>
-                    <div class="testimonial-content">
-                        <p>"Eli created a supportive environment for our team throughout the entire experience. We were able to bond, reflect about our work, and develop renewed appreciation for the value of the mind-body connection."</p>
-                        <cite>— Andrea M. Garroway, Ph.D., Clinical Psychologist</cite>
-                    </div>
+            <!-- Featured Testimonial -->
+            <div class="featured-testimonial">
+                <div class="testimonial-photo">
+                    <img src="images/andrea.jpg" alt="Andrea M. Garroway, Ph.D.">
                 </div>
+                <div class="testimonial-content">
+                    <p>"Eli created a supportive environment for our team throughout the entire experience. We were able to bond, reflect about our work, and develop renewed appreciation for the value of the mind-body connection."</p>
+                    <cite>— Andrea M. Garroway, Ph.D., Clinical Psychologist</cite>
+                </div>
+            </div>
+            <!-- Other Testimonials -->
+            <div class="testimonials-grid">
                 <div class="testimonial-card testimonial-card--with-photo">
                     <div class="testimonial-photo">
                         <img src="images/hyjekkarol.jpg" alt="Karol Hyjek" style="object-position: center 20%;">
@@ -262,7 +298,7 @@
                     </div>
                     <div class="testimonial-content">
                         <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
-                        <cite>— Matthew L. Rohrer, LCSW, Psychotherapist & Executive Coach</cite>
+                        <cite>— Matthew L. Rohrer, LCSW, Psychotherapist</cite>
                     </div>
                 </div>
             </div>
