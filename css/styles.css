@@ -1563,7 +1563,7 @@ p {
 
 /* Page Header (for inner pages) */
 .page-header {
-    padding: calc(var(--nav-height) + var(--space-lg)) 0 var(--space-lg);
+    padding: calc(var(--nav-height) + var(--space-md)) 0 var(--space-md);
     background-color: var(--color-bg-alt);
     text-align: center;
 }
