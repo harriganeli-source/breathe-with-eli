@@ -50,17 +50,42 @@
             }
         }
 
-        /* Connected Dots Network - fixed position floating organism */
+        /* Connected Dots Network - ABSOLUTE position on page, not fixed to viewport */
         .connected-dots {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            opacity: 0.25;
-            z-index: 100;
+            opacity: 0.15;
+            z-index: 1;
             overflow: visible;
+        }
+        /* Testimonial cards need to be above the organism */
+        #testimonials .testimonial-card {
+            position: relative;
+            z-index: 2;
+        }
+        /* Override default fade-in for testimonials - slower, staggered, from bottom */
+        #testimonials .testimonial-card.fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+        }
+        #testimonials .testimonial-card.fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Stagger delays for left-to-right animation */
+        #testimonials .testimonial-card:nth-child(1).fade-in {
+            transition-delay: 0s;
+        }
+        #testimonials .testimonial-card:nth-child(2).fade-in {
+            transition-delay: 0.4s;
+        }
+        #testimonials .testimonial-card:nth-child(3).fade-in {
+            transition-delay: 0.8s;
         }
         .connected-dots .dot {
             fill: var(--color-primary);
@@ -153,13 +178,15 @@
         </div>
     </header>
 
-    <!-- Floating Connected Dots Network (position: fixed) -->
-    <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice">
-        <!-- Lines and dots will be created by JavaScript -->
-    </svg>
+    <!-- Connected Dots Container - spans full page for absolute positioning -->
+    <div id="connected-dots-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible;">
+        <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 1000 3000" preserveAspectRatio="xMidYMin slice" style="width: 100%; height: 100%;">
+            <!-- Lines and dots will be created by JavaScript -->
+        </svg>
+    </div>
 
     <!-- Intro + Image Section (Two Column) -->
-    <section class="content-section intro-section-teams" style="position: relative;">
+    <section class="content-section intro-section-teams" style="position: relative; background-color: var(--color-bg);">
         <div class="container">
             <div class="two-column-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
                 <!-- Image -->
@@ -346,18 +373,19 @@
         // Configuration
         const dotRadius = 5;
         const breathCycle = 10000;
-        const lineGrowDuration = 4000;
-        const lineGrowDelay = 1500;
-        const lineStagger = 400;
+        const lineGrowDuration = 3500;  // Slower line growth
+        const lineGrowDelay = 1300;     // A bit more delay before starting
+        const lineStagger = 350;        // More delay between lines
 
-        // Initial hexagon positions (will be transformed)
+        // Initial hexagon positions (will be transformed) - LARGER scale
+        const scale = 1.6;  // Make organism 60% larger
         const basePositions = [
-            { x: 0, y: -110 },     // 0: top
-            { x: 95, y: -55 },     // 1: top right
-            { x: 95, y: 55 },      // 2: bottom right
-            { x: 0, y: 110 },      // 3: bottom
-            { x: -95, y: 55 },     // 4: bottom left
-            { x: -95, y: -55 },    // 5: top left
+            { x: 0 * scale, y: -110 * scale },     // 0: top
+            { x: 95 * scale, y: -55 * scale },     // 1: top right
+            { x: 95 * scale, y: 55 * scale },      // 2: bottom right
+            { x: 0 * scale, y: 110 * scale },      // 3: bottom
+            { x: -95 * scale, y: 55 * scale },     // 4: bottom left
+            { x: -95 * scale, y: -55 * scale },    // 5: top left
             { x: 0, y: 0, isCenter: true }  // 6: center
         ];
 
@@ -372,28 +400,30 @@
         const lineElements = [];
         const startTime = performance.now();
 
-        // Organism position and movement (in viewBox coordinates 0-1000 x 0-700)
-        let organismX = 750;
-        let organismY = 350;
+        // Organism position in SVG viewBox coordinates
+        // viewBox is 0-1000 x, 0-3000 y (maps to full page width, ~3000px page height)
+        let organismX = 700;  // Start right side
+        let organismY = 400;  // Near top of page
         let organismRotation = 0;
-        let targetX = 750;
-        let targetY = 350;
-        let targetRotation = 0;
 
-        // Scroll tracking
-        let lastScrollY = window.scrollY;
-        let scrollVelocity = 0;
+        // Target position the organism drifts toward (in SVG coords)
+        let targetX = 700;
+        let targetY = 400;
+        let targetRotation = 0;
 
         // Section positions (will be calculated)
         let sections = [];
+
+        // Page dimensions for coordinate conversion
+        let pageHeight = 3000;
 
         // Initialize dots
         basePositions.forEach((pos, i) => {
             const dot = {
                 baseX: pos.x,
                 baseY: pos.y,
-                x: 750 + pos.x,
-                y: 350 + pos.y,
+                x: 700 + pos.x,
+                y: 400 + pos.y,
                 phase: Math.random() * Math.PI * 2,
                 isCenter: pos.isCenter || false
             };
@@ -423,92 +453,158 @@
         dotElements.forEach(el => svg.appendChild(el));
 
         // Calculate section positions for scroll-based movement
+        // All positions are in SVG viewBox coordinates (0-1000 x, 0-3000 y)
         function updateSectionPositions() {
             const introSection = document.querySelector('.intro-section-teams');
             const testimonialsSection = document.getElementById('testimonials');
             const whatIOfferSection = document.querySelectorAll('.content-section')[2];
 
+            // Get page height and section positions
+            pageHeight = document.body.scrollHeight || 3000;
+            const introTop = introSection ? introSection.offsetTop : 0;
+            const testimonialsTop = testimonialsSection ? testimonialsSection.offsetTop : 600;
+            const whatIOfferTop = whatIOfferSection ? whatIOfferSection.offsetTop : 1200;
+
+            // Convert page pixels to SVG Y coordinates (page pixels * 3000 / pageHeight)
+            const toSvgY = (pageY) => (pageY / pageHeight) * 3000;
+
             sections = [
                 {
                     el: introSection,
-                    targetX: 750, targetY: 350, // Start position (right side)
+                    scrollThreshold: introTop,
+                    targetX: 700,  // Right side (70% of 1000)
+                    targetY: toSvgY(introTop + 350),
                     rotation: 0
                 },
                 {
                     el: testimonialsSection,
-                    targetX: 150, targetY: 350, // Move to far left side
-                    rotation: 30
+                    scrollThreshold: testimonialsTop + 100,  // More delay - trigger later
+                    targetX: 120, // Far left side (12% of 1000)
+                    targetY: toSvgY(testimonialsTop + 300),
+                    rotation: 45
                 },
                 {
                     el: whatIOfferSection,
-                    targetX: 850, targetY: 350, // Move to right side
-                    rotation: 60
+                    scrollThreshold: whatIOfferTop + 100,  // More delay - trigger later
+                    targetX: 880, // Right side (88% of 1000)
+                    targetY: toSvgY(whatIOfferTop + 400),
+                    rotation: 90
                 }
             ];
+
+            // Set initial target position
+            if (sections[0]) {
+                targetX = sections[0].targetX;
+                targetY = sections[0].targetY;
+                organismX = targetX;
+                organismY = targetY;
+            }
+
+            // Update container height to match page
+            const container = document.getElementById('connected-dots-container');
+            if (container) {
+                container.style.height = pageHeight + 'px';
+            }
         }
 
-        // Scroll handler - responds immediately, even during initial animation
+        // Track which section we're targeting and when we last changed
+        let currentSectionIndex = 0;
+        let lastSectionChangeTime = 0;
+        const sectionChangeCooldown = 3000;  // 3 second cooldown before accepting new target
+
+        // Scroll handler - updates target position based on which section is in view
+        // But with a cooldown to prevent bouncing
         function handleScroll() {
             const scrollY = window.scrollY;
-            scrollVelocity = scrollY - lastScrollY;
-            lastScrollY = scrollY;
-
-            // Find which section we're in
             const viewportMiddle = scrollY + window.innerHeight * 0.4;
+            const now = performance.now();
 
+            // Find which section the viewport middle is in
+            let newSectionIndex = 0;
             for (let i = sections.length - 1; i >= 0; i--) {
                 const section = sections[i];
                 if (!section.el) continue;
-                const rect = section.el.getBoundingClientRect();
-                const sectionTop = rect.top + scrollY;
 
-                if (viewportMiddle >= sectionTop) {
+                if (viewportMiddle >= section.scrollThreshold) {
+                    newSectionIndex = i;
+                    break;
+                }
+            }
+
+            // Only change target if:
+            // 1. It's a different section than current
+            // 2. Enough time has passed since last change (cooldown)
+            if (newSectionIndex !== currentSectionIndex &&
+                (now - lastSectionChangeTime) > sectionChangeCooldown) {
+                currentSectionIndex = newSectionIndex;
+                lastSectionChangeTime = now;
+                const section = sections[currentSectionIndex];
+                if (section) {
                     targetX = section.targetX;
                     targetY = section.targetY;
                     targetRotation = section.rotation;
-                    break;
                 }
             }
         }
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         window.addEventListener('resize', updateSectionPositions);
-        updateSectionPositions();
+        // Delay initial setup to ensure page is laid out
+        setTimeout(updateSectionPositions, 100);
+
+        // Continuous rotation for crawling effect
+        let continuousRotation = 0;
 
         function animate(time) {
             const elapsed = time - startTime;
 
-            // Smoothly interpolate organism position (very slow, amoeba-like)
-            const lerpSpeed = 0.0008;
+            // Smoothly drift toward target position
+            const lerpSpeed = 0.004;
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
 
-            // Breathing factor
+            // Add continuous slow rotation for "crawling" effect
+            continuousRotation += 0.015;
+
+            // Breathing factor - REDUCED amplitude, stays larger
             const breathPhase = (time % breathCycle) / breathCycle;
             const breathFactor = Math.sin(breathPhase * Math.PI * 2);
 
-            // Convert rotation to radians
-            const rotRad = (organismRotation * Math.PI) / 180;
+            // Convert rotation to radians (target rotation + continuous crawl rotation)
+            const rotRad = ((organismRotation + continuousRotation) * Math.PI) / 180;
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
+            // Squeeze/stretch factor - organism changes shape over time
+            const squeezePhase = (time % 15000) / 15000;  // 15 second cycle
+            const squeezeFactor = Math.sin(squeezePhase * Math.PI * 2);
+            // When squeezeFactor is positive: wider and shorter
+            // When squeezeFactor is negative: taller and narrower
+            const scaleX = 1 + squeezeFactor * 0.15;  // 0.85 to 1.15
+            const scaleY = 1 - squeezeFactor * 0.15;  // 1.15 to 0.85
+
             // Update dot positions
             dots.forEach((dot, i) => {
-                dot.phase += 0.003;
-                const wanderX = Math.sin(dot.phase) * 8;
-                const wanderY = Math.cos(dot.phase * 0.7) * 8;
+                // LOTS of wander for crawling movement between dots (EVEN SLOWER)
+                // Each dot has its own unique wander pattern
+                dot.phase += 0.0025 + (i * 0.0006);  // Even slower speeds per dot
+                const wanderX = Math.sin(dot.phase) * 28 + Math.sin(dot.phase * 1.7) * 15 + Math.sin(dot.phase * 0.3) * 10;
+                const wanderY = Math.cos(dot.phase * 0.7) * 28 + Math.cos(dot.phase * 1.3) * 15 + Math.cos(dot.phase * 0.5) * 10;
 
-                // Apply breathing expansion
-                const breathExpand = breathFactor * 8;
-                const expandedX = dot.baseX * (1 + breathExpand * 0.05);
-                const expandedY = dot.baseY * (1 + breathExpand * 0.05);
+                // Breathing expansion (small)
+                const breathExpand = breathFactor * 2;
+                const breathScale = 1 + breathExpand * 0.01;
+
+                // Apply squeeze/stretch to base positions
+                const expandedX = dot.baseX * scaleX * breathScale;
+                const expandedY = dot.baseY * scaleY * breathScale;
 
                 // Apply rotation
                 const rotatedX = expandedX * cosR - expandedY * sinR;
                 const rotatedY = expandedX * sinR + expandedY * cosR;
 
-                // Final position
+                // Final position in SVG coordinates (absolute on page)
                 dot.x = organismX + rotatedX + wanderX;
                 dot.y = organismY + rotatedY + wanderY;
 
