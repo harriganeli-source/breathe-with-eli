@@ -50,16 +50,17 @@
             }
         }
 
-        /* Connected Dots Network - positioned below text */
+        /* Connected Dots Network - fixed position floating organism */
         .connected-dots {
-            display: block;
-            width: 100%;
-            max-width: 320px;
-            height: auto;
-            aspect-ratio: 400 / 280;
-            margin: 2rem auto 0;
+            position: fixed;
+            top: 50%;
+            right: 10%;
+            width: 400px;
+            height: 280px;
+            transform: translateY(-50%);
             pointer-events: none;
             opacity: 0.25;
+            z-index: 10;
         }
         .connected-dots .dot {
             fill: var(--color-primary);
@@ -154,6 +155,11 @@
         </div>
     </header>
 
+    <!-- Floating Connected Dots Network (position: fixed) -->
+    <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
+        <!-- Lines and dots will be created by JavaScript -->
+    </svg>
+
     <!-- Intro + Image Section (Two Column) -->
     <section class="content-section intro-section-teams" style="position: relative;">
         <div class="container">
@@ -162,18 +168,12 @@
                 <div>
                     <img src="images/team-workshop.jpg" alt="Outdoor group workshop session" style="width: 100%; max-height: 450px; object-fit: cover; border-radius: 8px;">
                 </div>
-                <!-- Intro Text + Connected Dots below -->
-                <div>
-                    <div style="font-size: 0.95rem;">
-                        <p>Your team carries more than they talk about. The pressure, the pace, the moments when everything needs to happen at once. They're good at pushing through. But pushing through has a cost, and it usually shows up later—in tension, in disconnection, in the slow burn of running on empty.</p>
-                        <p><em>What if there was a space to put some of that down, together?</em></p>
-                        <p>Through breathwork and nervous system training, your people learn to down-regulate stress in real time, recover more fully between intense periods, and stay present with each other when things get hard.</p>
-                        <p>And there's something that happens when people breathe together in a room: they come out of it feeling more like a team than when they walked in.</p>
-                    </div>
-                    <!-- Connected Dots Network - below text -->
-                    <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
-                        <!-- Lines and dots will be created by JavaScript -->
-                    </svg>
+                <!-- Intro Text -->
+                <div style="font-size: 0.95rem;">
+                    <p>Your team carries more than they talk about. The pressure, the pace, the moments when everything needs to happen at once. They're good at pushing through. But pushing through has a cost, and it usually shows up later—in tension, in disconnection, in the slow burn of running on empty.</p>
+                    <p><em>What if there was a space to put some of that down, together?</em></p>
+                    <p>Through breathwork and nervous system training, your people learn to down-regulate stress in real time, recover more fully between intense periods, and stay present with each other when things get hard.</p>
+                    <p>And there's something that happens when people breathe together in a room: they come out of it feeling more like a team than when they walked in.</p>
                 </div>
             </div>
         </div>
@@ -336,168 +336,300 @@
 
     <script src="js/main.js"></script>
 
-    <!-- Connected Dots Animation -->
+    <!-- Connected Dots Animation - Scroll-linked floating organism -->
     <script>
     (function() {
-        // Shared animation function for both desktop and mobile
-        function initConnectedDots(svgId, config) {
-            const svg = document.getElementById(svgId);
-            if (!svg) return;
+        // Only run on desktop
+        if (window.innerWidth <= 768) return;
 
-            const { positions, connections, centerX, centerY, bounds } = config;
-            const numDots = positions.length;
-            const dotRadius = 5;
-            const breathCycle = 10000; // Slower breathing cycle
-            const lineGrowDuration = 4000; // 4 seconds per line to grow
-            const lineGrowDelay = 1500; // Wait 1.5s before lines start growing
-            const lineStagger = 400; // 400ms between each line starting
+        const svg = document.getElementById('connected-dots-svg');
+        if (!svg) return;
 
-            const dots = [];
-            const dotElements = [];
-            const lineElements = [];
-            const startTime = performance.now();
+        // Configuration
+        const dotRadius = 5;
+        const breathCycle = 10000;
+        const lineGrowDuration = 4000;
+        const lineGrowDelay = 1500;
+        const lineStagger = 400;
 
-            // Initialize dots
-            for (let i = 0; i < numDots; i++) {
-                const isCenter = positions[i].isCenter || false;
-                const dot = {
-                    x: positions[i].x,
-                    y: positions[i].y,
-                    baseX: positions[i].x,
-                    baseY: positions[i].y,
-                    phase: Math.random() * Math.PI * 2,
-                    isCenter: isCenter
-                };
-                dots.push(dot);
+        // Initial hexagon positions (will be transformed)
+        const basePositions = [
+            { x: 0, y: -110 },     // 0: top
+            { x: 95, y: -55 },     // 1: top right
+            { x: 95, y: 55 },      // 2: bottom right
+            { x: 0, y: 110 },      // 3: bottom
+            { x: -95, y: 55 },     // 4: bottom left
+            { x: -95, y: -55 },    // 5: top left
+            { x: 0, y: 0, isCenter: true }  // 6: center
+        ];
 
+        const connections = [
+            [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
+            [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
+        ];
+
+        // State
+        const dots = [];
+        const dotElements = [];
+        const lineElements = [];
+        const startTime = performance.now();
+
+        // Organism position and movement
+        let organismX = 200;
+        let organismY = 140;
+        let organismRotation = 0;
+        let targetX = 200;
+        let targetY = 140;
+        let targetRotation = 0;
+
+        // Scroll tracking
+        let lastScrollY = window.scrollY;
+        let scrollVelocity = 0;
+        let isAnimationComplete = false;
+
+        // Section positions (will be calculated)
+        let sections = [];
+
+        // Initialize dots
+        basePositions.forEach((pos, i) => {
+            const dot = {
+                baseX: pos.x,
+                baseY: pos.y,
+                x: 200 + pos.x,
+                y: 140 + pos.y,
+                phase: Math.random() * Math.PI * 2,
+                isCenter: pos.isCenter || false
+            };
+            dots.push(dot);
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('class', 'dot');
+            circle.setAttribute('r', dot.isCenter ? dotRadius * 1.3 : dotRadius);
+            if (dot.isCenter) circle.style.opacity = '0.85';
+            circle.setAttribute('cx', dot.x);
+            circle.setAttribute('cy', dot.y);
+            dotElements.push(circle);
+        });
+
+        // Initialize lines
+        connections.forEach(([i, j], idx) => {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('class', 'line');
+            line.setAttribute('x1', dots[i].x);
+            line.setAttribute('y1', dots[i].y);
+            line.setAttribute('x2', dots[i].x);
+            line.setAttribute('y2', dots[i].y);
+            lineElements.push({ element: line, from: i, to: j, index: idx });
+            svg.appendChild(line);
+        });
+
+        dotElements.forEach(el => svg.appendChild(el));
+
+        // Calculate section positions for scroll-based movement
+        function updateSectionPositions() {
+            const introSection = document.querySelector('.intro-section-teams');
+            const testimonialsSection = document.getElementById('testimonials');
+            const whatIOfferSection = document.querySelectorAll('.content-section')[2];
+
+            sections = [
+                {
+                    el: introSection,
+                    targetX: 200, targetY: 140, // Start position (right column)
+                    rotation: 0
+                },
+                {
+                    el: testimonialsSection,
+                    targetX: 80, targetY: 200, // Move to left side
+                    rotation: 30
+                },
+                {
+                    el: whatIOfferSection,
+                    targetX: 320, targetY: 140, // Move to right side
+                    rotation: 60
+                }
+            ];
+        }
+
+        // Scroll handler
+        function handleScroll() {
+            if (!isAnimationComplete) return;
+
+            const scrollY = window.scrollY;
+            scrollVelocity = scrollY - lastScrollY;
+            lastScrollY = scrollY;
+
+            // Find which section we're in
+            const viewportMiddle = scrollY + window.innerHeight * 0.4;
+
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const section = sections[i];
+                if (!section.el) continue;
+                const rect = section.el.getBoundingClientRect();
+                const sectionTop = rect.top + scrollY;
+
+                if (viewportMiddle >= sectionTop) {
+                    targetX = section.targetX;
+                    targetY = section.targetY;
+                    targetRotation = section.rotation;
+                    break;
+                }
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', updateSectionPositions);
+        updateSectionPositions();
+
+        function animate(time) {
+            const elapsed = time - startTime;
+
+            // Check if initial animation is complete
+            const lastLineFinishTime = lineGrowDelay + (connections.length - 1) * lineStagger + lineGrowDuration;
+            if (elapsed > lastLineFinishTime && !isAnimationComplete) {
+                isAnimationComplete = true;
+            }
+
+            // Smoothly interpolate organism position
+            const lerpSpeed = 0.02;
+            organismX += (targetX - organismX) * lerpSpeed;
+            organismY += (targetY - organismY) * lerpSpeed;
+            organismRotation += (targetRotation - organismRotation) * lerpSpeed;
+
+            // Breathing factor
+            const breathPhase = (time % breathCycle) / breathCycle;
+            const breathFactor = Math.sin(breathPhase * Math.PI * 2);
+
+            // Convert rotation to radians
+            const rotRad = (organismRotation * Math.PI) / 180;
+            const cosR = Math.cos(rotRad);
+            const sinR = Math.sin(rotRad);
+
+            // Update dot positions
+            dots.forEach((dot, i) => {
+                dot.phase += 0.003;
+                const wanderX = Math.sin(dot.phase) * 8;
+                const wanderY = Math.cos(dot.phase * 0.7) * 8;
+
+                // Apply breathing expansion
+                const breathExpand = breathFactor * 8;
+                const expandedX = dot.baseX * (1 + breathExpand * 0.05);
+                const expandedY = dot.baseY * (1 + breathExpand * 0.05);
+
+                // Apply rotation
+                const rotatedX = expandedX * cosR - expandedY * sinR;
+                const rotatedY = expandedX * sinR + expandedY * cosR;
+
+                // Final position
+                dot.x = organismX + rotatedX + wanderX;
+                dot.y = organismY + rotatedY + wanderY;
+
+                dotElements[i].setAttribute('cx', dot.x);
+                dotElements[i].setAttribute('cy', dot.y);
+            });
+
+            // Update lines with growth animation
+            lineElements.forEach(({ element, from, to, index }) => {
+                const fromDot = dots[from];
+                const toDot = dots[to];
+
+                const thisLineDelay = lineGrowDelay + (index * lineStagger);
+                let growProgress = 0;
+                if (elapsed > thisLineDelay) {
+                    growProgress = Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration);
+                    growProgress = 1 - Math.pow(1 - growProgress, 3);
+                }
+
+                element.setAttribute('x1', fromDot.x);
+                element.setAttribute('y1', fromDot.y);
+                element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
+                element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+
+        // Mobile fallback (simpler static version)
+        const mobileSvg = document.getElementById('connected-dots-mobile-svg');
+        if (mobileSvg) {
+            initMobileAnimation(mobileSvg);
+        }
+
+        function initMobileAnimation(svg) {
+            const mobilePositions = [
+                { x: 200, y: 30 },
+                { x: 320, y: 75 },
+                { x: 320, y: 175 },
+                { x: 200, y: 220 },
+                { x: 80, y: 175 },
+                { x: 80, y: 75 },
+                { x: 200, y: 125, isCenter: true }
+            ];
+
+            const mobileDots = [];
+            const mobileDotElements = [];
+            const mobileLineElements = [];
+            const mobileStartTime = performance.now();
+
+            mobilePositions.forEach((pos, i) => {
+                const dot = { x: pos.x, y: pos.y, baseX: pos.x, baseY: pos.y, phase: Math.random() * Math.PI * 2, isCenter: pos.isCenter || false };
+                mobileDots.push(dot);
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('class', 'dot');
-                // Center dot is slightly larger
-                circle.setAttribute('r', isCenter ? dotRadius * 1.3 : dotRadius);
-                // Center dot is slightly darker
-                if (isCenter) {
-                    circle.style.opacity = '0.85';
-                }
+                circle.setAttribute('r', dot.isCenter ? dotRadius * 1.3 : dotRadius);
+                if (dot.isCenter) circle.style.opacity = '0.85';
                 circle.setAttribute('cx', dot.x);
                 circle.setAttribute('cy', dot.y);
-                dotElements.push(circle);
-            }
+                mobileDotElements.push(circle);
+            });
 
-            // Create line elements (initially at dot positions - zero length)
-            for (let idx = 0; idx < connections.length; idx++) {
-                const [i, j] = connections[idx];
+            connections.forEach(([i, j], idx) => {
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('class', 'line');
-                // Start both ends at the "from" dot position (zero length)
-                line.setAttribute('x1', dots[i].x);
-                line.setAttribute('y1', dots[i].y);
-                line.setAttribute('x2', dots[i].x);
-                line.setAttribute('y2', dots[i].y);
-                lineElements.push({ element: line, from: i, to: j, index: idx });
+                line.setAttribute('x1', mobileDots[i].x);
+                line.setAttribute('y1', mobileDots[i].y);
+                line.setAttribute('x2', mobileDots[i].x);
+                line.setAttribute('y2', mobileDots[i].y);
+                mobileLineElements.push({ element: line, from: i, to: j, index: idx });
                 svg.appendChild(line);
-            }
+            });
+            mobileDotElements.forEach(el => svg.appendChild(el));
 
-            // Add dots on top of lines
-            dotElements.forEach(el => svg.appendChild(el));
-
-            function animate(time) {
-                const elapsed = time - startTime;
-
-                // Breathing factor
+            function mobileAnimate(time) {
+                const elapsed = time - mobileStartTime;
                 const breathPhase = (time % breathCycle) / breathCycle;
                 const breathFactor = Math.sin(breathPhase * Math.PI * 2);
 
-                // Update dot positions - slower wandering
-                dots.forEach((dot, i) => {
-                    dot.phase += 0.003; // Much slower movement
-                    const wanderX = Math.sin(dot.phase) * 12; // Smaller movement range
+                mobileDots.forEach((dot, i) => {
+                    dot.phase += 0.003;
+                    const wanderX = Math.sin(dot.phase) * 12;
                     const wanderY = Math.cos(dot.phase * 0.7) * 12;
-
                     const breathExpand = breathFactor * 10;
-                    const dirX = (dot.baseX - centerX) / 200;
-                    const dirY = (dot.baseY - centerY) / 200;
-
+                    const dirX = (dot.baseX - 200) / 200;
+                    const dirY = (dot.baseY - 125) / 200;
                     dot.x = dot.baseX + wanderX + dirX * breathExpand;
                     dot.y = dot.baseY + wanderY + dirY * breathExpand;
-
-                    dot.x = Math.max(bounds.minX, Math.min(bounds.maxX, dot.x));
-                    dot.y = Math.max(bounds.minY, Math.min(bounds.maxY, dot.y));
-
-                    dotElements[i].setAttribute('cx', dot.x);
-                    dotElements[i].setAttribute('cy', dot.y);
+                    mobileDotElements[i].setAttribute('cx', dot.x);
+                    mobileDotElements[i].setAttribute('cy', dot.y);
                 });
 
-                // Update line positions with staggered growth animation
-                lineElements.forEach(({ element, from, to, index }) => {
-                    const fromDot = dots[from];
-                    const toDot = dots[to];
-
-                    // Calculate line growth progress with staggered start
+                mobileLineElements.forEach(({ element, from, to, index }) => {
+                    const fromDot = mobileDots[from];
+                    const toDot = mobileDots[to];
                     const thisLineDelay = lineGrowDelay + (index * lineStagger);
-                    let growProgress = 0;
-                    if (elapsed > thisLineDelay) {
-                        growProgress = Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration);
-                        // Ease out for smoother animation
-                        growProgress = 1 - Math.pow(1 - growProgress, 3);
-                    }
-
-                    // Line starts at fromDot, grows toward toDot
+                    let growProgress = elapsed > thisLineDelay ? Math.min(1, (elapsed - thisLineDelay) / lineGrowDuration) : 0;
+                    growProgress = 1 - Math.pow(1 - growProgress, 3);
                     element.setAttribute('x1', fromDot.x);
                     element.setAttribute('y1', fromDot.y);
                     element.setAttribute('x2', fromDot.x + (toDot.x - fromDot.x) * growProgress);
                     element.setAttribute('y2', fromDot.y + (toDot.y - fromDot.y) * growProgress);
                 });
 
-                requestAnimationFrame(animate);
+                requestAnimationFrame(mobileAnimate);
             }
-
-            requestAnimationFrame(animate);
+            requestAnimationFrame(mobileAnimate);
         }
-
-        // Desktop configuration (7 dots - wide hexagon with center dot)
-        // Hexagon stretched horizontally to fit viewBox 400x280, center at (200, 140)
-        initConnectedDots('connected-dots-svg', {
-            positions: [
-                { x: 200, y: 30 },    // 0: top
-                { x: 340, y: 85 },    // 1: top right
-                { x: 340, y: 195 },   // 2: bottom right
-                { x: 200, y: 250 },   // 3: bottom
-                { x: 60, y: 195 },    // 4: bottom left
-                { x: 60, y: 85 },     // 5: top left
-                { x: 200, y: 140, isCenter: true }  // 6: center dot
-            ],
-            connections: [
-                // Spokes from center first (grow outward)
-                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
-                // Then hexagon edges
-                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
-            ],
-            centerX: 200,
-            centerY: 140,
-            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 260 }
-        });
-
-        // Mobile configuration (7 dots - wide hexagon with center)
-        initConnectedDots('connected-dots-mobile-svg', {
-            positions: [
-                { x: 200, y: 30 },    // 0: top
-                { x: 320, y: 75 },    // 1: top right
-                { x: 320, y: 175 },   // 2: bottom right
-                { x: 200, y: 220 },   // 3: bottom
-                { x: 80, y: 175 },    // 4: bottom left
-                { x: 80, y: 75 },     // 5: top left
-                { x: 200, y: 125, isCenter: true }  // 6: center dot
-            ],
-            connections: [
-                // Spokes from center first
-                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
-                // Then hexagon edges
-                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
-            ],
-            centerX: 200,
-            centerY: 125,
-            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 250 }
-        });
     })();
     </script>
 
