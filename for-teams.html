@@ -49,6 +49,63 @@
                 text-align: left;
             }
         }
+
+        /* Breathing Concentric Circles */
+        .breathing-circles {
+            position: absolute;
+            top: 50%;
+            left: 25%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+        }
+        .breathing-circles circle {
+            fill: none;
+            stroke: var(--color-primary);
+            stroke-width: 1;
+        }
+        .breathing-circles .circle-1 {
+            animation: breathe-circle 8s ease-in-out infinite;
+        }
+        .breathing-circles .circle-2 {
+            animation: breathe-circle 8s ease-in-out infinite 0.3s;
+        }
+        .breathing-circles .circle-3 {
+            animation: breathe-circle 8s ease-in-out infinite 0.6s;
+        }
+        .breathing-circles .circle-4 {
+            animation: breathe-circle 8s ease-in-out infinite 0.9s;
+        }
+        @keyframes breathe-circle {
+            0%, 100% {
+                transform: scale(0.95);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+        .intro-section-teams {
+            position: relative;
+            overflow: hidden;
+        }
+        .intro-section-teams .container {
+            position: relative;
+            z-index: 1;
+        }
+        @media (max-width: 768px) {
+            .breathing-circles {
+                width: 300px;
+                height: 300px;
+                left: 50%;
+                top: 20%;
+                opacity: 0.08;
+            }
+        }
     </style>
 </head>
 <body>
@@ -87,7 +144,14 @@
     </header>
 
     <!-- Intro + Image Section (Two Column) -->
-    <section class="content-section" style="position: relative;">
+    <section class="content-section intro-section-teams" style="position: relative;">
+        <!-- Breathing Circles Background -->
+        <svg class="breathing-circles" viewBox="0 0 500 500">
+            <circle class="circle-1" cx="250" cy="250" r="60" />
+            <circle class="circle-2" cx="250" cy="250" r="100" />
+            <circle class="circle-3" cx="250" cy="250" r="150" />
+            <circle class="circle-4" cx="250" cy="250" r="210" />
+        </svg>
         <div class="container">
             <div class="two-column-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
                 <!-- Image -->
