@@ -127,7 +127,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            opacity: 0.18;
+            opacity: 0.14;
             z-index: 1;
             overflow: visible;
         }
@@ -733,15 +733,15 @@
         // Organism position in SVG viewBox coordinates
         // viewBox is 0-400 x, 0-3000 y (maps to full page width, ~3000px page height)
         let organismX = 200;  // Start centered
-        let organismY = 700;  // Will be set properly by updateSectionPositions
+        let organismY = 300;  // Will be set properly by updateSectionPositions
         let organismRotation = 0;
-        let currentScale = 1.0;
+        let currentScale = 1.2;  // Start at normal size (no squash on mobile)
 
         // Target position the organism drifts toward (in SVG coords)
         let targetX = 200;
-        let targetY = 700;
+        let targetY = 300;
         let targetRotation = 0;
-        let targetScale = 1.0;
+        let targetScale = 1.2;
 
         // Section positions (will be calculated)
         let sections = [];
@@ -806,13 +806,13 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 200,  // Centered horizontally
-                    targetY: toSvgY(introTop + 1000),  // Well below the intro text and image
+                    targetY: toSvgY(introTop + 350),  // Behind the intro text
                     rotation: 0,
-                    scale: 1.0
+                    scale: 1.2
                 },
                 {
                     el: testimonialsSection,
-                    scrollThreshold: testimonialsTop + 100,
+                    scrollThreshold: testimonialsTop - 100,  // Trigger earlier
                     targetX: 100,  // Left side
                     targetY: toSvgY(testimonialsTop + 300),
                     rotation: 45,
@@ -820,11 +820,11 @@
                 },
                 {
                     el: whatIOfferSection,
-                    scrollThreshold: whatIOfferTop + 100,
+                    scrollThreshold: whatIOfferTop - 100,  // Trigger earlier
                     targetX: 300,  // Right side
                     targetY: toSvgY(whatIOfferTop + 350),
                     rotation: 90,
-                    scale: 1.5
+                    scale: 1.4
                 }
             ];
 
@@ -901,17 +901,16 @@
             const cosR = Math.cos(rotRad);
             const sinR = Math.sin(rotRad);
 
-            // Squeeze/stretch - same dramatic distortion as desktop
+            // Squeeze/stretch - organic distortion (no initial squash on mobile)
             const squeezePhase1 = (time % 12000) / 12000;
             const squeezePhase2 = (time % 8000) / 8000;
             const squeezePhase3 = (time % 19000) / 19000;
-            const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.6
-                                + Math.sin(squeezePhase2 * Math.PI * 2) * 0.3
-                                + Math.sin(squeezePhase3 * Math.PI * 2) * 0.25;
-            const initialSquash = Math.max(0, (1.5 - currentScale) * 1.2);
-            const baseDistortion = 0.15;
-            const scaleX = 1 + squeezeFactor * 0.35 + initialSquash + baseDistortion * Math.sin(squeezePhase2 * Math.PI * 4);
-            const scaleY = 1 - squeezeFactor * 0.35 - initialSquash * 0.7 - baseDistortion * Math.sin(squeezePhase3 * Math.PI * 4);
+            const squeezeFactor = Math.sin(squeezePhase1 * Math.PI * 2) * 0.5
+                                + Math.sin(squeezePhase2 * Math.PI * 2) * 0.25
+                                + Math.sin(squeezePhase3 * Math.PI * 2) * 0.2;
+            const baseDistortion = 0.12;
+            const scaleX = 1 + squeezeFactor * 0.3 + baseDistortion * Math.sin(squeezePhase2 * Math.PI * 4);
+            const scaleY = 1 - squeezeFactor * 0.3 - baseDistortion * Math.sin(squeezePhase3 * Math.PI * 4);
 
             // Color shift based on movement and rotation
             const rotationHueShift = Math.sin(continuousRotation * 0.01) * 25;
