@@ -55,24 +55,23 @@
             position: fixed;
             top: 50%;
             right: 10%;
-            width: 400px;
-            height: 280px;
+            width: 500px;
+            height: 350px;
             transform: translateY(-50%);
             pointer-events: none;
             opacity: 0.25;
-            z-index: 10;
+            z-index: 0;
         }
         .connected-dots .dot {
             fill: var(--color-primary);
         }
         .connected-dots .line {
             stroke: var(--color-primary);
-            stroke-width: 1;
+            stroke-width: 1.5;
             opacity: 0.6;
         }
         .intro-section-teams {
             position: relative;
-            overflow: hidden;
         }
         .intro-section-teams .container {
             position: relative;
@@ -112,7 +111,6 @@
         }
         .who-this-is-for {
             position: relative;
-            overflow: hidden;
         }
         .who-this-is-for .container {
             position: relative;
@@ -156,7 +154,7 @@
     </header>
 
     <!-- Floating Connected Dots Network (position: fixed) -->
-    <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
+    <svg class="connected-dots" id="connected-dots-svg" viewBox="-150 0 800 350" preserveAspectRatio="xMidYMid meet">
         <!-- Lines and dots will be created by JavaScript -->
     </svg>
 
@@ -375,17 +373,16 @@
         const startTime = performance.now();
 
         // Organism position and movement
-        let organismX = 200;
-        let organismY = 140;
+        let organismX = 250;
+        let organismY = 175;
         let organismRotation = 0;
-        let targetX = 200;
-        let targetY = 140;
+        let targetX = 250;
+        let targetY = 175;
         let targetRotation = 0;
 
         // Scroll tracking
         let lastScrollY = window.scrollY;
         let scrollVelocity = 0;
-        let isAnimationComplete = false;
 
         // Section positions (will be calculated)
         let sections = [];
@@ -395,8 +392,8 @@
             const dot = {
                 baseX: pos.x,
                 baseY: pos.y,
-                x: 200 + pos.x,
-                y: 140 + pos.y,
+                x: 250 + pos.x,
+                y: 175 + pos.y,
                 phase: Math.random() * Math.PI * 2,
                 isCenter: pos.isCenter || false
             };
@@ -434,26 +431,24 @@
             sections = [
                 {
                     el: introSection,
-                    targetX: 200, targetY: 140, // Start position (right column)
+                    targetX: 250, targetY: 175, // Start position (right column)
                     rotation: 0
                 },
                 {
                     el: testimonialsSection,
-                    targetX: 80, targetY: 200, // Move to left side
+                    targetX: 30, targetY: 175, // Move to far left side
                     rotation: 30
                 },
                 {
                     el: whatIOfferSection,
-                    targetX: 320, targetY: 140, // Move to right side
+                    targetX: 400, targetY: 175, // Move to right side
                     rotation: 60
                 }
             ];
         }
 
-        // Scroll handler
+        // Scroll handler - responds immediately, even during initial animation
         function handleScroll() {
-            if (!isAnimationComplete) return;
-
             const scrollY = window.scrollY;
             scrollVelocity = scrollY - lastScrollY;
             lastScrollY = scrollY;
@@ -482,12 +477,6 @@
 
         function animate(time) {
             const elapsed = time - startTime;
-
-            // Check if initial animation is complete
-            const lastLineFinishTime = lineGrowDelay + (connections.length - 1) * lineStagger + lineGrowDuration;
-            if (elapsed > lastLineFinishTime && !isAnimationComplete) {
-                isAnimationComplete = true;
-            }
 
             // Smoothly interpolate organism position
             const lerpSpeed = 0.02;
