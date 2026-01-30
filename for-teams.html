@@ -50,16 +50,16 @@
             }
         }
 
-        /* Connected Dots Network */
+        /* Connected Dots Network - positioned below text */
         .connected-dots {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 50%;
-            height: 100%;
+            display: block;
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            aspect-ratio: 400 / 280;
+            margin: 2rem auto 0;
             pointer-events: none;
-            z-index: 0;
-            opacity: 0.2;
+            opacity: 0.25;
         }
         .connected-dots .dot {
             fill: var(--color-primary);
@@ -156,22 +156,24 @@
 
     <!-- Intro + Image Section (Two Column) -->
     <section class="content-section intro-section-teams" style="position: relative;">
-        <!-- Connected Dots Network Background -->
-        <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
-            <!-- Lines and dots will be created by JavaScript -->
-        </svg>
         <div class="container">
-            <div class="two-column-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;">
+            <div class="two-column-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
                 <!-- Image -->
                 <div>
                     <img src="images/team-workshop.jpg" alt="Outdoor group workshop session" style="width: 100%; max-height: 450px; object-fit: cover; border-radius: 8px;">
                 </div>
-                <!-- Intro Text -->
-                <div style="font-size: 0.95rem;">
-                    <p>Your team carries more than they talk about. The pressure, the pace, the moments when everything needs to happen at once. They're good at pushing through. But pushing through has a cost, and it usually shows up later—in tension, in disconnection, in the slow burn of running on empty.</p>
-                    <p><em>What if there was a space to put some of that down, together?</em></p>
-                    <p>Through breathwork and nervous system training, your people learn to down-regulate stress in real time, recover more fully between intense periods, and stay present with each other when things get hard.</p>
-                    <p>And there's something that happens when people breathe together in a room: they come out of it feeling more like a team than when they walked in.</p>
+                <!-- Intro Text + Connected Dots below -->
+                <div>
+                    <div style="font-size: 0.95rem;">
+                        <p>Your team carries more than they talk about. The pressure, the pace, the moments when everything needs to happen at once. They're good at pushing through. But pushing through has a cost, and it usually shows up later—in tension, in disconnection, in the slow burn of running on empty.</p>
+                        <p><em>What if there was a space to put some of that down, together?</em></p>
+                        <p>Through breathwork and nervous system training, your people learn to down-regulate stress in real time, recover more fully between intense periods, and stay present with each other when things get hard.</p>
+                        <p>And there's something that happens when people breathe together in a room: they come out of it feeling more like a team than when they walked in.</p>
+                    </div>
+                    <!-- Connected Dots Network - below text -->
+                    <svg class="connected-dots" id="connected-dots-svg" viewBox="0 0 400 280" preserveAspectRatio="xMidYMid meet">
+                        <!-- Lines and dots will be created by JavaScript -->
+                    </svg>
                 </div>
             </div>
         </div>
@@ -452,47 +454,49 @@
             requestAnimationFrame(animate);
         }
 
-        // Desktop configuration (7 dots - hexagon with center dot)
-        // Hexagon vertices at 60° intervals, center at (200, 200), radius ~120
+        // Desktop configuration (7 dots - wide hexagon with center dot)
+        // Hexagon stretched horizontally to fit viewBox 400x280, center at (200, 140)
         initConnectedDots('connected-dots-svg', {
             positions: [
-                { x: 200, y: 80 },    // 0: top
-                { x: 304, y: 140 },   // 1: top right
-                { x: 304, y: 260 },   // 2: bottom right
-                { x: 200, y: 320 },   // 3: bottom
-                { x: 96, y: 260 },    // 4: bottom left
-                { x: 96, y: 140 },    // 5: top left
-                { x: 200, y: 200, isCenter: true }  // 6: center dot
+                { x: 200, y: 30 },    // 0: top
+                { x: 340, y: 85 },    // 1: top right
+                { x: 340, y: 195 },   // 2: bottom right
+                { x: 200, y: 250 },   // 3: bottom
+                { x: 60, y: 195 },    // 4: bottom left
+                { x: 60, y: 85 },     // 5: top left
+                { x: 200, y: 140, isCenter: true }  // 6: center dot
             ],
             connections: [
-                // Hexagon edges
-                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
-                // Spokes to center
-                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5]
+                // Spokes from center first (grow outward)
+                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
+                // Then hexagon edges
+                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
             ],
             centerX: 200,
-            centerY: 200,
-            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 380 }
+            centerY: 140,
+            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 260 }
         });
 
-        // Mobile configuration (7 dots - hexagon with center, smaller)
+        // Mobile configuration (7 dots - wide hexagon with center)
         initConnectedDots('connected-dots-mobile-svg', {
             positions: [
-                { x: 200, y: 60 },    // 0: top
-                { x: 287, y: 110 },   // 1: top right
-                { x: 287, y: 210 },   // 2: bottom right
-                { x: 200, y: 260 },   // 3: bottom
-                { x: 113, y: 210 },   // 4: bottom left
-                { x: 113, y: 110 },   // 5: top left
-                { x: 200, y: 160, isCenter: true }  // 6: center dot
+                { x: 200, y: 30 },    // 0: top
+                { x: 320, y: 75 },    // 1: top right
+                { x: 320, y: 175 },   // 2: bottom right
+                { x: 200, y: 220 },   // 3: bottom
+                { x: 80, y: 175 },    // 4: bottom left
+                { x: 80, y: 75 },     // 5: top left
+                { x: 200, y: 125, isCenter: true }  // 6: center dot
             ],
             connections: [
-                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0],
-                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5]
+                // Spokes from center first
+                [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5],
+                // Then hexagon edges
+                [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
             ],
             centerX: 200,
-            centerY: 160,
-            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 280 }
+            centerY: 125,
+            bounds: { minX: 20, maxX: 380, minY: 20, maxY: 250 }
         });
     })();
     </script>
