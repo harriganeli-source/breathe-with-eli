@@ -58,7 +58,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.10;
             z-index: 1;
             overflow: visible;
         }
@@ -377,15 +377,17 @@
         const lineGrowDelay = 1300;     // A bit more delay before starting
         const lineStagger = 350;        // More delay between lines
 
-        // Initial hexagon positions (will be transformed) - LARGER scale
-        const scale = 1.6;  // Make organism 60% larger
+        // Initial hexagon positions (base size, will be scaled dynamically)
+        const baseScale = 1.0;  // Base scale - will grow as organism moves down page
+        const maxScale = 1.8;   // Maximum scale when fully expanded
+        let currentScale = baseScale;  // Current dynamic scale
         const basePositions = [
-            { x: 0 * scale, y: -110 * scale },     // 0: top
-            { x: 95 * scale, y: -55 * scale },     // 1: top right
-            { x: 95 * scale, y: 55 * scale },      // 2: bottom right
-            { x: 0 * scale, y: 110 * scale },      // 3: bottom
-            { x: -95 * scale, y: 55 * scale },     // 4: bottom left
-            { x: -95 * scale, y: -55 * scale },    // 5: top left
+            { x: 0, y: -110 },     // 0: top
+            { x: 95, y: -55 },     // 1: top right
+            { x: 95, y: 55 },      // 2: bottom right
+            { x: 0, y: 110 },      // 3: bottom
+            { x: -95, y: 55 },     // 4: bottom left
+            { x: -95, y: -55 },    // 5: top left
             { x: 0, y: 0, isCenter: true }  // 6: center
         ];
 
@@ -410,6 +412,7 @@
         let targetX = 700;
         let targetY = 400;
         let targetRotation = 0;
+        let targetScale = 1.0;  // Target scale for expansion
 
         // Section positions (will be calculated)
         let sections = [];
@@ -473,22 +476,25 @@
                     el: introSection,
                     scrollThreshold: introTop,
                     targetX: 700,  // Right side (70% of 1000)
-                    targetY: toSvgY(introTop + 350),
-                    rotation: 0
+                    targetY: toSvgY(introTop + 450),  // Lower, in empty space below text
+                    rotation: 0,
+                    scale: 1.0  // Start smaller
                 },
                 {
                     el: testimonialsSection,
                     scrollThreshold: testimonialsTop + 100,  // More delay - trigger later
                     targetX: 120, // Far left side (12% of 1000)
                     targetY: toSvgY(testimonialsTop + 300),
-                    rotation: 45
+                    rotation: 45,
+                    scale: 1.5  // Grow as it moves down
                 },
                 {
                     el: whatIOfferSection,
                     scrollThreshold: whatIOfferTop + 100,  // More delay - trigger later
                     targetX: 880, // Right side (88% of 1000)
                     targetY: toSvgY(whatIOfferTop + 400),
-                    rotation: 90
+                    rotation: 90,
+                    scale: 1.8  // Fully expanded
                 }
             ];
 
@@ -496,8 +502,10 @@
             if (sections[0]) {
                 targetX = sections[0].targetX;
                 targetY = sections[0].targetY;
+                targetScale = sections[0].scale || 1.0;
                 organismX = targetX;
                 organismY = targetY;
+                currentScale = targetScale;
             }
 
             // Update container height to match page
@@ -543,6 +551,7 @@
                     targetX = section.targetX;
                     targetY = section.targetY;
                     targetRotation = section.rotation;
+                    targetScale = section.scale || 1.0;
                 }
             }
         }
@@ -563,6 +572,7 @@
             organismX += (targetX - organismX) * lerpSpeed;
             organismY += (targetY - organismY) * lerpSpeed;
             organismRotation += (targetRotation - organismRotation) * lerpSpeed;
+            currentScale += (targetScale - currentScale) * lerpSpeed;  // Smooth scale transition
 
             // Add continuous slow rotation for "crawling" effect
             continuousRotation += 0.015;
@@ -596,9 +606,9 @@
                 const breathExpand = breathFactor * 2;
                 const breathScale = 1 + breathExpand * 0.01;
 
-                // Apply squeeze/stretch to base positions
-                const expandedX = dot.baseX * scaleX * breathScale;
-                const expandedY = dot.baseY * scaleY * breathScale;
+                // Apply squeeze/stretch to base positions, plus dynamic scale
+                const expandedX = dot.baseX * currentScale * scaleX * breathScale;
+                const expandedY = dot.baseY * currentScale * scaleY * breathScale;
 
                 // Apply rotation
                 const rotatedX = expandedX * cosR - expandedY * sinR;
