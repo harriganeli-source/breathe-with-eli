@@ -1208,6 +1208,15 @@ p {
     font-size: 1rem !important;
 }
 
+/* Checkbox styling */
+.kit-form-container .formkit-checkboxes label,
+.kit-form-container .formkit-checkbox label,
+.kit-form-container [data-group="checkboxes"] label {
+    color: var(--color-white) !important;
+    font-size: 0.9rem !important;
+    font-family: var(--font-body) !important;
+}
+
 /* Hide Kit's powered by badge in CTA section */
 .kit-form-container .formkit-powered-by-convertkit-container {
     display: none !important;
