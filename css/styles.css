@@ -1098,7 +1098,7 @@ p {
         background-color: var(--color-primary);
     }
     50% {
-        background-color: #526352; /* slightly lighter sage */
+        background-color: #5f7a5f; /* noticeably lighter sage */
     }
 }
 
@@ -1338,26 +1338,22 @@ p {
     margin: 0;
 }
 
-.donation-banner {
-    background-color: var(--color-primary);
-    padding: var(--space-sm) 0;
-    text-align: center;
-}
-
-.donation-banner p {
+.cta-donation {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     font-size: 0.85rem;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.85);
-    margin: 0;
+    color: rgba(255, 255, 255, 0.75);
 }
 
-.donation-banner a {
+.cta-donation a {
     color: var(--color-white);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
-.donation-banner a:hover {
+.cta-donation a:hover {
     color: rgba(255, 255, 255, 0.7);
 }
 
