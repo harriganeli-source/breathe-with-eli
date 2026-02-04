@@ -42,6 +42,7 @@
         const headline = document.querySelector('.hero-content h1');
         if (headline) {
             headline.textContent = AB_TEST_CONFIG.variants[variant];
+            headline.style.opacity = '1';
         }
     }
 
