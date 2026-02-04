@@ -1338,24 +1338,27 @@ p {
     margin: 0;
 }
 
-.cta-donation {
-    margin-top: var(--space-lg);
-    padding-top: var(--space-md);
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+.donation-banner {
+    background-color: #e8ede8;
+    padding: var(--space-sm) 0;
     text-align: center;
-    font-size: 0.95rem;
-    font-style: italic;
-    color: var(--color-text-light);
 }
 
-.cta-donation a {
+.donation-banner p {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.donation-banner a {
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
-.cta-donation a:hover {
-    color: var(--color-secondary);
+.donation-banner a:hover {
+    color: var(--color-primary-dark);
 }
 
 /* ============================================
