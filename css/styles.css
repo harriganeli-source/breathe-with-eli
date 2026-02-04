@@ -1339,7 +1339,7 @@ p {
 }
 
 .donation-banner {
-    background-color: #e8ede8;
+    background-color: var(--color-primary);
     padding: var(--space-sm) 0;
     text-align: center;
 }
@@ -1347,18 +1347,18 @@ p {
 .donation-banner p {
     font-size: 0.85rem;
     font-style: italic;
-    color: var(--color-text);
+    color: rgba(255, 255, 255, 0.85);
     margin: 0;
 }
 
 .donation-banner a {
-    color: var(--color-primary);
+    color: var(--color-white);
     text-decoration: underline;
     text-underline-offset: 2px;
 }
 
 .donation-banner a:hover {
-    color: var(--color-primary-dark);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 /* ============================================
