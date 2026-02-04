@@ -1338,29 +1338,24 @@ p {
     margin: 0;
 }
 
-.footer-donation {
-    margin-bottom: var(--space-md) !important;
+.cta-donation {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 0.95rem;
     font-style: italic;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--color-text-light);
 }
 
-.footer-donation a {
-    display: inline-block;
-    margin-left: 0.5rem;
-    padding: 0.4rem 1rem;
-    font-size: 0.85rem;
-    font-style: normal;
-    color: var(--color-white);
-    background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 4px;
-    text-decoration: none;
-    transition: all 0.2s ease;
+.cta-donation a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
-.footer-donation a:hover {
-    background-color: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.6);
+.cta-donation a:hover {
+    color: var(--color-secondary);
 }
 
 /* ============================================
