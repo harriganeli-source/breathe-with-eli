@@ -1338,6 +1338,21 @@ p {
     margin: 0;
 }
 
+.footer-donation {
+    margin-bottom: var(--space-sm) !important;
+    font-style: italic;
+}
+
+.footer-donation a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.footer-donation a:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* ============================================
    RESPONSIVE STYLES
    ============================================ */
