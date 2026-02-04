@@ -31,6 +31,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+
+    <!-- A/B Test: Apply variant before render to prevent flash -->
+    <script>
+      (function() {
+        var variants = { A: 'Come Home to Yourself', B: 'Find Your Ground.' };
+        var variant = localStorage.getItem('ab_headline_variant');
+        if (!variant || (variant !== 'A' && variant !== 'B')) {
+          variant = Math.random() < 0.5 ? 'A' : 'B';
+          localStorage.setItem('ab_headline_variant', variant);
+        }
+        window.__abVariant = variant;
+        window.__abHeadline = variants[variant];
+      })();
+    </script>
+    <style>.hero-content h1 { opacity: 0; transition: opacity 0.1s; }</style>
 </head>
 <body>
     <!-- Navigation -->
