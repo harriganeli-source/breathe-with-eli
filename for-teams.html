@@ -574,11 +574,12 @@
             const whatIOfferSection = document.querySelectorAll('.content-section')[2];
 
             pageHeight = document.body.scrollHeight || 3000;
+            const svgViewBoxHeight = Math.max(3000, Math.ceil(pageHeight * 1.2));
             const introTop = introSection ? introSection.offsetTop : 0;
             const testimonialsTop = testimonialsSection ? testimonialsSection.offsetTop : 600;
             const whatIOfferTop = whatIOfferSection ? whatIOfferSection.offsetTop : 1200;
 
-            const toSvgY = (pageY) => (pageY / pageHeight) * 3000;
+            const toSvgY = (pageY) => (pageY / pageHeight) * svgViewBoxHeight;
 
             sections = [
                 { el: introSection, scrollThreshold: introTop, targetX: 700, targetY: toSvgY(introTop + 520), rotation: 0, scale: 1.0, stage: 0 },
@@ -597,6 +598,9 @@
 
             const container = document.getElementById('connected-dots-container');
             if (container) container.style.height = pageHeight + 'px';
+
+            const svg = document.getElementById('connected-dots-svg');
+            if (svg) svg.setAttribute('viewBox', `0 0 1000 ${svgViewBoxHeight}`);
         }
 
         let currentSectionIndex = 0;
