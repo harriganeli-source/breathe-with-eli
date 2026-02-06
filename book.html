@@ -182,7 +182,7 @@
                 <div class="booking-card" data-service="consultation" onclick="bookService('consultation')">
                     <h3>Virtual Consultation</h3>
                     <div class="price">Free</div>
-                    <div class="duration">30 minutes</div>
+                    <div class="duration">20 minutes</div>
                     <p>Not sure where to start? Let's chat and figure out the best path forward together.</p>
                 </div>
                 <div class="booking-card" data-service="breathwork" onclick="toggleOptions('breathwork')">
@@ -203,24 +203,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="booking-card" data-service="coaching" onclick="toggleOptions('coaching')">
+                <a class="booking-card" href="contact.html" style="text-decoration: none; color: inherit; display: block;">
                     <h3>Coaching</h3>
-                    <div class="price">$125</div>
+                    <div class="price">Apply for Coaching</div>
                     <div class="duration">75 minutes</div>
                     <p>1:1 somatic coaching for honest reflection, emotional unearthing, and embodied change.</p>
-                    <div class="sub-options" id="coaching-options">
-                        <h4>Choose your location:</h4>
-                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-victor')">
-                            <span class="location">Victor, NY (In-Person)</span>
-                        </div>
-                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-pittsford')">
-                            <span class="location">Pittsford, NY (In-Person)</span>
-                        </div>
-                        <div class="sub-option" onclick="event.stopPropagation(); bookService('coaching-virtual')">
-                            <span class="location">Virtual (Zoom)</span>
-                        </div>
-                    </div>
-                </div>
+                </a>
                 <div class="booking-card" data-service="group-breathwork" onclick="bookService('group-breathwork')">
                     <h3>Group Breathwork</h3>
                     <div class="price">Starting at $45</div>
