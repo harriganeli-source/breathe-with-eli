@@ -58,12 +58,6 @@
         .booking-card h3 {
             margin-bottom: 0.5rem;
         }
-        .booking-card .price {
-            font-size: 1.75rem;
-            font-family: var(--font-heading);
-            color: var(--color-primary);
-            margin: 1rem 0;
-        }
         .booking-card .duration {
             color: var(--color-text-light);
             font-size: 0.9rem;
@@ -109,11 +103,6 @@
             font-weight: 500;
             color: var(--color-text);
         }
-        .sub-option .option-price {
-            color: var(--color-primary);
-            font-weight: 500;
-        }
-
         .booking-container {
             min-height: 600px;
             background-color: var(--color-white);
@@ -185,14 +174,12 @@
             </div>
             <div class="booking-options">
                 <div class="booking-card" data-service="consultation" onclick="bookService('consultation')">
-                    <h3>Virtual Consultation</h3>
-                    <div class="price">Free</div>
+                    <h3>Free Virtual Consultation</h3>
                     <div class="duration">30 minutes</div>
                     <p>Not sure where to start? Let's chat and figure out the best path forward together.</p>
                 </div>
                 <div class="booking-card" data-service="breathwork" onclick="toggleOptions('breathwork')">
-                    <h3>Private Breathwork</h3>
-                    <div class="price">$175</div>
+                    <h3>Private Breathwork Session</h3>
                     <div class="duration">90 minutes</div>
                     <p>A powerful somatic session to release tension, process emotions, and reconnect with your body.</p>
                     <div class="sub-options" id="breathwork-options">
@@ -209,8 +196,7 @@
                     </div>
                 </div>
                 <div class="booking-card" data-service="coaching" onclick="toggleOptions('coaching')">
-                    <h3>Coaching Session</h3>
-                    <div class="price">$125</div>
+                    <h3>Coaching</h3>
                     <div class="duration">75 minutes</div>
                     <p>1:1 somatic coaching for honest reflection, emotional unearthing, and embodied change.</p>
                     <div class="sub-options" id="coaching-options">
