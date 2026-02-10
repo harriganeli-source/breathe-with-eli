@@ -6,6 +6,8 @@
 ## Key Files
 - **Stylesheet**: `css/styles.css` (main styles, ~2300 lines)
 - **JavaScript**: `js/main.js` (navigation, animations, mandalas)
+- **JavaScript**: `js/events.js` (dynamic event card rendering from JSON)
+- **Event Data**: `data/events.json` (single source of truth for all events)
 - **Images**: `images/` directory
 
 ## Pages
@@ -20,6 +22,7 @@
 | `mensgroup.html` | "The Present Man Project" |
 | `valentines.html` | "The Inner Beloved" couples workshop |
 | `for-teams.html` | Corporate/team offerings |
+| `admin.html` | Event management admin panel (hidden, not in nav) |
 
 ## Design System
 **Colors:**
@@ -55,31 +58,25 @@ This prevents overwriting changes that were merged via GitHub.
 
 This applies to all content on the site - always preserve the original copy from breathewitheli.com unless explicitly asked to change it.
 
-## Content Sync Requirements (CRITICAL)
+## Event Management System
 
-**When ANY event is added, changed, or removed, update ALL locations where it appears:**
+**Events are managed via `data/events.json`** — the single source of truth. Event cards on these 4 pages are rendered dynamically by `js/events.js`:
+- `upcoming.html`, `index.html`, `book.html`, `work-with-me.html`
 
-1. **Upcoming Events** - These four pages must have identical event listings:
-   - `upcoming.html` (primary source - Groups & Workshops page)
-   - `index.html` (Upcoming Events section on homepage)
-   - `book.html` (Upcoming Events section)
-   - `work-with-me.html` (Upcoming Events section at bottom)
+**To update events:**
+1. Go to `/admin` to open the admin panel
+2. Add, edit, delete, or reorder events using the UI
+3. Click "Download events.json" to export the updated file
+4. Replace `data/events.json` in the project with the downloaded file
+5. Commit and push — Vercel auto-deploys
 
-   **Sync these details for each event:**
-   - Event name
-   - Day of week, date, and time
-   - Location
-   - Description text
-   - Registration/info links
+**Or** edit `data/events.json` directly — changes auto-propagate to all 4 pages.
 
-2. **Individual Event Pages** - Must match the event listings above:
-   - `valentines.html` - The Inner Beloved workshop details
-   - `mens-weekend.html` - Men's Weekend Workshop details
-   - `mensgroup.html` - The Present Man Project details
+**Individual event detail pages** (`valentines.html`, `mens-weekend.html`, `mensgroup.html`) are standalone HTML and must be updated manually when their details change.
 
-   When dates, times, or details change on an individual event page, update the corresponding event card on all three listing pages (and vice versa).
+## Content Sync Requirements
 
-3. **Booking Cards** - The investment/booking cards must match across:
+1. **Booking Cards** - The investment/booking cards must match across:
    - `book.html` (booking-options cards)
    - `work-with-me.html` (Investment section cards)
    - Same order: Virtual Consultation, Private Breathwork, Coaching Session

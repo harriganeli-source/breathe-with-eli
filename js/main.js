@@ -74,11 +74,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    // Add fade-in class to elements
-    document.querySelectorAll('.service-card, .testimonial-quote, .testimonial-card, .event-card, .intro-content, .intro--with-image .two-col').forEach(el => {
-        el.classList.add('fade-in');
-        fadeInObserver.observe(el);
-    });
+    // Reusable function to observe fade-in elements (also called by events.js after dynamic rendering)
+    window.observeFadeIns = function() {
+        document.querySelectorAll('.service-card, .testimonial-quote, .testimonial-card, .event-card, .intro-content, .intro--with-image .two-col').forEach(el => {
+            if (!el.classList.contains('fade-in')) {
+                el.classList.add('fade-in');
+                fadeInObserver.observe(el);
+            }
+        });
+    };
+
+    // Add fade-in class to elements on initial load
+    window.observeFadeIns();
 
     // Synchronize service icon breathing animations
     // Use a single JavaScript timer to drive all icons together
