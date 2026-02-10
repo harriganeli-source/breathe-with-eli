@@ -1357,6 +1357,51 @@ p {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* Compact CTA - side-by-side layout */
+.cta--compact {
+    padding: var(--space-lg) 0;
+}
+
+.cta--compact .cta-donation {
+    margin-top: var(--space-md);
+}
+
+.cta-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+}
+
+.cta-inline-text {
+    text-align: left;
+}
+
+.cta-inline-text h2 {
+    margin-bottom: var(--space-xs);
+}
+
+.cta-inline-text p {
+    margin-bottom: 0;
+}
+
+.cta-inline-form .kit-form-container {
+    max-width: none;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .cta-inline {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
+        text-align: center;
+    }
+
+    .cta-inline-text {
+        text-align: center;
+    }
+}
+
 /* ============================================
    RESPONSIVE STYLES
    ============================================ */
