@@ -27,6 +27,19 @@
       "isExternal": false
     },
     {
+      "id": "breathwork-barn-2025-02-17",
+      "title": "Breathwork at the Barn",
+      "month": "Feb",
+      "day": "17",
+      "endDate": null,
+      "dateTimeDisplay": "Tuesday, February 17 \u00b7 5:00 PM - 7:00 PM",
+      "location": "Victor, NY",
+      "description": "Come as you are & unwind chronic patterns of bracing in the body-mind with the support of a group.",
+      "buttonText": "Register",
+      "buttonLink": "https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=category:Breathwork%20Group",
+      "isExternal": true
+    },
+    {
       "id": "small-group-2025-03-03",
       "title": "Small Group Breathwork",
       "month": "Mar",
