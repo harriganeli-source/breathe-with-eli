@@ -14,6 +14,19 @@
       "isExternal": false
     },
     {
+      "id": "breathwork-at-the-barn-2026-mar-1",
+      "title": "Breathwork at the Barn",
+      "month": "Mar",
+      "day": "1",
+      "endDate": null,
+      "dateTimeDisplay": "Sunday, March 1 · 2:00 PM - 4:00 PM ",
+      "location": "Victor, NY",
+      "description": "My standard monthly group. Come as you are & unwind chronic patterns of bracing in the body-mind.",
+      "buttonText": "Register",
+      "buttonLink": "https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88474521",
+      "isExternal": true
+    },
+    {
       "id": "small-group-2025-03-03",
       "title": "Small Group Breathwork",
       "month": "Mar",
@@ -51,19 +64,6 @@
       "buttonText": "More Info",
       "buttonLink": "mensgroup.html",
       "isExternal": false
-    },
-    {
-      "id": "breathwork-at-the-barn-2026-mar-1",
-      "title": "Breathwork at the Barn",
-      "month": "Mar",
-      "day": "1",
-      "endDate": null,
-      "dateTimeDisplay": "Sunday, March 1 · 2:00 PM - 4:00 PM ",
-      "location": "Victor, NY",
-      "description": "My standard monthly group. Come as you are & unwind chronic patterns of bracing in the body-mind.",
-      "buttonText": "Register",
-      "buttonLink": "https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88474521",
-      "isExternal": true
     }
   ]
 }
