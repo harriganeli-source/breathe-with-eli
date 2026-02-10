@@ -760,6 +760,7 @@
                 var response = await fetch('data/events.json');
                 var data = await response.json();
                 events = data.events || [];
+                sortEvents();
                 renderEventList();
             } catch (error) {
                 console.error('Failed to load events:', error);
@@ -782,12 +783,6 @@
                 var ev = events[i];
                 var isEditing = (i === editingIndex);
                 html += '<li class="admin-event-item' + (isEditing ? ' editing' : '') + '">';
-
-                // Reorder arrows
-                html += '<div class="admin-reorder">';
-                html += '<button onclick="moveEvent(' + i + ', -1)" title="Move up"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>';
-                html += '<button onclick="moveEvent(' + i + ', 1)" title="Move down"' + (i === events.length - 1 ? ' disabled' : '') + '>&darr;</button>';
-                html += '</div>';
 
                 // Date badge
                 html += '<div class="admin-event-date-badge">';
@@ -812,6 +807,17 @@
             }
 
             list.innerHTML = html;
+        }
+
+        // Sort events chronologically by month then day
+        var MONTH_ORDER = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+
+        function sortEvents() {
+            events.sort(function(a, b) {
+                var monthDiff = (MONTH_ORDER[a.month] || 0) - (MONTH_ORDER[b.month] || 0);
+                if (monthDiff !== 0) return monthDiff;
+                return (parseInt(a.day) || 0) - (parseInt(b.day) || 0);
+            });
         }
 
         // Add a new event (clear form)
@@ -879,6 +885,7 @@
                 showToast('Event added');
             }
 
+            sortEvents();
             editingIndex = -1;
             clearForm();
             renderEventList();
