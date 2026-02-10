@@ -1,43 +1,17 @@
 {
   "events": [
     {
-      "id": "breathwork-barn-2025-02-01",
-      "title": "Breathwork at the Barn",
-      "month": "Feb",
-      "day": "1",
-      "endDate": null,
-      "dateTimeDisplay": "Saturday, February 1 \u00b7 2:00 PM - 4:00 PM",
-      "location": "Victor, NY",
-      "description": "Come as you are & unwind chronic patterns of bracing in the body-mind with the support of a group.",
-      "buttonText": "Register",
-      "buttonLink": "https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88474521",
-      "isExternal": true
-    },
-    {
       "id": "inner-beloved-2025-02-15",
       "title": "The Inner Beloved Workshop",
       "month": "Feb",
       "day": "15",
       "endDate": null,
-      "dateTimeDisplay": "Sunday, February 15 \u00b7 1:00 PM - 5:00 PM",
+      "dateTimeDisplay": "Sunday, February 15 · 1:00 PM - 5:00 PM",
       "location": "Victor, NY",
-      "description": "A half-day Valentine\u2019s Weekend workshop with <a href=\"https://jessetorgerson.com/\" target=\"_blank\" rel=\"noopener\" style=\"color: var(--color-primary);\">Jesse Torgerson</a> & Eli Harrigan.",
+      "description": "A half-day Valentine’s Weekend workshop with <a href=\"https://jessetorgerson.com/\" target=\"_blank\" rel=\"noopener\" style=\"color: var(--color-primary);\">Jesse Torgerson</a> & Eli Harrigan.",
       "buttonText": "More Info",
       "buttonLink": "valentines.html",
       "isExternal": false
-    },
-    {
-      "id": "breathwork-barn-2025-02-17",
-      "title": "Breathwork at the Barn",
-      "month": "Feb",
-      "day": "17",
-      "endDate": null,
-      "dateTimeDisplay": "Tuesday, February 17 \u00b7 5:00 PM - 7:00 PM",
-      "location": "Victor, NY",
-      "description": "Come as you are & unwind chronic patterns of bracing in the body-mind with the support of a group.",
-      "buttonText": "Register",
-      "buttonLink": "https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=category:Breathwork%20Group",
-      "isExternal": true
     },
     {
       "id": "small-group-2025-03-03",
@@ -45,7 +19,7 @@
       "month": "Mar",
       "day": "3",
       "endDate": null,
-      "dateTimeDisplay": "Tuesday, March 3 \u00b7 6:00 PM - 8:00 PM",
+      "dateTimeDisplay": "Tuesday, March 3 · 6:00 PM - 8:00 PM",
       "location": "Pittsford, NY",
       "description": "An intimate group limited to four participants provides room for more personalized attention. Come as you are & unwind chronic patterns of bracing in the body-mind.",
       "buttonText": "Register",
@@ -54,7 +28,7 @@
     },
     {
       "id": "mens-weekend-2025-03-27",
-      "title": "Men\u2019s Weekend Workshop",
+      "title": "Men’s Weekend Workshop",
       "month": "Mar",
       "day": "27",
       "endDate": "to 29",
@@ -71,9 +45,9 @@
       "month": "Apr",
       "day": "7",
       "endDate": "to Jun 30",
-      "dateTimeDisplay": "Ongoing Men\u2019s Group \u00b7 7:00 PM - 9:30 PM Tuesdays",
+      "dateTimeDisplay": "Ongoing Men’s Group · 7:00 PM - 9:30 PM Tuesdays",
       "location": "Victor, NY",
-      "description": "Next cohort dates: April 7th, 21st \u00b7 May 5th, 19th \u00b7 June 2nd, 16th, 30th",
+      "description": "Next cohort dates: April 7th, 21st · May 5th, 19th · June 2nd, 16th, 30th",
       "buttonText": "More Info",
       "buttonLink": "mensgroup.html",
       "isExternal": false
