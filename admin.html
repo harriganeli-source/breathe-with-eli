@@ -1096,9 +1096,9 @@
             status.textContent = 'Pushing to GitHub...';
 
             try {
-                // Step 1: Get the current file's SHA (needed for updates)
-                var getResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE_PATH + '?ref=' + GITHUB_BRANCH,
+                // Step 1: Get the current file's SHA using the Git Data API (no caching issues)
+                var refResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/ref/heads/' + GITHUB_BRANCH,
                     {
                         headers: {
                             'Authorization': 'token ' + token,
@@ -1107,46 +1107,110 @@
                     }
                 );
 
-                var currentSHA = null;
-                if (getResponse.ok) {
-                    var fileData = await getResponse.json();
-                    currentSHA = fileData.sha;
-                } else if (getResponse.status !== 404) {
-                    throw new Error('Failed to check file: ' + getResponse.status);
-                }
+                if (!refResponse.ok) throw new Error('Failed to get branch ref: ' + refResponse.status);
+                var refData = await refResponse.json();
+                var commitSha = refData.object.sha;
 
-                // Step 2: Prepare the updated content
-                var jsonContent = JSON.stringify({ events: events }, null, 2) + '\n';
-                var base64Content = btoa(unescape(encodeURIComponent(jsonContent)));
-
-                // Step 3: Commit the file via GitHub API
-                var body = {
-                    message: 'Update events via admin panel',
-                    content: base64Content,
-                    branch: GITHUB_BRANCH
-                };
-
-                if (currentSHA) {
-                    body.sha = currentSHA;
-                }
-
-                var putResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + GITHUB_FILE_PATH,
+                // Get the tree for the latest commit
+                var commitResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/commits/' + commitSha,
                     {
-                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'token ' + token,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    }
+                );
+
+                if (!commitResponse.ok) throw new Error('Failed to get commit: ' + commitResponse.status);
+                var commitData = await commitResponse.json();
+                var treeSha = commitData.tree.sha;
+
+                // Step 2: Create a new blob with the updated content
+                var jsonContent = JSON.stringify({ events: events }, null, 2) + '\n';
+
+                var blobResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/blobs',
+                    {
+                        method: 'POST',
                         headers: {
                             'Authorization': 'token ' + token,
                             'Accept': 'application/vnd.github.v3+json',
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(body)
+                        body: JSON.stringify({
+                            content: jsonContent,
+                            encoding: 'utf-8'
+                        })
                     }
                 );
 
-                if (!putResponse.ok) {
-                    var errorData = await putResponse.json();
-                    throw new Error(errorData.message || 'GitHub API error: ' + putResponse.status);
-                }
+                if (!blobResponse.ok) throw new Error('Failed to create blob: ' + blobResponse.status);
+                var blobData = await blobResponse.json();
+
+                // Step 3: Create a new tree with the updated file
+                var treeResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/trees',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'token ' + token,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            base_tree: treeSha,
+                            tree: [{
+                                path: GITHUB_FILE_PATH,
+                                mode: '100644',
+                                type: 'blob',
+                                sha: blobData.sha
+                            }]
+                        })
+                    }
+                );
+
+                if (!treeResponse.ok) throw new Error('Failed to create tree: ' + treeResponse.status);
+                var treeData = await treeResponse.json();
+
+                // Step 4: Create a new commit
+                var newCommitResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/commits',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'token ' + token,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: 'Update events via admin panel',
+                            tree: treeData.sha,
+                            parents: [commitSha]
+                        })
+                    }
+                );
+
+                if (!newCommitResponse.ok) throw new Error('Failed to create commit: ' + newCommitResponse.status);
+                var newCommitData = await newCommitResponse.json();
+
+                // Step 5: Update the branch reference to point to the new commit
+                var updateRefResponse = await fetch(
+                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/refs/heads/' + GITHUB_BRANCH,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': 'token ' + token,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            sha: newCommitData.sha
+                        })
+                    }
+                );
+
+                if (!updateRefResponse.ok) throw new Error('Failed to update branch: ' + updateRefResponse.status);
 
                 status.textContent = '✓ Published! Vercel will deploy in ~30 seconds.';
                 showToast('Events published successfully!');
