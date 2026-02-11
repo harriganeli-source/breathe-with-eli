@@ -390,72 +390,6 @@
             opacity: 0.9;
         }
 
-        .admin-settings-toggle {
-            color: var(--color-white);
-            opacity: 0.7;
-            font-size: 0.8rem;
-            text-decoration: underline;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-family: var(--font-body);
-            margin-left: auto;
-        }
-
-        .admin-settings-toggle:hover {
-            opacity: 1;
-        }
-
-        .admin-settings-panel {
-            background: #3d4f3d;
-            padding: 1rem 2rem;
-            display: none;
-        }
-
-        .admin-settings-panel.visible {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .admin-settings-panel label {
-            color: var(--color-white);
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-
-        .admin-settings-panel input {
-            flex: 1;
-            min-width: 200px;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-            color: var(--color-white);
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-
-        .admin-settings-panel input::placeholder {
-            color: rgba(255,255,255,0.4);
-        }
-
-        .admin-settings-panel input:focus {
-            outline: none;
-            border-color: rgba(255,255,255,0.6);
-            background: rgba(255,255,255,0.15);
-        }
-
-        .admin-settings-panel .admin-btn {
-            color: var(--color-white);
-            border-color: rgba(255,255,255,0.3);
-            background: transparent;
-        }
-
-        .admin-settings-panel .admin-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
 
         .admin-toast {
             position: fixed;
@@ -680,20 +614,11 @@
 
     <!-- Publish Bar -->
     <div class="admin-publish-bar">
-        <button class="publish-btn" onclick="publishToGitHub()" id="publish-btn">
+        <button class="publish-btn" onclick="publishEvents()" id="publish-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             Publish
         </button>
-        <span class="publish-status" id="publish-status">Push changes live to breathewitheli.com</span>
-        <button class="admin-settings-toggle" onclick="toggleSettings()">⚙ Settings</button>
-    </div>
-
-    <!-- Settings Panel (hidden by default) -->
-    <div class="admin-settings-panel" id="settings-panel">
-        <label for="github-token">GitHub Token:</label>
-        <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
-        <button class="admin-btn" onclick="saveToken()">Save Token</button>
-        <span style="color: rgba(255,255,255,0.6); font-size: 0.75rem;">Stored in your browser only. Never sent anywhere except GitHub.</span>
+        <span class="publish-status" id="publish-status">Publish events live to breathewitheli.com</span>
     </div>
 
     <!-- Export Fallback Bar -->
@@ -731,6 +656,7 @@
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').classList.remove('admin-content-hidden');
                 sessionStorage.setItem('admin-auth', 'true');
+                sessionStorage.setItem('admin-pass', password);
                 loadEvents();
             } else {
                 document.getElementById('login-error').style.display = 'block';
@@ -757,7 +683,7 @@
         // Load events from JSON file
         async function loadEvents() {
             try {
-                var response = await fetch('data/events.json');
+                var response = await fetch('/api/events');
                 var data = await response.json();
                 events = data.events || [];
                 sortEvents();
@@ -1057,171 +983,32 @@
         }
 
         // ============================================
-        // PUBLISH TO GITHUB
+        // PUBLISH TO VERCEL BLOB
         // ============================================
-        var GITHUB_REPO = 'harriganeli-source/breathe-with-eli';
-        var GITHUB_FILE_PATH = 'data/events.json';
-        var GITHUB_BRANCH = 'main';
-
-        // Load saved token into settings field on page load
-        (function() {
-            var savedToken = localStorage.getItem('github_token');
-            if (savedToken) {
-                document.getElementById('github-token').value = savedToken;
-            }
-        })();
-
-        function toggleSettings() {
-            var panel = document.getElementById('settings-panel');
-            panel.classList.toggle('visible');
-        }
-
-        function saveToken() {
-            var token = document.getElementById('github-token').value.trim();
-            if (!token) {
-                showToast('Please enter a token', true);
-                return;
-            }
-            localStorage.setItem('github_token', token);
-            showToast('Token saved to browser');
-            document.getElementById('settings-panel').classList.remove('visible');
-        }
-
-        async function publishToGitHub() {
-            var token = localStorage.getItem('github_token');
-            if (!token) {
-                showToast('Set up your GitHub token first (click Settings)', true);
-                toggleSettings();
-                return;
-            }
-
+        async function publishEvents() {
             var btn = document.getElementById('publish-btn');
             var status = document.getElementById('publish-status');
 
             btn.disabled = true;
             btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg> Publishing...';
-            status.textContent = 'Pushing to GitHub...';
+            status.textContent = 'Publishing events...';
 
             try {
-                // Step 1: Get the current file's SHA using the Git Data API (no caching issues)
-                var refResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/ref/heads/' + GITHUB_BRANCH,
-                    {
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    }
-                );
+                var passHash = await sha256(sessionStorage.getItem('admin-pass') || '');
 
-                if (!refResponse.ok) throw new Error('Failed to get branch ref: ' + refResponse.status);
-                var refData = await refResponse.json();
-                var commitSha = refData.object.sha;
+                var response = await fetch('/api/events', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ events: events, passHash: passHash })
+                });
 
-                // Get the tree for the latest commit
-                var commitResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/commits/' + commitSha,
-                    {
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    }
-                );
+                if (!response.ok) {
+                    var errData = await response.json().catch(function() { return {}; });
+                    throw new Error(errData.error || 'Status ' + response.status);
+                }
 
-                if (!commitResponse.ok) throw new Error('Failed to get commit: ' + commitResponse.status);
-                var commitData = await commitResponse.json();
-                var treeSha = commitData.tree.sha;
-
-                // Step 2: Create a new blob with the updated content
-                var jsonContent = JSON.stringify({ events: events }, null, 2) + '\n';
-
-                var blobResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/blobs',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            content: jsonContent,
-                            encoding: 'utf-8'
-                        })
-                    }
-                );
-
-                if (!blobResponse.ok) throw new Error('Failed to create blob: ' + blobResponse.status);
-                var blobData = await blobResponse.json();
-
-                // Step 3: Create a new tree with the updated file
-                var treeResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/trees',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            base_tree: treeSha,
-                            tree: [{
-                                path: GITHUB_FILE_PATH,
-                                mode: '100644',
-                                type: 'blob',
-                                sha: blobData.sha
-                            }]
-                        })
-                    }
-                );
-
-                if (!treeResponse.ok) throw new Error('Failed to create tree: ' + treeResponse.status);
-                var treeData = await treeResponse.json();
-
-                // Step 4: Create a new commit
-                var newCommitResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/commits',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            message: 'Update events via admin panel',
-                            tree: treeData.sha,
-                            parents: [commitSha]
-                        })
-                    }
-                );
-
-                if (!newCommitResponse.ok) throw new Error('Failed to create commit: ' + newCommitResponse.status);
-                var newCommitData = await newCommitResponse.json();
-
-                // Step 5: Update the branch reference to point to the new commit
-                var updateRefResponse = await fetch(
-                    'https://api.github.com/repos/' + GITHUB_REPO + '/git/refs/heads/' + GITHUB_BRANCH,
-                    {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': 'token ' + token,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            sha: newCommitData.sha
-                        })
-                    }
-                );
-
-                if (!updateRefResponse.ok) throw new Error('Failed to update branch: ' + updateRefResponse.status);
-
-                status.textContent = '✓ Published! Vercel will deploy in ~30 seconds.';
+                status.textContent = '✓ Published! Changes are live now.';
                 showToast('Events published successfully!');
-
             } catch (error) {
                 console.error('Publish failed:', error);
                 status.textContent = '✗ Publish failed: ' + error.message;

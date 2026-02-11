@@ -6,7 +6,7 @@
 
 (async function() {
     try {
-        const response = await fetch('data/events.json');
+        const response = await fetch('/api/events');
         if (!response.ok) throw new Error('Failed to load events');
         const data = await response.json();
 
