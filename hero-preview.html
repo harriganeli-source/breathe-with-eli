@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Preview — White Embossed Mandala</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        /* Override hero background to pure white */
+        .hero--mandala {
+            background: #ffffff;
+        }
+
+        /* Remove noise texture overlay */
+        .hero--mandala::before {
+            display: none;
+        }
+
+        /* White embossed chevrons with shadow-only visibility */
+        .mandala-hover-container .chevron::before,
+        .mandala-hover-container .chevron::after {
+            background-color: #ffffff;
+            opacity: 1;
+            width: 20px;
+            height: 5px;
+            border-radius: 3px;
+            box-shadow:
+                calc(1.5px + var(--breath, 0) * 2px) calc(1.5px + var(--breath, 0) * 2px)
+                calc(4px + var(--breath, 0) * 5px) rgba(0, 0, 0, 0.12),
+                calc(-1px - var(--breath, 0) * 1px) calc(-1px - var(--breath, 0) * 1px)
+                calc(2px + var(--breath, 0) * 2px) rgba(255, 255, 255, 0.9);
+        }
+
+        /* Scroll chevron overrides for white theme */
+        .mandala-hover-container .chevron.scroll-chevron::before,
+        .mandala-hover-container .chevron.scroll-chevron::after {
+            opacity: 1;
+        }
+
+        .mandala-hover-container .chevron.scroll-chevron:hover::before,
+        .mandala-hover-container .chevron.scroll-chevron:hover::after {
+            opacity: 1;
+        }
+
+        /* Preview-only: side-by-side link */
+        .preview-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #2d2d2d;
+            color: #fff;
+            text-align: center;
+            padding: 0.5rem 1rem;
+            font-family: Inter, sans-serif;
+            font-size: 0.85rem;
+            z-index: 9999;
+        }
+        .preview-banner a {
+            color: #c4a77d;
+            margin-left: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-banner">
+        Preview: White Embossed Mandala
+        <a href="index.html">View current homepage</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero hero--mandala">
+        <div class="mandala-hover-container" id="hero-mandala"></div>
+        <div class="hero-content">
+            <h1>Come Home to Yourself</h1>
+            <p class="hero-subtitle">Get out of your head and back into your body.<br class="desktop-only"> Private sessions, workshops, and men's groups.</p>
+            <div class="mandala-mobile" id="hero-mandala-mobile"></div>
+            <div class="hero-buttons">
+                <a href="#mailing-list" class="btn btn-primary">Join the Mailing List</a>
+                <a href="work-with-me.html" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+        <a href="#intro" class="scroll-indicator" aria-label="Scroll to content">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </a>
+    </section>
+
+    <script>
+    // Interactive Hover Mandala — White Embossed Version
+    (function() {
+        const isMobile = window.innerWidth <= 768;
+        const container = isMobile
+            ? document.getElementById('hero-mandala-mobile')
+            : document.getElementById('hero-mandala');
+        const heroSection = document.querySelector('.hero--mandala');
+        if (!container || !heroSection) return;
+
+        const numChevrons = isMobile ? 12 : 24;
+        const baseRadius = isMobile ? 60 : 290;
+        const breathAmount = 6;
+        const hoverExpandAmount = 40;
+        const breathDuration = 8000;
+        const hoverEaseSpeed = 0.015;
+        const chevrons = [];
+        const chevronState = [];
+
+        // Entrance animation
+        const entranceDelay = 300;
+        const entranceDuration = 2000;
+        const entranceStartRadius = 1.4;
+        const entranceStartTime = Date.now() + entranceDelay;
+        let entranceComplete = false;
+        let bottomChevronFlipped = false;
+        const bottomChevronIndex = Math.floor(numChevrons * 0.25);
+
+        // Create chevrons — no hue gradient, white only
+        for (let i = 0; i < numChevrons; i++) {
+            const angle = (i / numChevrons) * Math.PI * 2;
+            const chevron = document.createElement('div');
+            chevron.className = 'chevron';
+
+            const rotation = (angle * 180 / Math.PI) + 90;
+            chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+            chevron.style.opacity = '0';
+
+            container.appendChild(chevron);
+            chevrons.push(chevron);
+            chevronState.push({
+                angle: angle,
+                currentOffset: 0,
+                targetOffset: 0,
+                collapseTimeout: null,
+                entranceStagger: i * (300 / numChevrons)
+            });
+        }
+
+        function updateChevronPosition(index, breathProgress, now) {
+            const chevron = chevrons[index];
+            const state = chevronState[index];
+
+            state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+
+            // Entrance animation
+            let entranceProgress = 1;
+            let entranceRadiusMultiplier = 1;
+            let entranceOpacity = 1;
+
+            if (!entranceComplete) {
+                const entranceElapsed = now - entranceStartTime - state.entranceStagger;
+                if (entranceElapsed < 0) {
+                    entranceProgress = 0;
+                } else if (entranceElapsed < entranceDuration) {
+                    const t = entranceElapsed / entranceDuration;
+                    entranceProgress = 1 - Math.pow(1 - t, 3);
+                }
+                entranceRadiusMultiplier = entranceStartRadius - (entranceStartRadius - 1) * entranceProgress;
+                entranceOpacity = Math.min(1, entranceProgress * 3);
+            }
+
+            // Breathing radius
+            const breathOffset = Math.sin(breathProgress * Math.PI * 2) * breathAmount;
+            const currentRadius = (baseRadius + breathOffset + state.currentOffset) * entranceRadiusMultiplier;
+
+            const x = Math.cos(state.angle) * currentRadius;
+            const y = Math.sin(state.angle) * currentRadius;
+
+            chevron.style.left = `calc(50% + ${x}px)`;
+            chevron.style.top = `calc(50% + ${y}px)`;
+            chevron.style.opacity = entranceOpacity;
+
+            // Set --breath CSS variable for shadow animation (0 to 1, peaks at inhale)
+            const breathValue = (Math.sin(breathProgress * Math.PI * 2) + 1) / 2;
+            chevron.style.setProperty('--breath', breathValue.toFixed(3));
+
+            // Bottom chevron scroll indicator
+            if (index === bottomChevronIndex && bottomChevronFlipped) {
+                chevron.style.transform = `translate(-50%, -50%) rotate(0deg)`;
+            }
+        }
+
+        function animateBreathing() {
+            const now = Date.now();
+            const breathProgress = (now % breathDuration) / breathDuration;
+
+            for (let i = 0; i < chevrons.length; i++) {
+                updateChevronPosition(i, breathProgress, now);
+            }
+
+            if (!entranceComplete) {
+                const lastChevronFinish = entranceStartTime + chevronState[chevronState.length - 1].entranceStagger + entranceDuration;
+                if (now > lastChevronFinish) {
+                    entranceComplete = true;
+                    if (!isMobile) {
+                        setTimeout(() => {
+                            const bottomChevron = chevrons[bottomChevronIndex];
+                            bottomChevron.classList.add('chevron-spinning');
+                            setTimeout(() => {
+                                bottomChevronFlipped = true;
+                                bottomChevron.classList.remove('chevron-spinning');
+                                bottomChevron.classList.add('scroll-chevron');
+
+                                const clickOverlay = document.createElement('div');
+                                clickOverlay.className = 'scroll-chevron-clickarea';
+                                clickOverlay.style.left = '50%';
+                                clickOverlay.style.bottom = '0';
+                                clickOverlay.style.transform = 'translateX(-50%)';
+                                container.appendChild(clickOverlay);
+
+                                const scrollToIntro = () => {
+                                    const intro = document.getElementById('intro');
+                                    if (intro) {
+                                        const navHeight = document.querySelector('.navbar') ? document.querySelector('.navbar').offsetHeight : 0;
+                                        const targetPosition = intro.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                                    }
+                                };
+
+                                bottomChevron.addEventListener('click', scrollToIntro);
+                                clickOverlay.addEventListener('click', scrollToIntro);
+                            }, 600);
+                        }, 1500);
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateBreathing);
+        }
+
+        function expandChevron(index) {
+            const state = chevronState[index];
+            state.targetOffset = hoverExpandAmount;
+            if (state.collapseTimeout) clearTimeout(state.collapseTimeout);
+            state.collapseTimeout = setTimeout(() => {
+                collapseChevron(index);
+            }, 800);
+        }
+
+        function collapseChevron(index) {
+            const state = chevronState[index];
+            state.targetOffset = 0;
+            state.collapseTimeout = null;
+        }
+
+        heroSection.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left - rect.width / 2;
+            const mouseY = e.clientY - rect.top - rect.height / 2;
+
+            for (let i = 0; i < chevronState.length; i++) {
+                const state = chevronState[i];
+                const checkX = Math.cos(state.angle) * baseRadius;
+                const checkY = Math.sin(state.angle) * baseRadius;
+                const dx = mouseX - checkX;
+                const dy = mouseY - checkY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 70) {
+                    expandChevron(i);
+                }
+            }
+        });
+
+        animateBreathing();
+    })();
+    </script>
+</body>
+</html>
