@@ -1967,7 +1967,7 @@ p {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    min-height: 750px;
+    min-height: 575px;
 }
 
 .event-card {
