@@ -185,7 +185,8 @@
         bevelSegments: isMobile ? 2 : 4,
         steps: 1,
     });
-    barGeometry.translate(0, 0, -rectD / 2);
+    // Keep geometry bottom at Z=0 so shapes extrude UP from the surface
+    // ExtrudeGeometry default goes from 0 to depth, which is what we want
 
     // --- Create chevron meshes in a ring ---
     const chevronMeshes = [];
@@ -217,7 +218,7 @@
         // Position on ring
         mesh.position.x = Math.cos(angle) * baseRadius * entranceStartRadius;
         mesh.position.y = Math.sin(angle) * baseRadius * entranceStartRadius;
-        mesh.position.z = rectD / 2;
+        mesh.position.z = 0;
 
         // Rotate so long axis points toward center
         mesh.rotation.z = angle;
@@ -280,8 +281,10 @@
             mesh.position.x = Math.cos(state.angle) * currentRadius;
             mesh.position.y = Math.sin(state.angle) * currentRadius;
 
-            // Z breathing: shapes rise and settle from the surface
-            mesh.position.z = breathValue * breathDepth;
+            // Z breathing: shapes extrude up from surface (scale, not translate)
+            // breathValue goes 0→1→0, scale goes minScale→1→minScale
+            const minScale = 0.15;
+            mesh.scale.z = minScale + breathValue * (1 - minScale);
 
             // Scroll indicator: bottom bar gets a gentle bounce
             if (i === bottomIndex && bottomFlipped) {
