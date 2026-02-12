@@ -150,7 +150,7 @@
     scene.add(dirLight);
 
     // Ambient fill
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     scene.add(ambientLight);
 
     // --- Simple rectangle geometry ---
@@ -179,8 +179,6 @@
             color: BG_COLOR,
             roughness: 0.5,
             metalness: 0.0,
-            transparent: true,
-            opacity: 0,
         });
 
         const mesh = new THREE.Mesh(barGeometry, mat);
@@ -242,9 +240,6 @@
                     entranceProgress = 1 - Math.pow(1 - t, 3);
                 }
                 entranceRadiusMultiplier = entranceStartRadius - (entranceStartRadius - 1) * entranceProgress;
-                entranceOpacity = Math.min(1, entranceProgress * 3);
-                mat.opacity = entranceOpacity;
-                mat.transparent = entranceOpacity < 1;
             }
 
             // Radial breathing + hover
@@ -270,10 +265,6 @@
                 chevronState[chevronState.length - 1].entranceStagger + entranceDuration;
             if (time > lastFinish) {
                 entranceComplete = true;
-                for (const mat of chevronMaterials) {
-                    mat.transparent = false;
-                    mat.opacity = 1;
-                }
                 // Flip bottom chevron after 1.5s
                 if (!isMobile) {
                     setTimeout(() => {
