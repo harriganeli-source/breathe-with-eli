@@ -121,7 +121,7 @@
     renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.NoToneMapping;
 
     // --- Ground plane (ShadowMaterial: transparent except shadows, so white BG shows) ---
@@ -137,16 +137,16 @@
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(-200, 200, 120);
     dirLight.castShadow = true;
-    dirLight.shadow.camera.left = -450;
-    dirLight.shadow.camera.right = 450;
-    dirLight.shadow.camera.top = 450;
-    dirLight.shadow.camera.bottom = -450;
+    dirLight.shadow.camera.left = -250;
+    dirLight.shadow.camera.right = 250;
+    dirLight.shadow.camera.top = 250;
+    dirLight.shadow.camera.bottom = -250;
     dirLight.shadow.camera.near = 1;
-    dirLight.shadow.camera.far = 1000;
-    dirLight.shadow.mapSize.width = isMobile ? 1024 : 2048;
-    dirLight.shadow.mapSize.height = isMobile ? 1024 : 2048;
-    dirLight.shadow.bias = -0.001;
-    dirLight.shadow.normalBias = 0.02;
+    dirLight.shadow.camera.far = 800;
+    dirLight.shadow.mapSize.width = isMobile ? 1024 : 4096;
+    dirLight.shadow.mapSize.height = isMobile ? 1024 : 4096;
+    dirLight.shadow.bias = -0.0005;
+    dirLight.shadow.normalBias = 0.01;
     scene.add(dirLight);
 
     // Ambient fill
