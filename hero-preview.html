@@ -28,7 +28,7 @@
             height: 50px;
         }
 
-        /* White embossed chevrons — shadows applied per-chevron via JS */
+        /* White embossed chevrons — per-arm shadow direction set via JS */
         .mandala-hover-container .chevron::before,
         .mandala-hover-container .chevron::after {
             background-color: #ffffff;
@@ -36,12 +36,22 @@
             width: 28px;
             height: 6px;
             border-radius: 4px;
-            /* Shadow set dynamically via --shadow-x, --shadow-y, --shadow-blur, --breath */
+        }
+
+        .mandala-hover-container .chevron::before {
             box-shadow:
-                calc(var(--shadow-x, 2) * (1px + var(--breath, 0) * 0.8px))
-                calc(var(--shadow-y, 2) * (1px + var(--breath, 0) * 0.8px))
-                calc(var(--shadow-blur, 5) * (1px + var(--breath, 0) * 0.6px))
-                rgba(0, 0, 0, calc(0.08 + var(--breath, 0) * 0.06));
+                calc(var(--sb-x, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(var(--sb-y, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(4px + var(--breath, 0) * 3px)
+                rgba(0, 0, 0, calc(0.10 + var(--breath, 0) * 0.06));
+        }
+
+        .mandala-hover-container .chevron::after {
+            box-shadow:
+                calc(var(--sa-x, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(var(--sa-y, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(4px + var(--breath, 0) * 3px)
+                rgba(0, 0, 0, calc(0.10 + var(--breath, 0) * 0.06));
         }
 
         /* Scroll chevron overrides for white theme */
@@ -133,11 +143,10 @@
         const chevrons = [];
         const chevronState = [];
 
-        // Light source direction (normalized vector pointing from light toward surface)
-        // Light is above and slightly left — shadows fall down-right
-        const lightAngle = -Math.PI / 3; // ~60 degrees from top, slightly left
-        const lightDirX = Math.cos(lightAngle);
-        const lightDirY = Math.sin(lightAngle);
+        // Light source: upper-left. Shadows fall toward lower-right in screen space.
+        // Screen-space shadow direction (before counter-rotation):
+        const screenShadowX = 3;
+        const screenShadowY = 4;
 
         // Entrance animation
         const entranceDelay = 300;
@@ -158,27 +167,25 @@
             chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
             chevron.style.opacity = '0';
 
-            // Calculate per-chevron shadow direction based on light source
-            // Shadow falls in the direction away from the light, but also influenced
-            // by the chevron's position on the ring (parallax-like effect)
-            const chevronX = Math.cos(angle); // normalized position on ring
-            const chevronY = Math.sin(angle);
+            // Counter-rotate shadow direction for each pseudo-element so
+            // all shadows point the same way in screen space (lower-right).
+            // The chevron div is rotated by: angle + PI/2
+            // ::before adds +PI/4 rotation, ::after adds -PI/4
+            const chevronRotation = angle + Math.PI / 2;
 
-            // Shadow direction: combination of global light direction + position offset
-            // Chevrons further from the light cast longer, more angled shadows
-            const shadowX = -lightDirX + chevronX * 0.4;
-            const shadowY = -lightDirY + chevronY * 0.4;
-            const shadowMag = Math.sqrt(shadowX * shadowX + shadowY * shadowY);
+            // For ::before (total rotation = chevronRotation + PI/4)
+            const thetaBefore = -(chevronRotation + Math.PI / 4);
+            const sbx = screenShadowX * Math.cos(thetaBefore) - screenShadowY * Math.sin(thetaBefore);
+            const sby = screenShadowX * Math.sin(thetaBefore) + screenShadowY * Math.cos(thetaBefore);
+            chevron.style.setProperty('--sb-x', sbx.toFixed(2));
+            chevron.style.setProperty('--sb-y', sby.toFixed(2));
 
-            // Normalize and scale shadow offsets
-            const shadowScale = 3;
-            chevron.style.setProperty('--shadow-x', ((shadowX / shadowMag) * shadowScale).toFixed(2));
-            chevron.style.setProperty('--shadow-y', ((shadowY / shadowMag) * shadowScale).toFixed(2));
-
-            // Chevrons on the shadow-side of the light get slightly deeper shadows
-            const dotProduct = chevronX * (-lightDirX) + chevronY * (-lightDirY);
-            const blurScale = 4 + dotProduct * 2; // range ~2 to ~6
-            chevron.style.setProperty('--shadow-blur', blurScale.toFixed(2));
+            // For ::after (total rotation = chevronRotation - PI/4)
+            const thetaAfter = -(chevronRotation - Math.PI / 4);
+            const sax = screenShadowX * Math.cos(thetaAfter) - screenShadowY * Math.sin(thetaAfter);
+            const say = screenShadowX * Math.sin(thetaAfter) + screenShadowY * Math.cos(thetaAfter);
+            chevron.style.setProperty('--sa-x', sax.toFixed(2));
+            chevron.style.setProperty('--sa-y', say.toFixed(2));
 
             container.appendChild(chevron);
             chevrons.push(chevron);
