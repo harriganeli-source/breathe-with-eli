@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
-        /* Override hero background to pure white */
+        /* Soft off-white background — needed for neumorphic highlight to be visible */
         .hero--mandala {
-            background: #ffffff;
+            background: #e8e8e8;
         }
 
         /* Remove noise texture overlay */
@@ -22,40 +22,35 @@
             display: none;
         }
 
-        /* Hide default chevron pseudo-elements — we use real child elements now */
+        /* Hide default chevron pseudo-elements */
         .mandala-hover-container .petal::before,
         .mandala-hover-container .petal::after {
             display: none;
         }
 
-        /* Petal: single curved arc piece */
         .mandala-hover-container .petal {
             position: absolute;
             pointer-events: auto;
         }
 
+        /* Solid pill shape — same color as background, visible only via shadows */
         .petal-shape {
-            width: 55px;
-            height: 28px;
-            border-top: 7px solid #ffffff;
-            border-left: none;
-            border-right: none;
-            border-bottom: none;
-            border-radius: 50%;
-            background: transparent;
-            /* Shadow applied via inline style in JS for directional lighting */
+            width: 60px;
+            height: 14px;
+            border-radius: 7px;
+            background: #e8e8e8;
+            border: none;
+            /* Dual shadow set per-petal via JS inline style */
         }
 
-        /* Mobile: slightly smaller petals */
         @media (max-width: 768px) {
             .petal-shape {
-                width: 38px;
-                height: 20px;
-                border-top-width: 5px;
+                width: 40px;
+                height: 10px;
+                border-radius: 5px;
             }
         }
 
-        /* Scroll indicator override for petal */
         .mandala-hover-container .petal.scroll-chevron {
             cursor: pointer;
             animation: chevron-scroll-bounce 2s ease-in-out infinite;
@@ -107,7 +102,7 @@
     </section>
 
     <script>
-    // Interactive Hover Mandala — White Embossed Curved Petals
+    // Interactive Hover Mandala — Neumorphic Embossed Petals
     (function() {
         const isMobile = window.innerWidth <= 768;
         const container = isMobile
@@ -126,11 +121,12 @@
         const petalShapes = [];
         const petalState = [];
 
-        // Light source: upper-left. Shadows fall toward lower-right in screen space.
-        const screenShadowX = 3;
-        const screenShadowY = 4;
-        const baseShadowBlur = 5;
-        const breathShadowExtra = 4;
+        // Light source from upper-left:
+        // Dark shadow falls lower-right, light highlight falls upper-left
+        const darkScreenX = 4;
+        const darkScreenY = 4;
+        const lightScreenX = -4;
+        const lightScreenY = -4;
 
         // Entrance animation
         const entranceDelay = 300;
@@ -141,29 +137,34 @@
         let bottomPetalFlipped = false;
         const bottomPetalIndex = Math.floor(numPetals * 0.25);
 
-        // Create petals — single curved arc pieces
         for (let i = 0; i < numPetals; i++) {
             const angle = (i / numPetals) * Math.PI * 2;
 
             const petal = document.createElement('div');
             petal.className = 'petal';
 
-            // Rotate so the arc curves along the ring (tangent), curving outward
-            const rotation = (angle * 180 / Math.PI) + 180;
-            petal.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+            // Rotate to be tangent to the circle
+            const rotationDeg = (angle * 180 / Math.PI);
+            petal.style.transform = `translate(-50%, -50%) rotate(${rotationDeg}deg)`;
             petal.style.opacity = '0';
 
-            // Inner shape element — the visible curved arc
             const shape = document.createElement('div');
             shape.className = 'petal-shape';
             petal.appendChild(shape);
 
-            // Counter-rotate shadow for this petal's rotation so shadows
-            // all fall toward lower-right in screen space
-            const rotRad = rotation * Math.PI / 180;
+            // Counter-rotate both shadow directions so they're consistent in screen space
+            const rotRad = angle;
             const theta = -rotRad;
-            const localShadowX = screenShadowX * Math.cos(theta) - screenShadowY * Math.sin(theta);
-            const localShadowY = screenShadowX * Math.sin(theta) + screenShadowY * Math.cos(theta);
+            const cosT = Math.cos(theta);
+            const sinT = Math.sin(theta);
+
+            // Dark shadow (lower-right in screen space)
+            const darkLocalX = darkScreenX * cosT - darkScreenY * sinT;
+            const darkLocalY = darkScreenX * sinT + darkScreenY * cosT;
+
+            // Light highlight (upper-left in screen space)
+            const lightLocalX = lightScreenX * cosT - lightScreenY * sinT;
+            const lightLocalY = lightScreenX * sinT + lightScreenY * cosT;
 
             container.appendChild(petal);
             petals.push(petal);
@@ -174,8 +175,10 @@
                 targetOffset: 0,
                 collapseTimeout: null,
                 entranceStagger: i * (300 / numPetals),
-                localShadowX: localShadowX,
-                localShadowY: localShadowY
+                darkLocalX,
+                darkLocalY,
+                lightLocalX,
+                lightLocalY
             });
         }
 
@@ -214,16 +217,24 @@
             petal.style.top = `calc(50% + ${y}px)`;
             petal.style.opacity = entranceOpacity;
 
-            // Breathing shadow: depth varies with breath cycle
-            const breathValue = (Math.sin(breathProgress * Math.PI * 2) + 1) / 2; // 0 to 1
-            const shadowScale = 1 + breathValue * 0.8;
-            const blur = baseShadowBlur + breathValue * breathShadowExtra;
-            const opacity = 0.10 + breathValue * 0.08;
+            // Breath value 0-1: controls how "raised" the shape appears
+            const breathValue = (Math.sin(breathProgress * Math.PI * 2) + 1) / 2;
 
-            const sx = state.localShadowX * shadowScale;
-            const sy = state.localShadowY * shadowScale;
+            // Shadow scales with breath — shapes rise and settle
+            const elevation = 1 + breathValue * 1.2; // 1x to 2.2x
+            const darkBlur = 6 + breathValue * 8;    // 6px to 14px
+            const lightBlur = 5 + breathValue * 6;    // 5px to 11px
+            const darkOpacity = 0.15 + breathValue * 0.10; // 0.15 to 0.25
+            const lightOpacity = 0.6 + breathValue * 0.3;  // 0.6 to 0.9
 
-            shape.style.filter = `drop-shadow(${sx.toFixed(1)}px ${sy.toFixed(1)}px ${blur.toFixed(1)}px rgba(0, 0, 0, ${opacity.toFixed(2)}))`;
+            const dx = state.darkLocalX * elevation;
+            const dy = state.darkLocalY * elevation;
+            const lx = state.lightLocalX * elevation;
+            const ly = state.lightLocalY * elevation;
+
+            shape.style.boxShadow =
+                `${dx.toFixed(1)}px ${dy.toFixed(1)}px ${darkBlur.toFixed(1)}px rgba(0, 0, 0, ${darkOpacity.toFixed(2)}), ` +
+                `${lx.toFixed(1)}px ${ly.toFixed(1)}px ${lightBlur.toFixed(1)}px rgba(255, 255, 255, ${lightOpacity.toFixed(2)})`;
 
             // Bottom petal scroll indicator
             if (index === bottomPetalIndex && bottomPetalFlipped) {
