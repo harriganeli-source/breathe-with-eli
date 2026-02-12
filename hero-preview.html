@@ -13,36 +13,33 @@
 
     <style>
         .hero--mandala {
-            background: #eaeaea;
+            background: #e0e0e0;
         }
 
         .hero--mandala::before {
             display: none;
         }
 
-        /* Non-rotated wrapper — drop-shadow here stays in screen space */
         .mandala-hover-container .chevron-wrap {
             position: absolute;
             pointer-events: auto;
-            /* filter set per-frame in JS */
         }
 
-        /* Individual chevron arms — white pills */
+        /* Chunky chevron arms — minimal border-radius for sharp look */
         .chevron-arm {
             position: absolute;
-            width: 26px;
-            height: 7px;
-            border-radius: 4px;
-            background: #eaeaea;
+            width: 34px;
+            height: 9px;
+            border-radius: 2px;
+            background: #e0e0e0;
             top: 50%;
             left: 50%;
         }
 
         @media (max-width: 768px) {
             .chevron-arm {
-                width: 18px;
-                height: 5px;
-                border-radius: 3px;
+                width: 24px;
+                height: 7px;
             }
         }
 
@@ -112,16 +109,15 @@
         const wrappers = [];
         const chevronState = [];
 
-        // Shadow direction in screen space: low raking light from upper-left
-        // Long shadows = light is close to the surface plane
-        const shadowBaseX = 6;
-        const shadowBaseY = 8;
-        const shadowBaseBlur = 8;
+        // Sharp shadows from low raking light (upper-left)
+        // Long offsets, minimal blur = hard shadow edge
+        const shadowBaseX = 8;
+        const shadowBaseY = 10;
+        const shadowBaseBlur = 2;
 
-        // Highlight direction (opposite)
         const highlightBaseX = -3;
         const highlightBaseY = -3;
-        const highlightBaseBlur = 6;
+        const highlightBaseBlur = 2;
 
         // Entrance animation
         const entranceDelay = 300;
@@ -135,23 +131,22 @@
         for (let i = 0; i < numChevrons; i++) {
             const angle = (i / numChevrons) * Math.PI * 2;
 
-            // Non-rotated wrapper — drop-shadow applied here stays in screen space
             const wrap = document.createElement('div');
             wrap.className = 'chevron-wrap';
             wrap.style.opacity = '0';
 
-            // Two arms forming ">" pointing outward at this angle
-            // Arm 1: upper arm of the chevron
+            // Two arms forming ">" POINTING INWARD (toward center)
+            // Arm 1: upper arm — tip points toward center
             const arm1 = document.createElement('div');
             arm1.className = 'chevron-arm';
-            const arm1Angle = (angle * 180 / Math.PI) + 45;
+            const arm1Angle = (angle * 180 / Math.PI) + 180 + 45; // +180 flips inward
             arm1.style.transform = `translate(-100%, -50%) rotate(${arm1Angle}deg)`;
             arm1.style.transformOrigin = 'right center';
 
-            // Arm 2: lower arm of the chevron
+            // Arm 2: lower arm
             const arm2 = document.createElement('div');
             arm2.className = 'chevron-arm';
-            const arm2Angle = (angle * 180 / Math.PI) - 45;
+            const arm2Angle = (angle * 180 / Math.PI) + 180 - 45;
             arm2.style.transform = `translate(-100%, -50%) rotate(${arm2Angle}deg)`;
             arm2.style.transformOrigin = 'right center';
 
@@ -174,7 +169,6 @@
 
             state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
 
-            // Entrance
             let entranceProgress = 1;
             let entranceRadiusMultiplier = 1;
             let entranceOpacity = 1;
@@ -201,31 +195,29 @@
             wrap.style.top = `calc(50% + ${y}px)`;
             wrap.style.opacity = entranceOpacity;
 
-            // Breathing controls shadow length — shapes rise and settle
+            // Breath controls elevation — sharper shadows when raised
             const breathValue = (Math.sin(breathProgress * Math.PI * 2) + 1) / 2;
-            const elevation = 1 + breathValue * 1.5;
+            const elevation = 1 + breathValue * 1.2;
 
             const sx = shadowBaseX * elevation;
             const sy = shadowBaseY * elevation;
-            const sBlur = shadowBaseBlur + breathValue * 8;
-            const sOpacity = 0.18 + breathValue * 0.12;
+            const sBlur = shadowBaseBlur + breathValue * 2; // stays sharp: 2px to 4px
+            const sOpacity = 0.25 + breathValue * 0.15;
 
             const hx = highlightBaseX * elevation;
             const hy = highlightBaseY * elevation;
-            const hBlur = highlightBaseBlur + breathValue * 4;
-            const hOpacity = 0.5 + breathValue * 0.4;
+            const hBlur = highlightBaseBlur + breathValue * 1;
+            const hOpacity = 0.6 + breathValue * 0.3;
 
             wrap.style.filter =
                 `drop-shadow(${sx.toFixed(1)}px ${sy.toFixed(1)}px ${sBlur.toFixed(1)}px rgba(0,0,0,${sOpacity.toFixed(2)})) ` +
                 `drop-shadow(${hx.toFixed(1)}px ${hy.toFixed(1)}px ${hBlur.toFixed(1)}px rgba(255,255,255,${hOpacity.toFixed(2)}))`;
 
             if (index === bottomIndex && bottomFlipped) {
-                // Override arm rotations to point down as scroll indicator
+                // Scroll indicator: point downward (arms at ±45 from vertical)
                 const arms = wrap.querySelectorAll('.chevron-arm');
-                arms[0].style.transform = `translate(-100%, -50%) rotate(45deg)`;
-                arms[0].style.transformOrigin = 'right center';
-                arms[1].style.transform = `translate(-100%, -50%) rotate(-45deg)`;
-                arms[1].style.transformOrigin = 'right center';
+                arms[0].style.transform = `translate(-100%, -50%) rotate(${90 + 45}deg)`;
+                arms[1].style.transform = `translate(-100%, -50%) rotate(${90 - 45}deg)`;
             }
         }
 
@@ -244,7 +236,6 @@
                     if (!isMobile) {
                         setTimeout(() => {
                             const bw = wrappers[bottomIndex];
-                            // Quick scale-down-up as transition
                             bw.style.transition = 'transform 0.6s ease-in-out';
                             bw.style.transform = 'scale(0.8)';
                             setTimeout(() => {
