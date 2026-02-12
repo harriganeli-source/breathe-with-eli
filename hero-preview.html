@@ -147,7 +147,7 @@
     // --- Lighting ---
     // Directional: raking light from upper-left for shadow casting
     const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
-    dirLight.position.set(-200, 200, 100);
+    dirLight.position.set(-200, 200, 35);
     dirLight.castShadow = true;
     dirLight.shadow.camera.left = -250;
     dirLight.shadow.camera.right = 250;
@@ -164,7 +164,7 @@
     // --- Rectangle geometry with beveled edges (catches highlights like real 3D) ---
     const rectW = isMobile ? 20 : 30;
     const rectH = isMobile ? 6 : 9;
-    const rectD = isMobile ? 8 : 14;
+    const rectD = isMobile ? 10 : 20;
     const bevel = 0.8;
     const rectShape = new THREE.Shape();
     rectShape.moveTo(-rectW / 2 + bevel, -rectH / 2);
