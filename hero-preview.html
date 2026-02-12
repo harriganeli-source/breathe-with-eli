@@ -13,7 +13,7 @@
 
     <style>
         .hero--mandala {
-            background: #e0e0e0;
+            background: #ffffff;
         }
         .hero--mandala::before {
             display: none;
@@ -90,13 +90,13 @@
     // --- Configuration ---
     const isMobile = window.innerWidth <= 768;
     const numChevrons = isMobile ? 6 : 12;
-    const baseRadius = isMobile ? 60 : 290;
-    const breathAmount = 6;
-    const breathDepth = 5;
-    const hoverExpandAmount = 40;
+    const baseRadius = isMobile ? 50 : 130;
+    const breathAmount = 4;
+    const breathDepth = 4;
+    const hoverExpandAmount = 20;
     const breathDuration = 8000;
     const hoverEaseSpeed = 0.015;
-    const BG_COLOR = 0xe0e0e0;
+    const BG_COLOR = 0xffffff;
 
     // --- Scene ---
     const scene = new THREE.Scene();
@@ -135,8 +135,8 @@
 
     // --- Lighting ---
     // Directional: low raking light from upper-left
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(-250, 250, 200);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    dirLight.position.set(-200, 200, 120);
     dirLight.castShadow = true;
     dirLight.shadow.camera.left = -450;
     dirLight.shadow.camera.right = 450;
@@ -151,10 +151,10 @@
     scene.add(dirLight);
 
     // Ambient fill
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    // --- Chevron Shape (2D outline of ">" pointing right) ---
+    // --- Chevron Shape (uniform-width ">" pointing right) ---
     function createChevronShape(armLen, armW, halfAngle) {
         const ca = Math.cos(halfAngle);
         const sa = Math.sin(halfAngle);
@@ -162,39 +162,39 @@
 
         const shape = new THREE.Shape();
 
-        // Tip of the chevron (right side, pointing right)
-        shape.moveTo(0, hw * 0.3);
+        // Tip (right side) — full width, blunt tip
+        shape.moveTo(hw * 0.5, hw);
 
-        // Upper arm: inner edge toward back-left
-        shape.lineTo(-armLen * ca + hw * sa, armLen * sa + hw * ca);
-        // Upper arm: outer edge (cap)
+        // Upper arm outer edge
         shape.lineTo(-armLen * ca - hw * sa, armLen * sa - hw * ca);
+        // Upper arm end cap
+        shape.lineTo(-armLen * ca + hw * sa, armLen * sa + hw * ca);
 
-        // Back to center-top of notch
-        shape.lineTo(-hw / ca * 0.6, 0);
+        // Inner notch
+        shape.lineTo(-hw * 0.4, 0);
 
-        // Lower arm: outer edge
-        shape.lineTo(-armLen * ca - hw * sa, -armLen * sa + hw * ca);
-        // Lower arm: inner edge
+        // Lower arm end cap
         shape.lineTo(-armLen * ca + hw * sa, -armLen * sa - hw * ca);
+        // Lower arm outer edge
+        shape.lineTo(-armLen * ca - hw * sa, -armLen * sa + hw * ca);
 
         // Back to tip
-        shape.lineTo(0, -hw * 0.3);
+        shape.lineTo(hw * 0.5, -hw);
         shape.closePath();
 
         return shape;
     }
 
-    const armLen = isMobile ? 18 : 30;
-    const armW = isMobile ? 6 : 9;
+    const armLen = isMobile ? 14 : 22;
+    const armW = isMobile ? 5 : 8;
     const chevronShape = createChevronShape(armLen, armW, Math.PI / 4);
 
     const extrudeSettings = {
-        depth: 6,
+        depth: 5,
         bevelEnabled: true,
-        bevelThickness: 1.5,
-        bevelSize: 1,
-        bevelSegments: isMobile ? 1 : 3,
+        bevelThickness: 0.4,
+        bevelSize: 0.3,
+        bevelSegments: isMobile ? 1 : 2,
         steps: 1,
     };
 
@@ -362,7 +362,7 @@
             const baseY = Math.sin(state.angle) * baseRadius;
             const dx = world.x - baseX;
             const dy = world.y - baseY;
-            if (Math.sqrt(dx * dx + dy * dy) < 100) {
+            if (Math.sqrt(dx * dx + dy * dy) < 50) {
                 expandChevron(i);
             }
         }
