@@ -22,19 +22,26 @@
             display: none;
         }
 
-        /* White embossed chevrons with shadow-only visibility */
+        /* Larger chevron hit areas */
+        .mandala-hover-container .chevron {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* White embossed chevrons — shadows applied per-chevron via JS */
         .mandala-hover-container .chevron::before,
         .mandala-hover-container .chevron::after {
             background-color: #ffffff;
             opacity: 1;
-            width: 20px;
-            height: 5px;
-            border-radius: 3px;
+            width: 28px;
+            height: 6px;
+            border-radius: 4px;
+            /* Shadow set dynamically via --shadow-x, --shadow-y, --shadow-blur, --breath */
             box-shadow:
-                calc(1.5px + var(--breath, 0) * 2px) calc(1.5px + var(--breath, 0) * 2px)
-                calc(4px + var(--breath, 0) * 5px) rgba(0, 0, 0, 0.12),
-                calc(-1px - var(--breath, 0) * 1px) calc(-1px - var(--breath, 0) * 1px)
-                calc(2px + var(--breath, 0) * 2px) rgba(255, 255, 255, 0.9);
+                calc(var(--shadow-x, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(var(--shadow-y, 2) * (1px + var(--breath, 0) * 0.8px))
+                calc(var(--shadow-blur, 5) * (1px + var(--breath, 0) * 0.6px))
+                rgba(0, 0, 0, calc(0.08 + var(--breath, 0) * 0.06));
         }
 
         /* Scroll chevron overrides for white theme */
@@ -46,6 +53,19 @@
         .mandala-hover-container .chevron.scroll-chevron:hover::before,
         .mandala-hover-container .chevron.scroll-chevron:hover::after {
             opacity: 1;
+        }
+
+        /* Mobile: slightly smaller */
+        @media (max-width: 768px) {
+            .mandala-hover-container .chevron {
+                width: 36px;
+                height: 36px;
+            }
+            .mandala-hover-container .chevron::before,
+            .mandala-hover-container .chevron::after {
+                width: 22px;
+                height: 5px;
+            }
         }
 
         /* Preview-only: side-by-side link */
@@ -94,7 +114,7 @@
     </section>
 
     <script>
-    // Interactive Hover Mandala — White Embossed Version
+    // Interactive Hover Mandala — White Embossed Version with directional lighting
     (function() {
         const isMobile = window.innerWidth <= 768;
         const container = isMobile
@@ -103,7 +123,8 @@
         const heroSection = document.querySelector('.hero--mandala');
         if (!container || !heroSection) return;
 
-        const numChevrons = isMobile ? 12 : 24;
+        // Fewer, larger chevrons
+        const numChevrons = isMobile ? 8 : 16;
         const baseRadius = isMobile ? 60 : 290;
         const breathAmount = 6;
         const hoverExpandAmount = 40;
@@ -111,6 +132,12 @@
         const hoverEaseSpeed = 0.015;
         const chevrons = [];
         const chevronState = [];
+
+        // Light source direction (normalized vector pointing from light toward surface)
+        // Light is above and slightly left — shadows fall down-right
+        const lightAngle = -Math.PI / 3; // ~60 degrees from top, slightly left
+        const lightDirX = Math.cos(lightAngle);
+        const lightDirY = Math.sin(lightAngle);
 
         // Entrance animation
         const entranceDelay = 300;
@@ -121,7 +148,7 @@
         let bottomChevronFlipped = false;
         const bottomChevronIndex = Math.floor(numChevrons * 0.25);
 
-        // Create chevrons — no hue gradient, white only
+        // Create chevrons
         for (let i = 0; i < numChevrons; i++) {
             const angle = (i / numChevrons) * Math.PI * 2;
             const chevron = document.createElement('div');
@@ -130,6 +157,28 @@
             const rotation = (angle * 180 / Math.PI) + 90;
             chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
             chevron.style.opacity = '0';
+
+            // Calculate per-chevron shadow direction based on light source
+            // Shadow falls in the direction away from the light, but also influenced
+            // by the chevron's position on the ring (parallax-like effect)
+            const chevronX = Math.cos(angle); // normalized position on ring
+            const chevronY = Math.sin(angle);
+
+            // Shadow direction: combination of global light direction + position offset
+            // Chevrons further from the light cast longer, more angled shadows
+            const shadowX = -lightDirX + chevronX * 0.4;
+            const shadowY = -lightDirY + chevronY * 0.4;
+            const shadowMag = Math.sqrt(shadowX * shadowX + shadowY * shadowY);
+
+            // Normalize and scale shadow offsets
+            const shadowScale = 3;
+            chevron.style.setProperty('--shadow-x', ((shadowX / shadowMag) * shadowScale).toFixed(2));
+            chevron.style.setProperty('--shadow-y', ((shadowY / shadowMag) * shadowScale).toFixed(2));
+
+            // Chevrons on the shadow-side of the light get slightly deeper shadows
+            const dotProduct = chevronX * (-lightDirX) + chevronY * (-lightDirY);
+            const blurScale = 4 + dotProduct * 2; // range ~2 to ~6
+            chevron.style.setProperty('--shadow-blur', blurScale.toFixed(2));
 
             container.appendChild(chevron);
             chevrons.push(chevron);
@@ -176,7 +225,7 @@
             chevron.style.top = `calc(50% + ${y}px)`;
             chevron.style.opacity = entranceOpacity;
 
-            // Set --breath CSS variable for shadow animation (0 to 1, peaks at inhale)
+            // Set --breath CSS variable for shadow depth animation (0 to 1)
             const breathValue = (Math.sin(breathProgress * Math.PI * 2) + 1) / 2;
             chevron.style.setProperty('--breath', breathValue.toFixed(3));
 
@@ -262,7 +311,7 @@
                 const dy = mouseY - checkY;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                if (distance < 70) {
+                if (distance < 90) { // Slightly larger detection radius for fewer chevrons
                     expandChevron(i);
                 }
             }
