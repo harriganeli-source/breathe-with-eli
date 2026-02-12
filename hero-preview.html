@@ -102,7 +102,7 @@
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(BG_COLOR);
 
-    // --- Camera (orthographic — flat bas-relief look) ---
+    // --- Camera (orthographic, slight tilt for depth) ---
     const frustumSize = 450;
     let aspect = canvas.clientWidth / canvas.clientHeight;
     const camera = new THREE.OrthographicCamera(
@@ -110,9 +110,10 @@
          frustumSize * aspect / 2,
          frustumSize / 2,
         -frustumSize / 2,
-         0.1, 1000
+         0.1, 2000
     );
-    camera.position.set(0, 0, 500);
+    // Slight angle — looking down at about 15° from vertical
+    camera.position.set(0, -120, 480);
     camera.lookAt(0, 0, 0);
 
     // --- Renderer ---
@@ -123,11 +124,9 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.NoToneMapping;
 
-    // --- Ground plane (receives shadows) ---
-    const planeGeo = new THREE.PlaneGeometry(1200, 1200);
-    const planeMat = new THREE.MeshStandardMaterial({
-        color: BG_COLOR, roughness: 0.9, metalness: 0.0
-    });
+    // --- Ground plane (ShadowMaterial: transparent except shadows, so white BG shows) ---
+    const planeGeo = new THREE.PlaneGeometry(2000, 2000);
+    const planeMat = new THREE.ShadowMaterial({ opacity: 0.15 });
     const plane = new THREE.Mesh(planeGeo, planeMat);
     plane.position.z = -0.5;
     plane.receiveShadow = true;
@@ -154,53 +153,11 @@
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    // --- Chevron Shape (uniform-width ">" pointing right) ---
-    function createChevronShape(armLen, armW, halfAngle) {
-        const ca = Math.cos(halfAngle);
-        const sa = Math.sin(halfAngle);
-        const hw = armW / 2;
-
-        const shape = new THREE.Shape();
-
-        // Tip (right side) — full width, blunt tip
-        shape.moveTo(hw * 0.5, hw);
-
-        // Upper arm outer edge
-        shape.lineTo(-armLen * ca - hw * sa, armLen * sa - hw * ca);
-        // Upper arm end cap
-        shape.lineTo(-armLen * ca + hw * sa, armLen * sa + hw * ca);
-
-        // Inner notch
-        shape.lineTo(-hw * 0.4, 0);
-
-        // Lower arm end cap
-        shape.lineTo(-armLen * ca + hw * sa, -armLen * sa - hw * ca);
-        // Lower arm outer edge
-        shape.lineTo(-armLen * ca - hw * sa, -armLen * sa + hw * ca);
-
-        // Back to tip
-        shape.lineTo(hw * 0.5, -hw);
-        shape.closePath();
-
-        return shape;
-    }
-
-    const armLen = isMobile ? 14 : 22;
-    const armW = isMobile ? 5 : 8;
-    const chevronShape = createChevronShape(armLen, armW, Math.PI / 4);
-
-    const extrudeSettings = {
-        depth: 5,
-        bevelEnabled: true,
-        bevelThickness: 0.4,
-        bevelSize: 0.3,
-        bevelSegments: isMobile ? 1 : 2,
-        steps: 1,
-    };
-
-    const chevronGeometry = new THREE.ExtrudeGeometry(chevronShape, extrudeSettings);
-    // Center the geometry so extrusion goes from -depth/2 to +depth/2
-    chevronGeometry.translate(0, 0, -extrudeSettings.depth / 2);
+    // --- Simple rectangle geometry ---
+    const rectWidth = isMobile ? 20 : 30;
+    const rectHeight = isMobile ? 6 : 9;
+    const rectDepth = isMobile ? 3 : 5;
+    const barGeometry = new THREE.BoxGeometry(rectWidth, rectHeight, rectDepth);
 
     // --- Create chevron meshes in a ring ---
     const chevronMeshes = [];
@@ -226,15 +183,15 @@
             opacity: 0,
         });
 
-        const mesh = new THREE.Mesh(chevronGeometry, mat);
+        const mesh = new THREE.Mesh(barGeometry, mat);
 
         // Position on ring
         mesh.position.x = Math.cos(angle) * baseRadius * entranceStartRadius;
         mesh.position.y = Math.sin(angle) * baseRadius * entranceStartRadius;
-        mesh.position.z = 0;
+        mesh.position.z = rectDepth / 2;
 
-        // Rotate so ">" tip points inward (toward center)
-        mesh.rotation.z = angle + Math.PI;
+        // Rotate so long axis points toward center
+        mesh.rotation.z = angle;
 
         mesh.castShadow = true;
         mesh.receiveShadow = true;
@@ -300,11 +257,9 @@
             // Z breathing: shapes rise and settle from the surface
             mesh.position.z = breathValue * breathDepth;
 
-            // Scroll indicator: bottom chevron points down after entrance
+            // Scroll indicator: bottom bar gets a gentle bounce
             if (i === bottomIndex && bottomFlipped) {
-                mesh.rotation.z = Math.PI / 2 + Math.PI; // points downward
-                // Gentle bounce
-                const bounce = Math.sin(time * 0.003) * 5;
+                const bounce = Math.sin(time * 0.003) * 3;
                 mesh.position.y = Math.sin(state.angle) * currentRadius + bounce;
             }
         }
