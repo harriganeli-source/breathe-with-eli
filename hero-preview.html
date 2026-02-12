@@ -83,6 +83,7 @@
 
     <script type="module">
     import * as THREE from 'three';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     const canvas = document.getElementById('mandala-canvas');
     const heroSection = document.getElementById('hero-section');
@@ -122,20 +123,31 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.6;
 
-    // --- Ground plane (ShadowMaterial: transparent except shadows, so white BG shows) ---
+    // --- Studio environment map (realistic ambient lighting from all directions) ---
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const roomEnv = new RoomEnvironment();
+    const envMap = pmremGenerator.fromScene(roomEnv).texture;
+    scene.environment = envMap;
+    roomEnv.dispose();
+    pmremGenerator.dispose();
+
+    // --- Ground plane (white, receives shadows) ---
     const planeGeo = new THREE.PlaneGeometry(2000, 2000);
-    const planeMat = new THREE.ShadowMaterial({ opacity: 0.15 });
+    const planeMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff, roughness: 1.0, metalness: 0.0, envMapIntensity: 0.5,
+    });
     const plane = new THREE.Mesh(planeGeo, planeMat);
     plane.position.z = -0.5;
     plane.receiveShadow = true;
     scene.add(plane);
 
     // --- Lighting ---
-    // Directional: low raking light from upper-left
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(-200, 200, 120);
+    // Directional: raking light from upper-left for shadow casting
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight.position.set(-200, 200, 100);
     dirLight.castShadow = true;
     dirLight.shadow.camera.left = -250;
     dirLight.shadow.camera.right = 250;
@@ -149,15 +161,31 @@
     dirLight.shadow.normalBias = 0.01;
     scene.add(dirLight);
 
-    // Ambient fill
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
-    scene.add(ambientLight);
+    // --- Rectangle geometry with beveled edges (catches highlights like real 3D) ---
+    const rectW = isMobile ? 20 : 30;
+    const rectH = isMobile ? 6 : 9;
+    const rectD = isMobile ? 3 : 5;
+    const bevel = 0.8;
+    const rectShape = new THREE.Shape();
+    rectShape.moveTo(-rectW / 2 + bevel, -rectH / 2);
+    rectShape.lineTo(rectW / 2 - bevel, -rectH / 2);
+    rectShape.quadraticCurveTo(rectW / 2, -rectH / 2, rectW / 2, -rectH / 2 + bevel);
+    rectShape.lineTo(rectW / 2, rectH / 2 - bevel);
+    rectShape.quadraticCurveTo(rectW / 2, rectH / 2, rectW / 2 - bevel, rectH / 2);
+    rectShape.lineTo(-rectW / 2 + bevel, rectH / 2);
+    rectShape.quadraticCurveTo(-rectW / 2, rectH / 2, -rectW / 2, rectH / 2 - bevel);
+    rectShape.lineTo(-rectW / 2, -rectH / 2 + bevel);
+    rectShape.quadraticCurveTo(-rectW / 2, -rectH / 2, -rectW / 2 + bevel, -rectH / 2);
 
-    // --- Simple rectangle geometry ---
-    const rectWidth = isMobile ? 20 : 30;
-    const rectHeight = isMobile ? 6 : 9;
-    const rectDepth = isMobile ? 3 : 5;
-    const barGeometry = new THREE.BoxGeometry(rectWidth, rectHeight, rectDepth);
+    const barGeometry = new THREE.ExtrudeGeometry(rectShape, {
+        depth: rectD,
+        bevelEnabled: true,
+        bevelThickness: 0.6,
+        bevelSize: 0.5,
+        bevelSegments: isMobile ? 2 : 4,
+        steps: 1,
+    });
+    barGeometry.translate(0, 0, -rectD / 2);
 
     // --- Create chevron meshes in a ring ---
     const chevronMeshes = [];
@@ -175,8 +203,13 @@
     for (let i = 0; i < numChevrons; i++) {
         const angle = (i / numChevrons) * Math.PI * 2;
 
-        const mat = new THREE.MeshBasicMaterial({
-            color: BG_COLOR,
+        const mat = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            roughness: 0.35,
+            metalness: 0.0,
+            clearcoat: 0.1,
+            clearcoatRoughness: 0.4,
+            envMapIntensity: 0.8,
         });
 
         const mesh = new THREE.Mesh(barGeometry, mat);
@@ -184,7 +217,7 @@
         // Position on ring
         mesh.position.x = Math.cos(angle) * baseRadius * entranceStartRadius;
         mesh.position.y = Math.sin(angle) * baseRadius * entranceStartRadius;
-        mesh.position.z = rectDepth / 2;
+        mesh.position.z = rectD / 2;
 
         // Rotate so long axis points toward center
         mesh.rotation.z = angle;
