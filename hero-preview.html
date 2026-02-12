@@ -134,7 +134,7 @@
 
     // --- Lighting ---
     // Directional: low raking light from upper-left
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(-200, 200, 120);
     dirLight.castShadow = true;
     dirLight.shadow.camera.left = -450;
@@ -150,7 +150,7 @@
     scene.add(dirLight);
 
     // Ambient fill
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
     // --- Simple rectangle geometry ---
@@ -177,7 +177,7 @@
 
         const mat = new THREE.MeshStandardMaterial({
             color: BG_COLOR,
-            roughness: 0.85,
+            roughness: 0.5,
             metalness: 0.0,
             transparent: true,
             opacity: 0,
