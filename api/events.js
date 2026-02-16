@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
       res.writeHead(200, {
         ...CORS_HEADERS,
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
       });
       return res.end(data);
     } catch (error) {
