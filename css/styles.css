@@ -436,7 +436,13 @@ p {
 .hero--mandala {
     position: relative;
     overflow: hidden;
-    background: radial-gradient(ellipse at center, var(--color-bg) 0%, var(--color-bg) 50%, rgba(90, 111, 95, 0.25) 85%);
+    background: radial-gradient(
+        ellipse at center,
+        #faf9f7 0%,
+        #f7f4ef 35%,
+        #f0ebe2 60%,
+        rgba(196, 167, 125, 0.12) 100%
+    );
     isolation: isolate;
 }
 
@@ -453,7 +459,8 @@ p {
     z-index: 0;
 }
 
-.mandala-hover-container {
+/* Zen Garden Container */
+.zen-garden-container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -464,37 +471,22 @@ p {
     z-index: 0;
 }
 
-.mandala-hover-container .chevron {
+/* Concentric ring element */
+.zen-ring {
     position: absolute;
-    width: 30px;
-    height: 30px;
-    pointer-events: auto;
-}
-
-.mandala-hover-container .chevron::before,
-.mandala-hover-container .chevron::after {
-    content: '';
-    position: absolute;
-    width: 17px;
-    height: 4px;
-    /* Use hue variation set by JS for color gradient around the ring */
-    background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
-    opacity: 0.4;
     top: 50%;
-    border-radius: 2px;
-    box-shadow: 0 0 8px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
-}
-
-.mandala-hover-container .chevron::before {
-    transform: rotate(45deg);
-    transform-origin: right center;
-    right: 50%;
-}
-
-.mandala-hover-container .chevron::after {
-    transform: rotate(-45deg);
-    transform-origin: left center;
     left: 50%;
+    border-radius: 50%;
+    pointer-events: auto;
+    background: transparent;
+    border: 2.5px solid rgba(185, 165, 135, 0.35);
+    box-shadow:
+        0 -1px 0 rgba(255, 252, 242, 0.6),
+        0 2px 4px rgba(139, 115, 85, 0.12),
+        inset 0 -1px 0 rgba(255, 252, 242, 0.4),
+        inset 0 1px 2px rgba(139, 115, 85, 0.08);
+    will-change: transform, opacity;
+    transform: translate(-50%, -50%);
 }
 
 .hero--mandala .hero-content {
@@ -510,7 +502,7 @@ p {
     font-size: 0.95rem;
 }
 
-/* Scroll indicator - hidden on desktop (chevron becomes scroll indicator), shown on mobile */
+/* Scroll indicator */
 .scroll-indicator {
     position: absolute;
     bottom: 2rem;
@@ -518,19 +510,16 @@ p {
     transform: translateX(-50%);
     width: 32px;
     height: 32px;
-    color: var(--color-primary);
-    opacity: 0.4;
-    transition: opacity 0.3s ease;
-    animation: scroll-bounce 2s ease-in-out infinite;
+    color: var(--color-secondary);
+    opacity: 0;
+    transition: opacity 0.6s ease;
     z-index: 2;
-    display: none; /* Hidden on desktop - bottom chevron becomes scroll indicator */
+    display: block;
 }
 
-/* Show scroll indicator on mobile */
-@media (max-width: 768px) {
-    .scroll-indicator {
-        display: block;
-    }
+.scroll-indicator.visible {
+    opacity: 0.4;
+    animation: scroll-bounce 2s ease-in-out infinite;
 }
 
 .scroll-indicator:hover {
@@ -551,60 +540,8 @@ p {
     }
 }
 
-/* Bottom chevron flip animation before becoming scroll indicator */
-.mandala-hover-container .chevron.chevron-spinning {
-    animation: chevron-flip 0.6s ease-in-out forwards;
-}
-
-@keyframes chevron-flip {
-    0% {
-        transform: translate(-50%, -50%) rotate(180deg);
-    }
-    100% {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-}
-
-/* Bottom chevron that becomes scroll indicator */
-.mandala-hover-container .chevron.scroll-chevron {
-    cursor: pointer;
-    transition: transform 0.6s ease;
-    animation: chevron-scroll-bounce 2s ease-in-out infinite;
-}
-
-/* Invisible click overlay for easier clicking on bouncing chevron */
-.scroll-chevron-clickarea {
-    position: absolute;
-    width: 80px;
-    height: 100px;
-    cursor: pointer;
-    z-index: 10;
-    /* Debug: uncomment to see the click area */
-    /* background: rgba(255, 0, 0, 0.2); */
-}
-
-.mandala-hover-container .chevron.scroll-chevron::before,
-.mandala-hover-container .chevron.scroll-chevron::after {
-    opacity: 0.5;
-    transition: opacity 0.3s ease;
-}
-
-.mandala-hover-container .chevron.scroll-chevron:hover::before,
-.mandala-hover-container .chevron.scroll-chevron:hover::after {
-    opacity: 0.8;
-}
-
-@keyframes chevron-scroll-bounce {
-    0%, 100% {
-        transform: translate(-50%, -50%) rotate(0deg) translateY(0) scale(1);
-    }
-    50% {
-        transform: translate(-50%, -50%) rotate(0deg) translateY(14px) scale(1.1);
-    }
-}
-
-/* Mobile mandala - hidden on desktop, shown inline on mobile */
-.mandala-mobile {
+/* Mobile zen garden - hidden on desktop, shown inline on mobile */
+.zen-garden-mobile {
     display: none;
 }
 
@@ -1557,48 +1494,20 @@ p {
         font-size: 0.8rem;
     }
 
-    .mandala-hover-container {
+    .zen-garden-container {
         display: none;
     }
 
-    .mandala-mobile {
+    .zen-garden-mobile {
         display: block;
         position: relative;
-        width: 160px;
-        height: 160px;
+        width: 180px;
+        height: 180px;
         margin: var(--space-md) auto;
     }
 
-    .mandala-mobile .chevron {
-        position: absolute;
-        width: 20px;
-        height: 20px;
-    }
-
-    .mandala-mobile .chevron::before,
-    .mandala-mobile .chevron::after {
-        content: '';
-        position: absolute;
-        width: 10px;
-        height: 2.5px;
-        /* Use hue variation set by JS for color gradient around the ring */
-        background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
-        opacity: 0.45;
-        top: 50%;
-        border-radius: 2px;
-        box-shadow: 0 0 6px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
-    }
-
-    .mandala-mobile .chevron::before {
-        transform: rotate(45deg);
-        transform-origin: right center;
-        right: 50%;
-    }
-
-    .mandala-mobile .chevron::after {
-        transform: rotate(-45deg);
-        transform-origin: left center;
-        left: 50%;
+    .zen-garden-mobile .zen-ring {
+        border-width: 1.5px;
     }
 
     .hero-buttons {
@@ -2244,8 +2153,13 @@ p {
     .service-icon svg,
     .testimonial-quote,
     .hero--with-image::after,
-    .cta {
+    .cta,
+    .scroll-indicator.visible {
         animation: none;
+    }
+
+    .zen-ring {
+        transition: none;
     }
 }
 
