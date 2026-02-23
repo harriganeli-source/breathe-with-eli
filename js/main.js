@@ -164,9 +164,7 @@ function toggleCaption(button) {
     const maxRadius = isMobile ? 75 : 350;
     const breathAmount = 8;
     const breathDuration = 8000;
-    const ringPhaseOffset = 0.08; // Phase stagger between rings for ripple effect
-    const hoverExpandAmount = 25;
-    const hoverEaseSpeed = 0.02;
+    const ringPhaseOffset = 0.08;
 
     // Entrance animation
     const entranceDelay = 300;
@@ -174,6 +172,15 @@ function toggleCaption(button) {
     const entranceStartScale = 0.3;
     const entranceStartTime = Date.now() + entranceDelay;
     let entranceComplete = false;
+
+    // Trailing ripple system - stores recent mouse positions
+    const trail = []; // Array of { x, y, time, strength, direction }
+    const trailMaxAge = 3000; // Ripples fade over 3 seconds
+    const trailSampleInterval = 30; // Record a point every 30ms
+    const rippleRadius = 60; // How far from cursor a ring is affected
+    const rippleStrength = 30; // Max px displacement at cursor
+    const settleSpeed = 0.03; // How fast rings settle back (lower = slower)
+    let lastTrailTime = 0;
 
     const rings = [];
     const ringState = [];
@@ -187,7 +194,6 @@ function toggleCaption(button) {
         ring.className = 'zen-ring';
         ring.style.opacity = '0';
 
-        // Set base dimensions
         const diameter = baseRadius * 2;
         ring.style.width = diameter + 'px';
         ring.style.height = diameter + 'px';
@@ -198,7 +204,6 @@ function toggleCaption(button) {
             baseRadius: baseRadius,
             currentOffset: 0,
             targetOffset: 0,
-            collapseTimeout: null,
             phaseOffset: i * ringPhaseOffset,
             entranceStagger: i * (400 / numRings)
         });
@@ -208,8 +213,33 @@ function toggleCaption(button) {
         const ring = rings[index];
         const state = ringState[index];
 
-        // Smooth hover interpolation
-        state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+        // Calculate trailing ripple effect from mouse trail
+        // Use the strongest recent effect (by absolute value), preserving its sign
+        let trailOffset = 0;
+        let strongestAbs = 0;
+        for (let t = trail.length - 1; t >= 0; t--) {
+            const point = trail[t];
+            const age = now - point.time;
+            if (age > trailMaxAge) break;
+
+            const distToRing = Math.abs(point.distFromCenter - state.baseRadius);
+            if (distToRing < rippleRadius) {
+                const proximity = 1 - (distToRing / rippleRadius);
+                const freshness = 1 - (age / trailMaxAge);
+                const easedFreshness = freshness * freshness;
+                // direction is +1 (outward) or -1 (inward)
+                const pointEffect = rippleStrength * proximity * easedFreshness * point.strength * point.direction;
+                if (Math.abs(pointEffect) > strongestAbs) {
+                    strongestAbs = Math.abs(pointEffect);
+                    trailOffset = pointEffect;
+                }
+            }
+        }
+
+        state.targetOffset = trailOffset;
+
+        // Smooth interpolation toward target
+        state.currentOffset += (state.targetOffset - state.currentOffset) * settleSpeed;
 
         // Entrance animation
         let entranceProgress = 1;
@@ -221,8 +251,8 @@ function toggleCaption(button) {
             if (elapsed < 0) {
                 entranceProgress = 0;
             } else if (elapsed < entranceDuration) {
-                const t = elapsed / entranceDuration;
-                entranceProgress = 1 - Math.pow(1 - t, 3);
+                const et = elapsed / entranceDuration;
+                entranceProgress = 1 - Math.pow(1 - et, 3);
             }
             entranceScale = entranceStartScale + (1 - entranceStartScale) * entranceProgress;
             entranceOpacity = Math.min(1, entranceProgress * 2.5);
@@ -245,6 +275,11 @@ function toggleCaption(button) {
         const now = Date.now();
         const breathProgress = (now % breathDuration) / breathDuration;
 
+        // Prune old trail points
+        while (trail.length > 0 && (now - trail[0].time) > trailMaxAge) {
+            trail.shift();
+        }
+
         for (let i = 0; i < rings.length; i++) {
             updateRingPosition(i, breathProgress, now);
         }
@@ -266,29 +301,53 @@ function toggleCaption(button) {
         requestAnimationFrame(animate);
     }
 
-    // Hover interaction
-    function expandRing(index) {
-        const state = ringState[index];
-        state.targetOffset = hoverExpandAmount;
-        if (state.collapseTimeout) clearTimeout(state.collapseTimeout);
-        state.collapseTimeout = setTimeout(() => {
-            state.targetOffset = 0;
-            state.collapseTimeout = null;
-        }, 800);
-    }
-
+    // Mouse interaction - record trail of positions with radial direction
     heroSection.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastTrailTime < trailSampleInterval) return;
+        lastTrailTime = now;
+
         const rect = container.getBoundingClientRect();
         const mouseX = e.clientX - rect.left - rect.width / 2;
         const mouseY = e.clientY - rect.top - rect.height / 2;
-        const mouseDistFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+        const distFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
 
-        for (let i = 0; i < ringState.length; i++) {
-            const distToRing = Math.abs(mouseDistFromCenter - ringState[i].baseRadius);
-            if (distToRing < 40) {
-                expandRing(i);
+        let strength = 1;
+        let direction = 1; // +1 = outward (expand), -1 = inward (contract)
+
+        if (trail.length > 0) {
+            const prev = trail[trail.length - 1];
+            const dx = mouseX - prev.x;
+            const dy = mouseY - prev.y;
+            const speed = Math.sqrt(dx * dx + dy * dy);
+
+            // Slower movement = deeper impression
+            strength = Math.min(1, Math.max(0.3, 1 - speed / 150));
+
+            if (speed > 1) {
+                // Calculate how "radial" the movement is using dot product
+                // Radial unit vector points from center toward cursor
+                const radialX = mouseX / (distFromCenter || 1);
+                const radialY = mouseY / (distFromCenter || 1);
+                // Radial component of movement: positive = outward, negative = inward
+                const radialComponent = dx * radialX + dy * radialY;
+                // How much of the total movement is radial vs tangential (0-1)
+                const radialness = Math.abs(radialComponent) / speed;
+                // Signed radial direction: +1 or -1
+                const radialSign = radialComponent >= 0 ? 1 : -1;
+                // Blend: tangential movement → expand (1), radial → signed direction
+                direction = 1 * (1 - radialness) + radialSign * radialness;
             }
         }
+
+        trail.push({
+            x: mouseX,
+            y: mouseY,
+            distFromCenter: distFromCenter,
+            time: now,
+            strength: strength,
+            direction: direction
+        });
     });
 
     // Start animation
