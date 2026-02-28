@@ -149,209 +149,320 @@ function toggleCaption(button) {
 // Kit (ConvertKit) form handling is done by Kit's official script
 // loaded via: https://breathe-with-eli.kit.com/7a97c5385b/index.js
 
-// Zen Garden Concentric Rings - Interactive breathing animation
+// Hero animation - randomly pick Zen Garden or Chevron Mandala on each page load
 (function() {
     const isMobile = window.innerWidth <= 768;
-    const container = isMobile
-        ? document.getElementById('hero-mandala-mobile')
-        : document.getElementById('hero-mandala');
+    const desktopContainer = document.getElementById('hero-mandala');
+    const mobileContainer = document.getElementById('hero-mandala-mobile');
     const heroSection = document.querySelector('.hero--mandala');
-    if (!container || !heroSection) return;
+    if (!desktopContainer || !mobileContainer || !heroSection) return;
 
-    // Configuration
-    const numRings = isMobile ? 5 : 7;
-    const minRadius = isMobile ? 20 : 60;
-    const maxRadius = isMobile ? 75 : 350;
-    const breathAmount = 8;
-    const breathDuration = 8000;
-    const ringPhaseOffset = 0.08;
+    const useZenGarden = Math.random() < 0.5;
 
-    // Entrance animation
-    const entranceDelay = 300;
-    const entranceDuration = 2200;
-    const entranceStartScale = 0.3;
-    const entranceStartTime = Date.now() + entranceDelay;
-    let entranceComplete = false;
+    if (useZenGarden) {
+        // Zen Garden Concentric Rings
+        desktopContainer.className = 'zen-garden-container';
+        mobileContainer.className = 'zen-garden-mobile';
 
-    // Trailing ripple system - stores recent mouse positions
-    const trail = []; // Array of { x, y, time, strength, direction }
-    const trailMaxAge = 3000; // Ripples fade over 3 seconds
-    const trailSampleInterval = 30; // Record a point every 30ms
-    const rippleRadius = 60; // How far from cursor a ring is affected
-    const rippleStrength = 30; // Max px displacement at cursor
-    const settleSpeed = 0.03; // How fast rings settle back (lower = slower)
-    let lastTrailTime = 0;
+        const container = isMobile ? mobileContainer : desktopContainer;
 
-    const rings = [];
-    const ringState = [];
+        const numRings = isMobile ? 5 : 7;
+        const minRadius = isMobile ? 20 : 60;
+        const maxRadius = isMobile ? 75 : 350;
+        const breathAmount = 8;
+        const breathDuration = 8000;
+        const ringPhaseOffset = 0.08;
 
-    // Create ring elements
-    for (let i = 0; i < numRings; i++) {
-        const t = i / (numRings - 1);
-        const baseRadius = minRadius + t * (maxRadius - minRadius);
+        const entranceDelay = 300;
+        const entranceDuration = 2200;
+        const entranceStartScale = 0.3;
+        const entranceStartTime = Date.now() + entranceDelay;
+        let entranceComplete = false;
 
-        const ring = document.createElement('div');
-        ring.className = 'zen-ring';
-        ring.style.opacity = '0';
+        const trail = [];
+        const trailMaxAge = 3000;
+        const trailSampleInterval = 30;
+        const rippleRadius = 60;
+        const rippleStrength = 30;
+        const settleSpeed = 0.03;
+        let lastTrailTime = 0;
 
-        const diameter = baseRadius * 2;
-        ring.style.width = diameter + 'px';
-        ring.style.height = diameter + 'px';
+        const rings = [];
+        const ringState = [];
 
-        container.appendChild(ring);
-        rings.push(ring);
-        ringState.push({
-            baseRadius: baseRadius,
-            currentOffset: 0,
-            targetOffset: 0,
-            phaseOffset: i * ringPhaseOffset,
-            entranceStagger: i * (400 / numRings)
-        });
-    }
+        for (let i = 0; i < numRings; i++) {
+            const t = i / (numRings - 1);
+            const baseRadius = minRadius + t * (maxRadius - minRadius);
 
-    function updateRingPosition(index, breathProgress, now) {
-        const ring = rings[index];
-        const state = ringState[index];
+            const ring = document.createElement('div');
+            ring.className = 'zen-ring';
+            ring.style.opacity = '0';
 
-        // Calculate trailing ripple effect from mouse trail
-        // Use the strongest recent effect (by absolute value), preserving its sign
-        let trailOffset = 0;
-        let strongestAbs = 0;
-        for (let t = trail.length - 1; t >= 0; t--) {
-            const point = trail[t];
-            const age = now - point.time;
-            if (age > trailMaxAge) break;
+            const diameter = baseRadius * 2;
+            ring.style.width = diameter + 'px';
+            ring.style.height = diameter + 'px';
 
-            const distToRing = Math.abs(point.distFromCenter - state.baseRadius);
-            if (distToRing < rippleRadius) {
-                const proximity = 1 - (distToRing / rippleRadius);
-                const freshness = 1 - (age / trailMaxAge);
-                const easedFreshness = freshness * freshness;
-                // direction is +1 (outward) or -1 (inward)
-                const pointEffect = rippleStrength * proximity * easedFreshness * point.strength * point.direction;
-                if (Math.abs(pointEffect) > strongestAbs) {
-                    strongestAbs = Math.abs(pointEffect);
-                    trailOffset = pointEffect;
+            container.appendChild(ring);
+            rings.push(ring);
+            ringState.push({
+                baseRadius: baseRadius,
+                currentOffset: 0,
+                targetOffset: 0,
+                phaseOffset: i * ringPhaseOffset,
+                entranceStagger: i * (400 / numRings)
+            });
+        }
+
+        function updateRingPosition(index, breathProgress, now) {
+            const ring = rings[index];
+            const state = ringState[index];
+
+            let trailOffset = 0;
+            let strongestAbs = 0;
+            for (let t = trail.length - 1; t >= 0; t--) {
+                const point = trail[t];
+                const age = now - point.time;
+                if (age > trailMaxAge) break;
+
+                const distToRing = Math.abs(point.distFromCenter - state.baseRadius);
+                if (distToRing < rippleRadius) {
+                    const proximity = 1 - (distToRing / rippleRadius);
+                    const freshness = 1 - (age / trailMaxAge);
+                    const easedFreshness = freshness * freshness;
+                    const pointEffect = rippleStrength * proximity * easedFreshness * point.strength * point.direction;
+                    if (Math.abs(pointEffect) > strongestAbs) {
+                        strongestAbs = Math.abs(pointEffect);
+                        trailOffset = pointEffect;
+                    }
                 }
             }
-        }
 
-        state.targetOffset = trailOffset;
+            state.targetOffset = trailOffset;
+            state.currentOffset += (state.targetOffset - state.currentOffset) * settleSpeed;
 
-        // Smooth interpolation toward target
-        state.currentOffset += (state.targetOffset - state.currentOffset) * settleSpeed;
+            let entranceProgress = 1;
+            let entranceScale = 1;
+            let entranceOpacity = 1;
 
-        // Entrance animation
-        let entranceProgress = 1;
-        let entranceScale = 1;
-        let entranceOpacity = 1;
-
-        if (!entranceComplete) {
-            const elapsed = now - entranceStartTime - state.entranceStagger;
-            if (elapsed < 0) {
-                entranceProgress = 0;
-            } else if (elapsed < entranceDuration) {
-                const et = elapsed / entranceDuration;
-                entranceProgress = 1 - Math.pow(1 - et, 3);
+            if (!entranceComplete) {
+                const elapsed = now - entranceStartTime - state.entranceStagger;
+                if (elapsed < 0) {
+                    entranceProgress = 0;
+                } else if (elapsed < entranceDuration) {
+                    const et = elapsed / entranceDuration;
+                    entranceProgress = 1 - Math.pow(1 - et, 3);
+                }
+                entranceScale = entranceStartScale + (1 - entranceStartScale) * entranceProgress;
+                entranceOpacity = Math.min(1, entranceProgress * 2.5);
             }
-            entranceScale = entranceStartScale + (1 - entranceStartScale) * entranceProgress;
-            entranceOpacity = Math.min(1, entranceProgress * 2.5);
+
+            const ringBreathProgress = breathProgress + state.phaseOffset;
+            const breathOffset = Math.sin(ringBreathProgress * Math.PI * 2) * breathAmount;
+
+            const currentRadius = (state.baseRadius + breathOffset + state.currentOffset) * entranceScale;
+            const scale = currentRadius / state.baseRadius;
+
+            ring.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            ring.style.opacity = entranceOpacity;
         }
 
-        // Breathing with per-ring phase offset for ripple
-        const ringBreathProgress = breathProgress + state.phaseOffset;
-        const breathOffset = Math.sin(ringBreathProgress * Math.PI * 2) * breathAmount;
+        function animate() {
+            const now = Date.now();
+            const breathProgress = (now % breathDuration) / breathDuration;
 
-        // Final radius
-        const currentRadius = (state.baseRadius + breathOffset + state.currentOffset) * entranceScale;
-        const scale = currentRadius / state.baseRadius;
-
-        ring.style.transform = `translate(-50%, -50%) scale(${scale})`;
-        ring.style.opacity = entranceOpacity;
-    }
-
-    // Animation loop
-    function animate() {
-        const now = Date.now();
-        const breathProgress = (now % breathDuration) / breathDuration;
-
-        // Prune old trail points
-        while (trail.length > 0 && (now - trail[0].time) > trailMaxAge) {
-            trail.shift();
-        }
-
-        for (let i = 0; i < rings.length; i++) {
-            updateRingPosition(i, breathProgress, now);
-        }
-
-        // Check entrance completion -> show scroll indicator
-        if (!entranceComplete) {
-            const lastFinish = entranceStartTime + ringState[ringState.length - 1].entranceStagger + entranceDuration;
-            if (now > lastFinish) {
-                entranceComplete = true;
-                setTimeout(() => {
-                    const scrollIndicator = heroSection.querySelector('.scroll-indicator');
-                    if (scrollIndicator) {
-                        scrollIndicator.classList.add('visible');
-                    }
-                }, 800);
+            while (trail.length > 0 && (now - trail[0].time) > trailMaxAge) {
+                trail.shift();
             }
-        }
 
-        requestAnimationFrame(animate);
-    }
-
-    // Mouse interaction - record trail of positions with radial direction
-    heroSection.addEventListener('mousemove', (e) => {
-        const now = Date.now();
-        if (now - lastTrailTime < trailSampleInterval) return;
-        lastTrailTime = now;
-
-        const rect = container.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left - rect.width / 2;
-        const mouseY = e.clientY - rect.top - rect.height / 2;
-        const distFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
-
-        let strength = 1;
-        let direction = 1; // +1 = outward (expand), -1 = inward (contract)
-
-        if (trail.length > 0) {
-            const prev = trail[trail.length - 1];
-            const dx = mouseX - prev.x;
-            const dy = mouseY - prev.y;
-            const speed = Math.sqrt(dx * dx + dy * dy);
-
-            // Slower movement = deeper impression
-            strength = Math.min(1, Math.max(0.3, 1 - speed / 150));
-
-            if (speed > 1) {
-                // Calculate how "radial" the movement is using dot product
-                // Radial unit vector points from center toward cursor
-                const radialX = mouseX / (distFromCenter || 1);
-                const radialY = mouseY / (distFromCenter || 1);
-                // Radial component of movement: positive = outward, negative = inward
-                const radialComponent = dx * radialX + dy * radialY;
-                // How much of the total movement is radial vs tangential (0-1)
-                const radialness = Math.abs(radialComponent) / speed;
-                // Signed radial direction: +1 or -1
-                const radialSign = radialComponent >= 0 ? 1 : -1;
-                // Blend: tangential movement → expand (1), radial → signed direction
-                direction = 1 * (1 - radialness) + radialSign * radialness;
+            for (let i = 0; i < rings.length; i++) {
+                updateRingPosition(i, breathProgress, now);
             }
+
+            if (!entranceComplete) {
+                const lastFinish = entranceStartTime + ringState[ringState.length - 1].entranceStagger + entranceDuration;
+                if (now > lastFinish) {
+                    entranceComplete = true;
+                    setTimeout(() => {
+                        const scrollIndicator = heroSection.querySelector('.scroll-indicator');
+                        if (scrollIndicator) scrollIndicator.classList.add('visible');
+                    }, 800);
+                }
+            }
+
+            requestAnimationFrame(animate);
         }
 
-        trail.push({
-            x: mouseX,
-            y: mouseY,
-            distFromCenter: distFromCenter,
-            time: now,
-            strength: strength,
-            direction: direction
+        heroSection.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastTrailTime < trailSampleInterval) return;
+            lastTrailTime = now;
+
+            const rect = container.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left - rect.width / 2;
+            const mouseY = e.clientY - rect.top - rect.height / 2;
+            const distFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+
+            let strength = 1;
+            let direction = 1;
+
+            if (trail.length > 0) {
+                const prev = trail[trail.length - 1];
+                const dx = mouseX - prev.x;
+                const dy = mouseY - prev.y;
+                const speed = Math.sqrt(dx * dx + dy * dy);
+
+                strength = Math.min(1, Math.max(0.3, 1 - speed / 150));
+
+                if (speed > 1) {
+                    const radialX = mouseX / (distFromCenter || 1);
+                    const radialY = mouseY / (distFromCenter || 1);
+                    const radialComponent = dx * radialX + dy * radialY;
+                    const radialness = Math.abs(radialComponent) / speed;
+                    const radialSign = radialComponent >= 0 ? 1 : -1;
+                    direction = 1 * (1 - radialness) + radialSign * radialness;
+                }
+            }
+
+            trail.push({
+                x: mouseX,
+                y: mouseY,
+                distFromCenter: distFromCenter,
+                time: now,
+                strength: strength,
+                direction: direction
+            });
         });
-    });
 
-    // Start animation
-    animate();
+        animate();
+
+    } else {
+        // Chevron Mandala
+        desktopContainer.className = 'mandala-hover-container';
+        mobileContainer.className = 'mandala-mobile';
+
+        const container = isMobile ? mobileContainer : desktopContainer;
+
+        const numChevrons = isMobile ? 12 : 24;
+        const baseRadius = isMobile ? 60 : 290;
+        const breathAmount = 6;
+        const hoverExpandAmount = 40;
+        const breathDuration = 8000;
+        const hoverEaseSpeed = 0.015;
+        const chevrons = [];
+        const chevronState = [];
+
+        const entranceDelay = 300;
+        const entranceDuration = 2000;
+        const entranceStartRadius = 1.4;
+        const entranceStartTime = Date.now() + entranceDelay;
+        let entranceComplete = false;
+
+        for (let i = 0; i < numChevrons; i++) {
+            const angle = (i / numChevrons) * Math.PI * 2;
+            const chevron = document.createElement('div');
+            chevron.className = 'chevron';
+
+            const rotation = (angle * 180 / Math.PI) + 90;
+            chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+            chevron.style.opacity = '0';
+
+            const hueShift = (i / numChevrons) * 80 - 40;
+            chevron.style.setProperty('--chevron-hue', 100 + hueShift);
+
+            container.appendChild(chevron);
+            chevrons.push(chevron);
+            chevronState.push({
+                angle: angle,
+                currentOffset: 0,
+                targetOffset: 0,
+                collapseTimeout: null,
+                entranceStagger: i * (300 / numChevrons)
+            });
+        }
+
+        function updateChevronPosition(index, breathProgress, now) {
+            const chevron = chevrons[index];
+            const state = chevronState[index];
+
+            state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+
+            let entranceProgress = 1;
+            let entranceRadiusMultiplier = 1;
+            let entranceOpacity = 1;
+
+            if (!entranceComplete) {
+                const entranceElapsed = now - entranceStartTime - state.entranceStagger;
+                if (entranceElapsed < 0) {
+                    entranceProgress = 0;
+                } else if (entranceElapsed < entranceDuration) {
+                    const t = entranceElapsed / entranceDuration;
+                    entranceProgress = 1 - Math.pow(1 - t, 3);
+                }
+                entranceRadiusMultiplier = entranceStartRadius - (entranceStartRadius - 1) * entranceProgress;
+                entranceOpacity = Math.min(1, entranceProgress * 3);
+            }
+
+            const breathOffset = Math.sin(breathProgress * Math.PI * 2) * breathAmount;
+            const currentRadius = (baseRadius + breathOffset + state.currentOffset) * entranceRadiusMultiplier;
+
+            const x = Math.cos(state.angle) * currentRadius;
+            const y = Math.sin(state.angle) * currentRadius;
+
+            chevron.style.left = `calc(50% + ${x}px)`;
+            chevron.style.top = `calc(50% + ${y}px)`;
+            chevron.style.opacity = entranceOpacity;
+        }
+
+        function animateBreathing() {
+            const now = Date.now();
+            const breathProgress = (now % breathDuration) / breathDuration;
+
+            for (let i = 0; i < chevrons.length; i++) {
+                updateChevronPosition(i, breathProgress, now);
+            }
+
+            if (!entranceComplete) {
+                const lastChevronFinish = entranceStartTime + chevronState[chevronState.length - 1].entranceStagger + entranceDuration;
+                if (now > lastChevronFinish) {
+                    entranceComplete = true;
+                    setTimeout(() => {
+                        const scrollIndicator = heroSection.querySelector('.scroll-indicator');
+                        if (scrollIndicator) scrollIndicator.classList.add('visible');
+                    }, 800);
+                }
+            }
+
+            requestAnimationFrame(animateBreathing);
+        }
+
+        function expandChevron(index) {
+            const state = chevronState[index];
+            state.targetOffset = hoverExpandAmount;
+            if (state.collapseTimeout) clearTimeout(state.collapseTimeout);
+            state.collapseTimeout = setTimeout(() => {
+                state.targetOffset = 0;
+                state.collapseTimeout = null;
+            }, 800);
+        }
+
+        heroSection.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left - rect.width / 2;
+            const mouseY = e.clientY - rect.top - rect.height / 2;
+
+            for (let i = 0; i < chevronState.length; i++) {
+                const state = chevronState[i];
+                const checkX = Math.cos(state.angle) * baseRadius;
+                const checkY = Math.sin(state.angle) * baseRadius;
+                const dx = mouseX - checkX;
+                const dy = mouseY - checkY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < 70) expandChevron(i);
+            }
+        });
+
+        animateBreathing();
+    }
 })();
 
 // Interactive Breath Wave - Trailing Line
