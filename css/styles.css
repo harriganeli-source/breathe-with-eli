@@ -489,6 +489,55 @@ p {
     transform: translate(-50%, -50%);
 }
 
+/* Chevron Mandala Container */
+.mandala-hover-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(900px, 95vw);
+    height: min(900px, 95vw);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.mandala-hover-container .chevron {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    pointer-events: auto;
+}
+
+.mandala-hover-container .chevron::before,
+.mandala-hover-container .chevron::after {
+    content: '';
+    position: absolute;
+    width: 17px;
+    height: 4px;
+    background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
+    opacity: 0.4;
+    top: 50%;
+    border-radius: 2px;
+    box-shadow: 0 0 8px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
+}
+
+.mandala-hover-container .chevron::before {
+    transform: rotate(45deg);
+    transform-origin: right center;
+    right: 50%;
+}
+
+.mandala-hover-container .chevron::after {
+    transform: rotate(-45deg);
+    transform-origin: left center;
+    left: 50%;
+}
+
+/* Mobile chevron container - hidden by default, shown in mobile media query */
+.mandala-mobile {
+    display: none;
+}
+
 .hero--mandala .hero-content {
     position: relative;
     z-index: 1;
@@ -1508,6 +1557,49 @@ p {
 
     .zen-garden-mobile .zen-ring {
         border-width: 1.5px;
+    }
+
+    .mandala-hover-container {
+        display: none;
+    }
+
+    .mandala-mobile {
+        display: block;
+        position: relative;
+        width: 160px;
+        height: 160px;
+        margin: var(--space-md) auto;
+    }
+
+    .mandala-mobile .chevron {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+    }
+
+    .mandala-mobile .chevron::before,
+    .mandala-mobile .chevron::after {
+        content: '';
+        position: absolute;
+        width: 10px;
+        height: 2.5px;
+        background-color: hsl(var(--chevron-hue, 100), 30%, 40%);
+        opacity: 0.45;
+        top: 50%;
+        border-radius: 2px;
+        box-shadow: 0 0 6px hsla(var(--chevron-hue, 100), 30%, 40%, 0.2);
+    }
+
+    .mandala-mobile .chevron::before {
+        transform: rotate(45deg);
+        transform-origin: right center;
+        right: 50%;
+    }
+
+    .mandala-mobile .chevron::after {
+        transform: rotate(-45deg);
+        transform-origin: left center;
+        left: 50%;
     }
 
     .hero-buttons {
