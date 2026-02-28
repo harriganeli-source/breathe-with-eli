@@ -149,7 +149,7 @@ function toggleCaption(button) {
 // Kit (ConvertKit) form handling is done by Kit's official script
 // loaded via: https://breathe-with-eli.kit.com/7a97c5385b/index.js
 
-// Interactive Hover Mandala with breathing animation
+// Zen Garden Concentric Rings - Interactive breathing animation
 (function() {
     const isMobile = window.innerWidth <= 768;
     const container = isMobile
@@ -158,216 +158,200 @@ function toggleCaption(button) {
     const heroSection = document.querySelector('.hero--mandala');
     if (!container || !heroSection) return;
 
-    const numChevrons = isMobile ? 12 : 24;
-    const baseRadius = isMobile ? 60 : 290;
-    const breathAmount = 6; // How much the radius changes during breathing
-    const hoverExpandAmount = 40; // Additional expansion on hover
-    const breathDuration = 8000; // 8 seconds per breath cycle
-    const hoverEaseSpeed = 0.015; // How fast hover offset interpolates (0-1, lower = smoother)
-    const chevrons = [];
-    const chevronState = []; // Store current and target hover offsets
+    // Configuration
+    const numRings = isMobile ? 5 : 7;
+    const minRadius = isMobile ? 20 : 60;
+    const maxRadius = isMobile ? 75 : 350;
+    const breathAmount = 8;
+    const breathDuration = 8000;
+    const ringPhaseOffset = 0.08;
 
-    // Page-load entrance animation settings
-    const entranceDelay = 300; // ms before animation starts
-    const entranceDuration = 2000; // ms for full entrance animation (slower, more relaxed)
-    const entranceStartRadius = 1.4; // Start 40% wider than final position
+    // Entrance animation
+    const entranceDelay = 300;
+    const entranceDuration = 2200;
+    const entranceStartScale = 0.3;
     const entranceStartTime = Date.now() + entranceDelay;
     let entranceComplete = false;
-    let bottomChevronFlipped = false;
-    // Bottom chevron calculation: cos(angle)*radius gives X, sin(angle)*radius gives Y
-    // For bottom of screen, we want max Y (positive), which is sin(angle) = 1, meaning angle = π/2
-    // Since angle = (i/numChevrons) * 2π, we need i/numChevrons = 0.25 for angle = π/2
-    const bottomChevronIndex = Math.floor(numChevrons * 0.25); // Bottom chevron (at π/2 radians, max Y on screen)
 
-    // Create chevron elements arranged in a circle
-    for (let i = 0; i < numChevrons; i++) {
-        const angle = (i / numChevrons) * Math.PI * 2;
-        const chevron = document.createElement('div');
-        chevron.className = 'chevron';
+    // Trailing ripple system - stores recent mouse positions
+    const trail = []; // Array of { x, y, time, strength, direction }
+    const trailMaxAge = 3000; // Ripples fade over 3 seconds
+    const trailSampleInterval = 30; // Record a point every 30ms
+    const rippleRadius = 60; // How far from cursor a ring is affected
+    const rippleStrength = 30; // Max px displacement at cursor
+    const settleSpeed = 0.03; // How fast rings settle back (lower = slower)
+    let lastTrailTime = 0;
 
-        // Rotate to point outward
-        const rotation = (angle * 180 / Math.PI) + 90;
-        chevron.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+    const rings = [];
+    const ringState = [];
 
-        // Start with reduced opacity for entrance animation
-        chevron.style.opacity = '0';
+    // Create ring elements
+    for (let i = 0; i < numRings; i++) {
+        const t = i / (numRings - 1);
+        const baseRadius = minRadius + t * (maxRadius - minRadius);
 
-        // Set color gradient - hue shift around the ring
-        // Base color is sage green (around 100 on hue wheel)
-        // Shift from warm gold/olive (60) at top to cool teal (140) at bottom
-        const hueShift = (i / numChevrons) * 80 - 40; // -40 to +40 range for more visible gradient
-        chevron.style.setProperty('--chevron-hue', 100 + hueShift);
+        const ring = document.createElement('div');
+        ring.className = 'zen-ring';
+        ring.style.opacity = '0';
 
-        container.appendChild(chevron);
-        chevrons.push(chevron);
-        chevronState.push({
-            angle: angle,
+        const diameter = baseRadius * 2;
+        ring.style.width = diameter + 'px';
+        ring.style.height = diameter + 'px';
+
+        container.appendChild(ring);
+        rings.push(ring);
+        ringState.push({
+            baseRadius: baseRadius,
             currentOffset: 0,
             targetOffset: 0,
-            collapseTimeout: null,
-            // Stagger entrance by angle - top chevrons appear first, rippling around
-            entranceStagger: i * (300 / numChevrons)
+            phaseOffset: i * ringPhaseOffset,
+            entranceStagger: i * (400 / numRings)
         });
     }
 
-    function updateChevronPosition(index, breathProgress, now) {
-        const chevron = chevrons[index];
-        const state = chevronState[index];
+    function updateRingPosition(index, breathProgress, now) {
+        const ring = rings[index];
+        const state = ringState[index];
 
-        // Smoothly interpolate current offset toward target
-        state.currentOffset += (state.targetOffset - state.currentOffset) * hoverEaseSpeed;
+        // Calculate trailing ripple effect from mouse trail
+        // Use the strongest recent effect (by absolute value), preserving its sign
+        let trailOffset = 0;
+        let strongestAbs = 0;
+        for (let t = trail.length - 1; t >= 0; t--) {
+            const point = trail[t];
+            const age = now - point.time;
+            if (age > trailMaxAge) break;
 
-        // Calculate entrance animation progress
-        let entranceProgress = 1;
-        let entranceRadiusMultiplier = 1;
-        let entranceOpacity = 1;
-
-        if (!entranceComplete) {
-            const entranceElapsed = now - entranceStartTime - state.entranceStagger;
-            if (entranceElapsed < 0) {
-                entranceProgress = 0;
-            } else if (entranceElapsed < entranceDuration) {
-                // Ease-out cubic for smooth deceleration (settling feel)
-                const t = entranceElapsed / entranceDuration;
-                entranceProgress = 1 - Math.pow(1 - t, 3);
-            }
-            // Chevrons start from wider radius and contract inward to final position
-            // entranceStartRadius (1.4) -> 1.0 as entranceProgress goes 0 -> 1
-            entranceRadiusMultiplier = entranceStartRadius - (entranceStartRadius - 1) * entranceProgress;
-            // Fade in during first third of entrance
-            entranceOpacity = Math.min(1, entranceProgress * 3);
-        }
-
-        // Calculate breathing radius (sine wave)
-        const breathOffset = Math.sin(breathProgress * Math.PI * 2) * breathAmount;
-        const currentRadius = (baseRadius + breathOffset + state.currentOffset) * entranceRadiusMultiplier;
-
-        const x = Math.cos(state.angle) * currentRadius;
-        const y = Math.sin(state.angle) * currentRadius;
-
-        chevron.style.left = `calc(50% + ${x}px)`;
-        chevron.style.top = `calc(50% + ${y}px)`;
-        chevron.style.opacity = entranceOpacity;
-
-        // Handle bottom chevron flip to become scroll indicator
-        if (index === bottomChevronIndex && bottomChevronFlipped) {
-            // The chevron base shape ">" points right at 0deg
-            // But the bottom chevron already has 180deg rotation applied (pointing left/outward)
-            // To flip it to point DOWN as a scroll indicator, we need to rotate it
-            // from pointing outward (away from center) to pointing down
-            // Testing with 0deg - the raw chevron shape points right, let's see what we get
-            chevron.style.transform = `translate(-50%, -50%) rotate(0deg)`;
-        }
-    }
-
-    // Breathing animation loop
-    function animateBreathing() {
-        const now = Date.now();
-        const breathProgress = (now % breathDuration) / breathDuration;
-
-        for (let i = 0; i < chevrons.length; i++) {
-            updateChevronPosition(i, breathProgress, now);
-        }
-
-        // Check if entrance animation is complete
-        if (!entranceComplete) {
-            const lastChevronFinish = entranceStartTime + chevronState[chevronState.length - 1].entranceStagger + entranceDuration;
-            if (now > lastChevronFinish) {
-                entranceComplete = true;
-                // On desktop only: flip the bottom chevron to point down as scroll indicator
-                // On mobile: keep the separate scroll-indicator visible instead
-                if (!isMobile) {
-                    setTimeout(() => {
-                        const bottomChevron = chevrons[bottomChevronIndex];
-                        // Start spin animation
-                        bottomChevron.classList.add('chevron-spinning');
-
-                        // After flip completes, switch to scroll indicator
-                        setTimeout(() => {
-                            bottomChevronFlipped = true;
-                            bottomChevron.classList.remove('chevron-spinning');
-                            bottomChevron.classList.add('scroll-chevron');
-
-                            // Create invisible click overlay for easier clicking
-                            const clickOverlay = document.createElement('div');
-                            clickOverlay.className = 'scroll-chevron-clickarea';
-                            // Position at bottom center of mandala
-                            clickOverlay.style.left = '50%';
-                            clickOverlay.style.bottom = '0';
-                            clickOverlay.style.transform = 'translateX(-50%)';
-                            container.appendChild(clickOverlay);
-
-                            // Scroll function for both chevron and overlay
-                            const scrollToIntro = () => {
-                                const intro = document.getElementById('intro');
-                                if (intro) {
-                                    const navHeight = document.querySelector('.navbar').offsetHeight;
-                                    const targetPosition = intro.getBoundingClientRect().top + window.pageYOffset - navHeight;
-                                    window.scrollTo({
-                                        top: targetPosition,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                            };
-
-                            // Make both clickable
-                            bottomChevron.addEventListener('click', scrollToIntro);
-                            clickOverlay.addEventListener('click', scrollToIntro);
-                        }, 600); // Wait for flip animation to complete
-                    }, 1500); // 1.5 second delay after entrance completes
+            const distToRing = Math.abs(point.distFromCenter - state.baseRadius);
+            if (distToRing < rippleRadius) {
+                const proximity = 1 - (distToRing / rippleRadius);
+                const freshness = 1 - (age / trailMaxAge);
+                const easedFreshness = freshness * freshness;
+                // direction is +1 (outward) or -1 (inward)
+                const pointEffect = rippleStrength * proximity * easedFreshness * point.strength * point.direction;
+                if (Math.abs(pointEffect) > strongestAbs) {
+                    strongestAbs = Math.abs(pointEffect);
+                    trailOffset = pointEffect;
                 }
             }
         }
 
-        requestAnimationFrame(animateBreathing);
-    }
+        state.targetOffset = trailOffset;
 
-    function expandChevron(index) {
-        const state = chevronState[index];
-        state.targetOffset = hoverExpandAmount;
+        // Smooth interpolation toward target
+        state.currentOffset += (state.targetOffset - state.currentOffset) * settleSpeed;
 
-        // Clear any existing collapse timeout
-        if (state.collapseTimeout) {
-            clearTimeout(state.collapseTimeout);
+        // Entrance animation
+        let entranceProgress = 1;
+        let entranceScale = 1;
+        let entranceOpacity = 1;
+
+        if (!entranceComplete) {
+            const elapsed = now - entranceStartTime - state.entranceStagger;
+            if (elapsed < 0) {
+                entranceProgress = 0;
+            } else if (elapsed < entranceDuration) {
+                const et = elapsed / entranceDuration;
+                entranceProgress = 1 - Math.pow(1 - et, 3);
+            }
+            entranceScale = entranceStartScale + (1 - entranceStartScale) * entranceProgress;
+            entranceOpacity = Math.min(1, entranceProgress * 2.5);
         }
 
-        // Set new collapse timeout (delay before returning)
-        state.collapseTimeout = setTimeout(() => {
-            collapseChevron(index);
-        }, 800);
+        // Breathing with per-ring phase offset for ripple
+        const ringBreathProgress = breathProgress + state.phaseOffset;
+        const breathOffset = Math.sin(ringBreathProgress * Math.PI * 2) * breathAmount;
+
+        // Final radius
+        const currentRadius = (state.baseRadius + breathOffset + state.currentOffset) * entranceScale;
+        const scale = currentRadius / state.baseRadius;
+
+        ring.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        ring.style.opacity = entranceOpacity;
     }
 
-    function collapseChevron(index) {
-        const state = chevronState[index];
-        state.targetOffset = 0;
-        state.collapseTimeout = null;
+    // Animation loop
+    function animate() {
+        const now = Date.now();
+        const breathProgress = (now % breathDuration) / breathDuration;
+
+        // Prune old trail points
+        while (trail.length > 0 && (now - trail[0].time) > trailMaxAge) {
+            trail.shift();
+        }
+
+        for (let i = 0; i < rings.length; i++) {
+            updateRingPosition(i, breathProgress, now);
+        }
+
+        // Check entrance completion -> show scroll indicator
+        if (!entranceComplete) {
+            const lastFinish = entranceStartTime + ringState[ringState.length - 1].entranceStagger + entranceDuration;
+            if (now > lastFinish) {
+                entranceComplete = true;
+                setTimeout(() => {
+                    const scrollIndicator = heroSection.querySelector('.scroll-indicator');
+                    if (scrollIndicator) {
+                        scrollIndicator.classList.add('visible');
+                    }
+                }, 800);
+            }
+        }
+
+        requestAnimationFrame(animate);
     }
 
-    // Mouse interaction on the whole hero section
+    // Mouse interaction - record trail of positions with radial direction
     heroSection.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastTrailTime < trailSampleInterval) return;
+        lastTrailTime = now;
+
         const rect = container.getBoundingClientRect();
         const mouseX = e.clientX - rect.left - rect.width / 2;
         const mouseY = e.clientY - rect.top - rect.height / 2;
+        const distFromCenter = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
 
-        for (let i = 0; i < chevronState.length; i++) {
-            const state = chevronState[i];
-            // Calculate base position for distance check
-            const checkX = Math.cos(state.angle) * baseRadius;
-            const checkY = Math.sin(state.angle) * baseRadius;
+        let strength = 1;
+        let direction = 1; // +1 = outward (expand), -1 = inward (contract)
 
-            // Check distance from mouse to chevron base position
-            const dx = mouseX - checkX;
-            const dy = mouseY - checkY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+        if (trail.length > 0) {
+            const prev = trail[trail.length - 1];
+            const dx = mouseX - prev.x;
+            const dy = mouseY - prev.y;
+            const speed = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 70) {
-                expandChevron(i);
+            // Slower movement = deeper impression
+            strength = Math.min(1, Math.max(0.3, 1 - speed / 150));
+
+            if (speed > 1) {
+                // Calculate how "radial" the movement is using dot product
+                // Radial unit vector points from center toward cursor
+                const radialX = mouseX / (distFromCenter || 1);
+                const radialY = mouseY / (distFromCenter || 1);
+                // Radial component of movement: positive = outward, negative = inward
+                const radialComponent = dx * radialX + dy * radialY;
+                // How much of the total movement is radial vs tangential (0-1)
+                const radialness = Math.abs(radialComponent) / speed;
+                // Signed radial direction: +1 or -1
+                const radialSign = radialComponent >= 0 ? 1 : -1;
+                // Blend: tangential movement → expand (1), radial → signed direction
+                direction = 1 * (1 - radialness) + radialSign * radialness;
             }
         }
+
+        trail.push({
+            x: mouseX,
+            y: mouseY,
+            distFromCenter: distFromCenter,
+            time: now,
+            strength: strength,
+            direction: direction
+        });
     });
 
-    // Start breathing animation
-    animateBreathing();
+    // Start animation
+    animate();
 })();
 
 // Interactive Breath Wave - Trailing Line
