@@ -277,6 +277,11 @@ p {
     gap: var(--space-md);
 }
 
+/* Hidden on desktop; shown only inside mobile hamburger menu */
+.nav-mobile-events {
+    display: none;
+}
+
 .nav-menu a {
     font-size: 0.9rem;
     font-weight: 500;
@@ -1502,6 +1507,59 @@ p {
 
     .nav-toggle.active span:nth-child(3) {
         transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* Mobile nav events panel */
+    .nav-mobile-events {
+        display: block;
+        width: 100%;
+        padding-bottom: var(--space-sm);
+        margin-bottom: var(--space-xs);
+        border-bottom: 1px solid rgba(74, 93, 74, 0.2);
+        list-style: none;
+    }
+
+    .mobile-events-label {
+        display: block;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--color-text-light);
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .mobile-events-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .mobile-event-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        padding: 0.35rem 0 !important;
+        font-size: 1rem !important;
+        text-decoration: none;
+        color: var(--color-text) !important;
+    }
+
+    .mobile-event-item:hover {
+        color: var(--color-primary) !important;
+    }
+
+    .mobile-event-date {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-primary);
+        min-width: 42px;
+        flex-shrink: 0;
+    }
+
+    .mobile-event-title {
+        font-size: 0.95rem;
+        font-weight: 400;
     }
 
     /* Hero adjustments */

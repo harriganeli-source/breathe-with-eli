@@ -133,6 +133,49 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Mobile nav: inject upcoming events at top of hamburger menu
+(async function() {
+    const navMenu = document.querySelector('.nav-menu');
+    if (!navMenu) return;
+
+    try {
+        const response = await fetch('/api/events');
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!data.events || data.events.length === 0) return;
+
+        const eventsToShow = data.events.slice(0, 3);
+
+        const li = document.createElement('li');
+        li.className = 'nav-mobile-events';
+
+        let html = '<span class="mobile-events-label">Upcoming</span><div class="mobile-events-list">';
+        eventsToShow.forEach(function(event) {
+            var attrs = event.isExternal ? ' target="_blank" rel="noopener"' : '';
+            html += '<a href="' + event.buttonLink + '" class="mobile-event-item"' + attrs + '>' +
+                '<span class="mobile-event-date">' + event.month + ' ' + event.day + '</span>' +
+                '<span class="mobile-event-title">' + event.title + '</span>' +
+                '</a>';
+        });
+        html += '</div>';
+
+        li.innerHTML = html;
+        navMenu.insertBefore(li, navMenu.firstChild);
+
+        // Close menu when an event link is clicked
+        li.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                var navToggle = document.querySelector('.nav-toggle');
+                if (navToggle) navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.classList.remove('nav-open');
+            });
+        });
+    } catch (e) {
+        // Silently fail — nav works fine without events
+    }
+})();
+
 // FAQ Accordion Toggle
 function toggleFaq(button) {
     const faqItem = button.parentElement;
