@@ -23,12 +23,12 @@ module.exports = async function handler(req, res) {
         return res.end(JSON.stringify({ events: [] }));
       }
       const blobUrl = blobs[0].url;
-      const response = await fetch(blobUrl);
+      const response = await fetch(blobUrl, { cache: 'no-store' });
       const data = await response.text();
       res.writeHead(200, {
         ...CORS_HEADERS,
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+        'Cache-Control': 'no-store',
       });
       return res.end(data);
     } catch (error) {
