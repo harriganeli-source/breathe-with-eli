@@ -2539,3 +2539,8 @@ p {
         margin: 0 auto var(--space-sm);
     }
 }
+
+@media (max-width: 768px) {
+    .investment-cards > div:nth-child(2) { order: 3; }
+    .investment-cards > div:nth-child(3) { order: 2; }
+}
