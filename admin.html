@@ -935,7 +935,7 @@
             html += '<p>' + (description || '') + '</p>';
             html += '</div>';
             if (soldOut) {
-                html += '<a href="contact.html?subject=waitlist&event=' + encodeURIComponent(title) + '" class="btn btn-secondary">Join Waitlist</a>';
+                html += '<a href="contact.html?subject=waitlist&event=' + encodeURIComponent(title + ' \u2013 ' + (dateTimeDisplay || '')) + '" class="btn btn-secondary" style="line-height: 1.3;"><span style="display: block; font-size: 0.75em; opacity: 0.75; margin-bottom: 2px;">Sold Out</span>Join Waitlist</a>';
             } else if (isExternal) {
                 html += '<a href="' + (buttonLink || '#') + '" class="btn btn-secondary" target="_blank" rel="noopener">' + (buttonText || 'Register') + '</a>';
             } else {

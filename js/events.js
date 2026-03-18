@@ -45,8 +45,8 @@
                 // Build button
                 var buttonHTML;
                 if (event.soldOut) {
-                    var waitlistURL = 'contact.html?subject=waitlist&event=' + encodeURIComponent(event.title);
-                    buttonHTML = '<a href="' + waitlistURL + '" class="btn btn-secondary">Join Waitlist</a>';
+                    var waitlistURL = 'contact.html?subject=waitlist&event=' + encodeURIComponent(event.title + ' \u2013 ' + event.dateTimeDisplay);
+                    buttonHTML = '<a href="' + waitlistURL + '" class="btn btn-secondary" style="line-height: 1.3;"><span style="display: block; font-size: 0.75em; opacity: 0.75; margin-bottom: 2px;">Sold Out</span>Join Waitlist</a>';
                 } else if (event.isExternal) {
                     buttonHTML = '<a href="' + event.buttonLink + '" class="btn btn-secondary" target="_blank" rel="noopener">' + event.buttonText + '</a>';
                 } else {
