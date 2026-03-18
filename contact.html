@@ -100,6 +100,7 @@
                                     <option value="coaching">Coaching</option>
                                     <option value="groups">Men's Groups</option>
                                     <option value="events">Events & Workshops</option>
+                                    <option value="waitlist">Event Waitlist</option>
                                     <option value="private-events">Private Group Events</option>
                                     <option value="other">Other</option>
                                 </select>
@@ -118,6 +119,21 @@
                     </div>
 
                     <script>
+                        // Pre-fill from URL params (e.g. ?subject=waitlist&event=Event+Name)
+                        (function() {
+                            var params = new URLSearchParams(window.location.search);
+                            var subject = params.get('subject');
+                            var event = params.get('event');
+                            if (subject) {
+                                var sel = document.getElementById('subject');
+                                if (sel) sel.value = subject;
+                            }
+                            if (event) {
+                                var msg = document.getElementById('message');
+                                if (msg) msg.value = "I\u2019d like to join the waitlist for: " + event;
+                            }
+                        })();
+
                         const form = document.getElementById('contact-form');
                         const formContainer = document.getElementById('form-container');
                         const formSuccess = document.getElementById('form-success');

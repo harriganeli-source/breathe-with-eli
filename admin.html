@@ -597,6 +597,13 @@
                         </div>
                     </div>
 
+                    <div class="admin-form-group">
+                        <div class="admin-checkbox">
+                            <input type="checkbox" id="field-soldOut">
+                            <label for="field-soldOut" style="margin: 0; font-weight: 400;">Sold out — strikes through title, replaces button with "Join Waitlist"</label>
+                        </div>
+                    </div>
+
                     <div class="admin-form-actions">
                         <button type="submit" class="admin-btn admin-btn--primary">Save Event</button>
                         <button type="button" class="admin-btn" onclick="cancelEdit()">Cancel</button>
@@ -718,7 +725,7 @@
 
                 // Details
                 html += '<div class="admin-event-details">';
-                html += '<h4>' + ev.title + '</h4>';
+                html += '<h4>' + ev.title + (ev.soldOut ? ' <span style="font-size: 0.65rem; font-weight: 600; color: #c0392b; background: #fdf0ef; border: 1px solid #e0c0bc; border-radius: 3px; padding: 1px 5px; vertical-align: middle;">SOLD OUT</span>' : '') + '</h4>';
                 html += '<p>' + ev.dateTimeDisplay + ' &middot; ' + ev.location + '</p>';
                 html += '</div>';
 
@@ -771,6 +778,7 @@
             document.getElementById('field-buttonText').value = ev.buttonText || 'Register';
             document.getElementById('field-buttonLink').value = ev.buttonLink || '';
             document.getElementById('field-isExternal').checked = ev.isExternal || false;
+            document.getElementById('field-soldOut').checked = ev.soldOut || false;
 
             renderEventList();
             updatePreview();
@@ -800,7 +808,8 @@
                 description: document.getElementById('field-description').value,
                 buttonText: document.getElementById('field-buttonText').value,
                 buttonLink: document.getElementById('field-buttonLink').value,
-                isExternal: document.getElementById('field-isExternal').checked
+                isExternal: document.getElementById('field-isExternal').checked,
+                soldOut: document.getElementById('field-soldOut').checked
             };
 
             if (editingIndex >= 0) {
@@ -906,6 +915,7 @@
             var buttonText = document.getElementById('field-buttonText').value;
             var buttonLink = document.getElementById('field-buttonLink').value;
             var isExternal = document.getElementById('field-isExternal').checked;
+            var soldOut = document.getElementById('field-soldOut').checked;
 
             var html = '<div class="event-card" style="opacity: 1; transform: none;">';
             html += '<div class="event-date">';
@@ -916,11 +926,17 @@
             }
             html += '</div>';
             html += '<div class="event-info">';
-            html += '<h3>' + title + '</h3>';
+            if (soldOut) {
+                html += '<h3 style="text-decoration: line-through; opacity: 0.5;">' + title + '</h3>';
+            } else {
+                html += '<h3>' + title + '</h3>';
+            }
             html += '<p><strong>' + (dateTimeDisplay || '') + '</strong> \u00b7 ' + (location || '') + '</p>';
             html += '<p>' + (description || '') + '</p>';
             html += '</div>';
-            if (isExternal) {
+            if (soldOut) {
+                html += '<a href="contact.html?subject=waitlist&event=' + encodeURIComponent(title) + '" class="btn btn-secondary">Join Waitlist</a>';
+            } else if (isExternal) {
                 html += '<a href="' + (buttonLink || '#') + '" class="btn btn-secondary" target="_blank" rel="noopener">' + (buttonText || 'Register') + '</a>';
             } else {
                 html += '<a href="' + (buttonLink || '#') + '" class="btn btn-secondary">' + (buttonText || 'Register') + '</a>';
