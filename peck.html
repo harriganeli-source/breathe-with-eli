@@ -1,408 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTZKY6VY4T"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PTZKY6VY4T');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Long Work — A Book Club with Eli Harrigan</title>
     <meta name="description" content="A guided inquiry into M. Scott Peck's The Road Less Traveled. Six sessions on Zoom, starting May 6, 2026.">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="The Long Work — A Book Club with Eli Harrigan">
+    <meta property="og:description" content="A guided inquiry into M. Scott Peck's The Road Less Traveled. Six sessions on Zoom, starting May 6, 2026.">
+    <meta property="og:url" content="https://breathewitheli.com/peck">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
     <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        /* Header: title left, book cover right */
+        .peck-header {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
         }
-
-        body {
-            font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
-            background: #f9f8f5;
-            color: #1a1a1a;
-            line-height: 1.7;
-            padding: 5rem 1.5rem 7rem;
+        .peck-header-text {
+            flex: 1;
         }
-
-        .page {
-            max-width: 660px;
-            margin: 0 auto;
+        .peck-header-image {
+            flex-shrink: 0;
+            width: 150px;
         }
-
-        /* Site link */
-        .site-link {
-            display: inline-block;
-            margin-bottom: 4.5rem;
-            font-size: 0.72rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #aaa;
-            text-decoration: none;
-        }
-        .site-link:hover { color: #555; }
-
-        /* Eyebrow */
-        .eyebrow {
-            font-size: 0.72rem;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            font-variant: small-caps;
-            color: #aaa;
-            margin-bottom: 1.1rem;
-        }
-
-        /* Title */
-        h1 {
-            font-size: clamp(3rem, 9vw, 4.5rem);
-            font-style: italic;
-            font-weight: normal;
-            line-height: 1.08;
-            letter-spacing: -0.01em;
-            margin-bottom: 1.1rem;
-        }
-
-        /* Subtitle */
-        .subtitle {
-            font-size: 0.75rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #999;
-            margin-bottom: 3.5rem;
-        }
-        .subtitle em {
-            font-style: italic;
-            text-transform: none;
-            letter-spacing: normal;
-        }
-
-        /* Book cover */
-        .book-cover {
-            float: right;
-            width: 130px;
-            margin: 0 0 1.5rem 2rem;
-        }
-        .book-cover img {
+        .peck-header-image img {
             width: 100%;
             display: block;
         }
-
-        @media (max-width: 520px) {
-            .book-cover {
-                float: none;
-                width: 100px;
-                margin: 0 0 1.75rem 0;
-            }
+        .peck-eyebrow {
+            font-size: 0.78rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-bottom: 1rem;
         }
-
-        /* Blockquote */
-        blockquote {
-            border-left: 2px solid #ccc;
-            padding-left: 1.5rem;
-            margin: 0 0 3rem;
+        .peck-header h1 {
+            margin-bottom: 0.75rem;
+        }
+        .peck-subtitle {
+            font-family: var(--font-heading);
             font-style: italic;
-            color: #555;
-            font-size: 1.05rem;
-            line-height: 1.65;
-        }
-        blockquote cite {
-            display: block;
-            margin-top: 0.8rem;
-            font-style: normal;
-            font-size: 0.8rem;
-            color: #aaa;
-            letter-spacing: 0.06em;
-        }
-
-        /* Body copy */
-        .body-copy p {
-            font-size: 1.05rem;
-            line-height: 1.8;
-            color: #2c2c2c;
-            margin-bottom: 1.5rem;
-        }
-        .body-copy p:last-child { margin-bottom: 0; }
-
-        /* Divider */
-        hr {
-            border: none;
-            border-top: 1px solid #e0ddd7;
-            margin: 3.5rem 0;
+            font-size: 1.15rem;
+            color: var(--color-text-light);
+            margin-bottom: var(--space-md);
         }
 
         /* Sessions */
-        .sessions-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: #aaa;
-            margin-bottom: 0;
-        }
-
         .session-module {
-            border-top: 1px solid #e0ddd7;
-            padding: 1.75rem 0;
+            border-top: 1px solid #dedad3;
+            padding: 1.5rem 0;
         }
         .session-module:last-of-type {
-            border-bottom: 1px solid #e0ddd7;
+            border-bottom: 1px solid #dedad3;
         }
-
         .module-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             gap: 1.5rem;
-            margin-bottom: 0.65rem;
+            margin-bottom: 0.5rem;
         }
-
         .module-name {
+            font-family: var(--font-heading);
             font-style: italic;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             font-weight: normal;
         }
-
         .module-dates {
-            font-size: 0.72rem;
-            color: #aaa;
-            letter-spacing: 0.05em;
+            font-size: 0.78rem;
+            color: var(--color-text-light);
             white-space: nowrap;
             flex-shrink: 0;
         }
-
         .module-desc {
-            font-size: 0.92rem;
-            color: #666;
-            line-height: 1.65;
-        }
-
-        /* Recording note */
-        .recording-note {
-            font-size: 0.9rem;
-            color: #888;
-            font-style: italic;
-            margin-top: 1.75rem;
-            line-height: 1.65;
-        }
-
-        /* Facilitator card */
-        .facilitator-card {
-            border: 1px solid #dedad3;
-            padding: 2rem 2.25rem;
-        }
-
-        .card-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: #aaa;
-            margin-bottom: 1.1rem;
-        }
-
-        .facilitator-card p {
             font-size: 0.95rem;
-            line-height: 1.75;
-            color: #3a3a3a;
-            margin-bottom: 1rem;
+            color: var(--color-text-light);
+            line-height: 1.65;
         }
-        .facilitator-card p:last-child { margin-bottom: 0; }
 
         /* Details grid */
         .details-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.75rem 2.5rem;
+            gap: 1.5rem 3rem;
+            margin-bottom: var(--space-lg);
+            text-align: left;
         }
-
         .detail-label {
-            font-size: 0.68rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #aaa;
-            margin-bottom: 0.3rem;
-        }
-
-        .detail-value {
-            font-size: 0.97rem;
-            color: #1a1a1a;
-            line-height: 1.5;
-        }
-
-        /* Pricing card */
-        .pricing-card {
-            border: 1px solid #dedad3;
-            padding: 2rem 2.25rem;
-            display: flex;
-            align-items: baseline;
-            gap: 1.25rem;
-        }
-
-        .price {
-            font-size: 3rem;
-            font-style: italic;
-            font-weight: normal;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-
-        .price-right {
-            flex: 1;
-        }
-
-        .price-label {
-            font-size: 0.97rem;
-            color: #444;
-            margin-bottom: 0.4rem;
-        }
-
-        .price-note {
-            font-size: 0.85rem;
-            color: #999;
-            font-style: italic;
-            line-height: 1.5;
-        }
-
-        /* CTA */
-        .cta-copy {
-            font-size: 1.02rem;
-            color: #555;
-            line-height: 1.75;
-            margin-bottom: 2rem;
-        }
-
-        .cta-btn {
-            display: inline-block;
-            padding: 0.85rem 2.25rem;
-            background: #1a1a1a;
-            color: #f9f8f5;
-            text-decoration: none;
             font-size: 0.72rem;
-            letter-spacing: 0.14em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            font-family: 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+            color: var(--color-text-light);
+            margin-bottom: 0.25rem;
         }
-        .cta-btn:hover { background: #333; }
+        .detail-value {
+            font-size: 1rem;
+            color: var(--color-text);
+        }
 
-        /* Mobile */
-        @media (max-width: 520px) {
-            body { padding: 3.5rem 1.25rem 5rem; }
-
+        @media (max-width: 600px) {
+            .peck-header {
+                flex-direction: column-reverse;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .peck-header-image {
+                width: 110px;
+            }
             .module-header {
                 flex-direction: column;
-                gap: 0.2rem;
+                gap: 0.15rem;
             }
-
             .details-grid {
                 grid-template-columns: 1fr;
                 gap: 1.25rem;
-            }
-
-            .pricing-card {
-                flex-direction: column;
-                gap: 0.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="page">
-
-        <a href="https://breathewitheli.com" class="site-link">breathewitheli.com</a>
-
-        <!-- 1. Eyebrow -->
-        <p class="eyebrow">Six sessions &middot; Starting May 6, 2026 &middot; Zoom</p>
-
-        <!-- 2. Title -->
-        <h1>The Long Work</h1>
-
-        <!-- 3. Subtitle -->
-        <p class="subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
-
-        <!-- 4. Blockquote -->
-        <div class="book-cover">
-            <img src="images/road-less-traveled.jpg" alt="The Road Less Traveled by M. Scott Peck">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Eli Harrigan</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="upcoming.html">Upcoming Events</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="nav-dropdown">
+                    <a href="work-with-me.html">Work With Me</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
+                        <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
+                        <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
+                    </ul>
+                </li>
+                <li class="nav-dropdown">
+                    <a href="for-teams.html">For Teams</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="for-teams.html">All Teams &amp; Organizations</a></li>
+                        <li><a href="helping-the-helpers.html">Healthcare &amp; Caregivers</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="book.html" class="nav-cta">Book a Session</a></li>
+            </ul>
         </div>
-        <blockquote>
-            &ldquo;The attempt to avoid legitimate suffering lies at the root of all emotional illness.&rdquo;
-            <cite>&mdash; M. Scott Peck</cite>
-        </blockquote>
+    </nav>
 
-        <!-- 5. Body copy -->
-        <div class="body-copy">
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="peck-header">
+                <div class="peck-header-text">
+                    <p class="peck-eyebrow">Six sessions &middot; Starting May 6, 2026 &middot; Zoom</p>
+                    <h1>The Long Work</h1>
+                    <p class="peck-subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
+                    <a href="#" class="btn btn-primary">Reserve Your Spot</a>
+                </div>
+                <div class="peck-header-image">
+                    <img src="images/road-less-traveled.jpg" alt="The Road Less Traveled by M. Scott Peck">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quote -->
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container" style="max-width: 800px; text-align: center;">
+            <blockquote>
+                <p style="font-family: var(--font-heading); font-size: 1.4rem; font-style: italic; margin-bottom: 1rem;">&ldquo;The attempt to avoid legitimate suffering lies at the root of all emotional illness.&rdquo;</p>
+                <cite style="color: var(--color-text-light);">&mdash; M. Scott Peck</cite>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- Body Copy -->
+    <section class="content-section">
+        <div class="container" style="max-width: 780px;">
             <p>Most people have heard of this book. Fewer have actually finished it.</p>
             <p>Peck opens with three words: <em>Life is difficult.</em> Not as a warning&mdash;as a relief. Because once you stop fighting that fact, something loosens. The suffering doesn&rsquo;t go away. But your relationship to it changes.</p>
             <p>I&rsquo;ve been sitting with this book for a long time. There&rsquo;s something in it that keeps asking to be returned to. Not studied&mdash;felt. And I think it works better in a room with other people than it does alone on your couch.</p>
             <p>So I&rsquo;m running a small group on Zoom starting May 6th. Six sessions, every other Wednesday evening. We&rsquo;ll move through the book slowly, one section at a time. I&rsquo;m a somatic coach and group facilitator, and I&rsquo;ll be bringing that into every session&mdash;which means we won&rsquo;t just be talking about Peck&rsquo;s ideas. We&rsquo;ll be finding where they actually live. In your body. In your relationships. In the patterns you&rsquo;ve been meaning to look at for a while now.</p>
         </div>
+    </section>
 
-        <!-- 6. Divider -->
-        <div style="clear: both;"></div>
-        <hr>
+    <!-- Sessions -->
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container" style="max-width: 780px;">
+            <h2 style="margin-bottom: var(--space-lg);">What We&rsquo;ll Work Through</h2>
 
-        <!-- 7. Sessions -->
-        <p class="sessions-label">What we&rsquo;ll work through</p>
-
-        <div class="session-module">
-            <div class="module-header">
-                <span class="module-name">Module 1 &mdash; Discipline &amp; Love</span>
-                <span class="module-dates">Sessions 1&ndash;3 &middot; May 6, May 20, June 3</span>
+            <div class="session-module">
+                <div class="module-header">
+                    <span class="module-name">Module 1 &mdash; Discipline &amp; Love</span>
+                    <span class="module-dates">Sessions 1&ndash;3 &middot; May 6, May 20, June 3</span>
+                </div>
+                <p class="module-desc">Responsibility. Delaying gratification. Dedication to truth. And Peck&rsquo;s dismantling of almost everything most of us were taught about what love actually is.</p>
             </div>
-            <p class="module-desc">Responsibility. Delaying gratification. Dedication to truth. And Peck&rsquo;s dismantling of almost everything most of us were taught about what love actually is.</p>
-        </div>
 
-        <div class="session-module">
-            <div class="module-header">
-                <span class="module-name">Module 2 &mdash; Growth, Religion &amp; Grace</span>
-                <span class="module-dates">Sessions 4&ndash;6 &middot; June 17, July 1, July 15</span>
+            <div class="session-module">
+                <div class="module-header">
+                    <span class="module-name">Module 2 &mdash; Growth, Religion &amp; Grace</span>
+                    <span class="module-dates">Sessions 4&ndash;6 &middot; June 17, July 1, July 15</span>
+                </div>
+                <p class="module-desc">The maps we use to navigate reality, and what it costs to hold onto ones that are wrong. And grace: the thing that tends to show up when you stop white-knuckling it.</p>
             </div>
-            <p class="module-desc">The maps we use to navigate reality, and what it costs to hold onto ones that are wrong. And grace: the thing that tends to show up when you stop white-knuckling it.</p>
+
+            <p style="font-style: italic; color: var(--color-text-light); font-size: 0.95rem; margin-top: var(--space-md);">Every session is recorded and sent to you afterward, so you have it regardless of whether you can make it live.</p>
         </div>
+    </section>
 
-        <!-- 8. Recording note -->
-        <p class="recording-note">Every session is recorded and sent to you afterward, so you have it regardless of whether you can make it live.</p>
-
-        <!-- 9. Divider -->
-        <hr>
-
-        <!-- 10. Facilitator card -->
-        <div class="facilitator-card">
-            <p class="card-label">About Eli</p>
+    <!-- About Eli -->
+    <section class="content-section">
+        <div class="container" style="max-width: 780px;">
+            <h2 style="margin-bottom: var(--space-md);">About Eli</h2>
             <p>I&rsquo;m a somatic coach and group facilitator based in Rochester, NY. I&rsquo;ve been doing this work long enough to know that most of us understand a lot more than we&rsquo;ve actually integrated. There&rsquo;s a gap between the insight and the shift&mdash;and that gap is where I work.</p>
             <p>I&rsquo;m not running this group because I&rsquo;ve got Peck figured out. I&rsquo;m running it because I think it&rsquo;s the kind of book that opens differently when you&rsquo;re sitting with other people who are trying to be honest.</p>
         </div>
+    </section>
 
-        <!-- 11. Divider -->
-        <hr>
+    <!-- Details & Pricing -->
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container" style="max-width: 600px; text-align: center;">
+            <h2 style="margin-bottom: var(--space-lg);">The Details</h2>
 
-        <!-- 12. Details grid -->
-        <div class="details-grid">
-            <div>
-                <p class="detail-label">Dates</p>
-                <p class="detail-value">May 6 &ndash; July 15, 2026</p>
+            <div class="details-grid" style="max-width: 460px; margin-left: auto; margin-right: auto;">
+                <div>
+                    <p class="detail-label">Dates</p>
+                    <p class="detail-value">May 6 &ndash; July 15, 2026</p>
+                </div>
+                <div>
+                    <p class="detail-label">Time</p>
+                    <p class="detail-value">Wednesdays, 7:00&ndash;8:30 pm ET</p>
+                </div>
+                <div>
+                    <p class="detail-label">Format</p>
+                    <p class="detail-value">Zoom, small group</p>
+                </div>
+                <div>
+                    <p class="detail-label">Sessions</p>
+                    <p class="detail-value">6 sessions, every other Wednesday</p>
+                </div>
             </div>
-            <div>
-                <p class="detail-label">Time</p>
-                <p class="detail-value">Wednesdays, 7:00&ndash;8:30 pm ET</p>
+
+            <p style="font-size: 2.5rem; font-family: var(--font-heading); font-style: italic; margin-bottom: 0.25rem;">$250</p>
+            <p style="color: var(--color-text-light); margin-bottom: 0.5rem;">for all six sessions</p>
+            <p style="color: var(--color-text-light); font-style: italic; font-size: 0.9rem; margin-bottom: var(--space-lg);">A payment plan is available. Reach out for details.</p>
+
+            <p style="margin-bottom: var(--space-md);">If you&rsquo;ve had this book on your shelf for years without quite getting to it&mdash;or read it once and felt like you only got half of it&mdash;this is probably for you.</p>
+            <a href="#" class="btn btn-primary">Reserve Your Spot</a>
+        </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section class="cta cta--compact">
+        <div class="container">
+            <div class="cta-inline">
+                <div class="cta-inline-text">
+                    <h2>Stay Connected</h2>
+                    <p>Be the first to know about upcoming events and receive the occasional newsletter.</p>
+                </div>
+                <div class="cta-inline-form">
+                    <div class="kit-form-container">
+                        <script async data-uid="7a97c5385b" src="https://breathe-with-eli.kit.com/7a97c5385b/index.js"></script>
+                    </div>
+                </div>
             </div>
-            <div>
-                <p class="detail-label">Format</p>
-                <p class="detail-value">Zoom, small group</p>
+            <p class="cta-donation">No one is turned away from my breathwork groups for lack of funds. <a href="https://breathe-with-eli.kit.com/products/breathe-with-eli" target="_blank" rel="noopener">Donations</a> help make that possible.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">Eli Harrigan</a>
+                    <p>Breathwork & Coaching</p>
+                    <p class="footer-location">Rochester, NY & Online</p>
+                </div>
+                <div class="footer-nav">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li class="nav-dropdown">
+                            <a href="work-with-me.html">Work With Me</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
+                                <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
+                                <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="upcoming.html">Upcoming Events</a></li>
+                        <li class="nav-dropdown">
+                            <a href="for-teams.html">For Teams</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="for-teams.html">All Teams &amp; Organizations</a></li>
+                                <li><a href="helping-the-helpers.html">Healthcare &amp; Caregivers</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="book.html">Book</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="mailto:eli@breathewitheli.com">eli@breathewitheli.com</a></li>
+                        <li><a href="https://instagram.com/breathewitheli" target="_blank" rel="noopener">Instagram</a></li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <p class="detail-label">Sessions</p>
-                <p class="detail-value">6 sessions, every other Wednesday</p>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Eli Harrigan. All rights reserved.</p>
             </div>
         </div>
+    </footer>
 
-        <!-- 13. Pricing card -->
-        <div class="pricing-card" style="margin-top: 3rem;">
-            <span class="price">$250</span>
-            <div class="price-right">
-                <p class="price-label">for all six sessions</p>
-                <p class="price-note">A payment plan is available. Reach out for details.</p>
-            </div>
-        </div>
-
-        <!-- 14. CTA -->
-        <hr>
-        <p class="cta-copy">If you&rsquo;ve had this book on your shelf for years without quite getting to it&mdash;or read it once and felt like you only got half of it&mdash;this is probably for you.</p>
-        <a href="#" class="cta-btn">Reserve Your Spot</a>
-
-    </div>
+    <script src="js/main.js"></script>
 </body>
 </html>
