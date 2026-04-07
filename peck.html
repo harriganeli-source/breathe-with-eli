@@ -72,6 +72,25 @@
             letter-spacing: normal;
         }
 
+        /* Book cover */
+        .book-cover {
+            float: right;
+            width: 130px;
+            margin: 0 0 1.5rem 2rem;
+        }
+        .book-cover img {
+            width: 100%;
+            display: block;
+        }
+
+        @media (max-width: 520px) {
+            .book-cover {
+                float: none;
+                width: 100px;
+                margin: 0 0 1.75rem 0;
+            }
+        }
+
         /* Blockquote */
         blockquote {
             border-left: 2px solid #ccc;
@@ -295,6 +314,9 @@
         <p class="subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
 
         <!-- 4. Blockquote -->
+        <div class="book-cover">
+            <img src="images/road-less-traveled.jpg" alt="The Road Less Traveled by M. Scott Peck">
+        </div>
         <blockquote>
             &ldquo;The attempt to avoid legitimate suffering lies at the root of all emotional illness.&rdquo;
             <cite>&mdash; M. Scott Peck</cite>
@@ -309,6 +331,7 @@
         </div>
 
         <!-- 6. Divider -->
+        <div style="clear: both;"></div>
         <hr>
 
         <!-- 7. Sessions -->
