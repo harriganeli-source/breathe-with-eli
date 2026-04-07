@@ -31,48 +31,61 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
-        /* Header: title left, book cover right */
-        .peck-header {
+        /* Tighten section padding site-wide on this page */
+        .peck-page .content-section {
+            padding: var(--space-lg) 0;
+        }
+
+        /* Header layout */
+        .peck-hero {
             display: flex;
             align-items: center;
             gap: 3rem;
         }
-        .peck-header-text {
+        .peck-hero-text {
             flex: 1;
         }
-        .peck-header-image {
+        .peck-hero-image {
             flex-shrink: 0;
-            width: 150px;
+            width: 140px;
         }
-        .peck-header-image img {
+        .peck-hero-image img {
             width: 100%;
             display: block;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
         }
         .peck-eyebrow {
             font-size: 0.78rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--color-text-light);
-            margin-bottom: 1rem;
-        }
-        .peck-header h1 {
             margin-bottom: 0.75rem;
+        }
+        .peck-hero h1 {
+            margin-bottom: 0.5rem;
         }
         .peck-subtitle {
             font-family: var(--font-heading);
             font-style: italic;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: var(--color-text-light);
             margin-bottom: var(--space-md);
         }
 
-        /* Sessions */
+        /* Sessions — dark green section */
+        .section-primary {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+        }
+        .section-primary h2 {
+            color: var(--color-white);
+        }
         .session-module {
-            border-top: 1px solid #dedad3;
+            border-top: 1px solid rgba(255,255,255,0.2);
             padding: 1.5rem 0;
         }
         .session-module:last-of-type {
-            border-bottom: 1px solid #dedad3;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
         .module-header {
             display: flex;
@@ -86,17 +99,24 @@
             font-style: italic;
             font-size: 1.1rem;
             font-weight: normal;
+            color: var(--color-white);
         }
         .module-dates {
             font-size: 0.78rem;
-            color: var(--color-text-light);
+            color: rgba(255,255,255,0.65);
             white-space: nowrap;
             flex-shrink: 0;
         }
         .module-desc {
             font-size: 0.95rem;
-            color: var(--color-text-light);
+            color: rgba(255,255,255,0.75);
             line-height: 1.65;
+        }
+        .recording-note {
+            font-style: italic;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            margin-top: var(--space-md);
         }
 
         /* Details grid */
@@ -120,13 +140,13 @@
         }
 
         @media (max-width: 600px) {
-            .peck-header {
+            .peck-hero {
                 flex-direction: column-reverse;
                 align-items: flex-start;
-                gap: 1.5rem;
+                gap: 1.25rem;
             }
-            .peck-header-image {
-                width: 110px;
+            .peck-hero-image {
+                width: 100px;
             }
             .module-header {
                 flex-direction: column;
@@ -139,7 +159,7 @@
         }
     </style>
 </head>
-<body>
+<body class="peck-page">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -176,14 +196,14 @@
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <div class="peck-header">
-                <div class="peck-header-text">
+            <div class="peck-hero">
+                <div class="peck-hero-text">
                     <p class="peck-eyebrow">Six sessions &middot; Starting May 6, 2026 &middot; Zoom</p>
                     <h1>The Long Work</h1>
                     <p class="peck-subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
-                    <a href="#" class="btn btn-primary">Reserve Your Spot</a>
+                    <a href="#register" class="btn btn-primary">Reserve Your Spot</a>
                 </div>
-                <div class="peck-header-image">
+                <div class="peck-hero-image">
                     <img src="images/road-less-traveled.jpg" alt="The Road Less Traveled by M. Scott Peck">
                 </div>
             </div>
@@ -210,46 +230,55 @@
         </div>
     </section>
 
-    <!-- Sessions -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
+    <!-- Sessions — dark green -->
+    <section class="content-section section-primary">
         <div class="container" style="max-width: 780px;">
-            <h2 style="margin-bottom: var(--space-lg);">What We&rsquo;ll Work Through</h2>
+            <h2 style="margin-bottom: var(--space-md);">What We&rsquo;ll Work Through</h2>
+            <p style="color: rgba(255,255,255,0.8); margin-bottom: var(--space-md);">Six meetings, moving through all four sections of the book.</p>
 
             <div class="session-module">
-                <div class="module-header">
-                    <span class="module-name">Module 1 &mdash; Discipline &amp; Love</span>
-                    <span class="module-dates">Sessions 1&ndash;3 &middot; May 6, May 20, June 3</span>
-                </div>
-                <p class="module-desc">Responsibility. Delaying gratification. Dedication to truth. And Peck&rsquo;s dismantling of almost everything most of us were taught about what love actually is.</p>
+                <span class="module-name">Part I &mdash; Discipline</span>
+                <p class="module-desc" style="margin-top: 0.5rem;">Peck&rsquo;s four tools for facing life without flinching: delaying gratification, accepting responsibility, dedication to truth, and balancing. The responsibility chapter alone has a way of sitting with people for weeks.</p>
             </div>
-
             <div class="session-module">
-                <div class="module-header">
-                    <span class="module-name">Module 2 &mdash; Growth, Religion &amp; Grace</span>
-                    <span class="module-dates">Sessions 4&ndash;6 &middot; June 17, July 1, July 15</span>
-                </div>
-                <p class="module-desc">The maps we use to navigate reality, and what it costs to hold onto ones that are wrong. And grace: the thing that tends to show up when you stop white-knuckling it.</p>
+                <span class="module-name">Part II &mdash; Love</span>
+                <p class="module-desc" style="margin-top: 0.5rem;">A dismantling of almost everything most of us were taught about what love is. Peck argues that love is not a feeling&mdash;it&rsquo;s a decision, an extension of yourself toward another person&rsquo;s growth. Harder and more real than the version most of us grew up with.</p>
+            </div>
+            <div class="session-module">
+                <span class="module-name">Part III &mdash; Growth and Religion</span>
+                <p class="module-desc" style="margin-top: 0.5rem;">The maps we use to navigate reality&mdash;how we built them, and what it costs to hold onto ones that are wrong. Peck isn&rsquo;t talking about organized religion here. He&rsquo;s talking about the worldview each of us carries without realizing it.</p>
+            </div>
+            <div class="session-module">
+                <span class="module-name">Part IV &mdash; Grace</span>
+                <p class="module-desc" style="margin-top: 0.5rem;">The strangest and, for many people, the most valuable section. Peck tries to name the force that shows up when you stop white-knuckling it. Some people find it the most important part of the book. Some aren&rsquo;t ready for it the first time through. Either way, we&rsquo;ll go there.</p>
             </div>
 
-            <p style="font-style: italic; color: var(--color-text-light); font-size: 0.95rem; margin-top: var(--space-md);">Every session is recorded and sent to you afterward, so you have it regardless of whether you can make it live.</p>
+            <p class="recording-note">Every session is recorded and sent to you afterward, so you have it regardless of whether you can make it live.</p>
         </div>
     </section>
 
     <!-- About Eli -->
-    <section class="content-section">
-        <div class="container" style="max-width: 780px;">
-            <h2 style="margin-bottom: var(--space-md);">About Eli</h2>
-            <p>I&rsquo;m a somatic coach and group facilitator based in Rochester, NY. I&rsquo;ve been doing this work long enough to know that most of us understand a lot more than we&rsquo;ve actually integrated. There&rsquo;s a gap between the insight and the shift&mdash;and that gap is where I work.</p>
-            <p>I&rsquo;m not running this group because I&rsquo;ve got Peck figured out. I&rsquo;m running it because I think it&rsquo;s the kind of book that opens differently when you&rsquo;re sitting with other people who are trying to be honest.</p>
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container">
+            <div class="two-col">
+                <div class="about-image">
+                    <img src="images/eli-portrait.jpg" alt="Eli Harrigan">
+                </div>
+                <div>
+                    <h2 style="margin-bottom: var(--space-md);">About Eli</h2>
+                    <p>I&rsquo;m a somatic coach and group facilitator based in Rochester, NY. I&rsquo;ve been doing this work long enough to know that most of us understand a lot more than we&rsquo;ve actually integrated. There&rsquo;s a gap between the insight and the shift&mdash;and that gap is where I work.</p>
+                    <p>I&rsquo;m not running this group because I&rsquo;ve got Peck figured out. I&rsquo;m running it because I think it&rsquo;s the kind of book that opens differently when you&rsquo;re sitting with other people who are trying to be honest.</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Details & Pricing -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
+    <section id="register" class="content-section">
         <div class="container" style="max-width: 600px; text-align: center;">
             <h2 style="margin-bottom: var(--space-lg);">The Details</h2>
 
-            <div class="details-grid" style="max-width: 460px; margin-left: auto; margin-right: auto;">
+            <div class="details-grid" style="max-width: 420px; margin-left: auto; margin-right: auto;">
                 <div>
                     <p class="detail-label">Dates</p>
                     <p class="detail-value">May 6 &ndash; July 15, 2026</p>
@@ -268,7 +297,7 @@
                 </div>
             </div>
 
-            <p style="font-size: 2.5rem; font-family: var(--font-heading); font-style: italic; margin-bottom: 0.25rem;">$250</p>
+            <p style="font-size: 2.5rem; font-family: var(--font-heading); font-style: italic; margin-bottom: 0.25rem;">$199</p>
             <p style="color: var(--color-text-light); margin-bottom: 0.5rem;">for all six sessions</p>
             <p style="color: var(--color-text-light); font-style: italic; font-size: 0.9rem; margin-bottom: var(--space-lg);">A payment plan is available. Reach out for details.</p>
 
