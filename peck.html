@@ -66,7 +66,7 @@
             font-style: italic;
             font-size: 1.15rem;
             color: var(--color-text-light);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.75rem;
         }
         .peck-subtitle-2 {
             font-size: 1rem;
@@ -143,7 +143,10 @@
 
         @media (max-width: 600px) {
             .peck-hero-image {
-                width: 240px;
+                width: 100% !important;
+            }
+            .peck-quote-row {
+                flex-direction: column;
             }
             .module-header {
                 flex-direction: column;
@@ -194,9 +197,6 @@
     <header class="page-header">
         <div class="container">
             <div class="peck-hero">
-                <div class="peck-hero-image">
-                    <img src="images/road-less-traveled-photo.png" alt="The Road Less Traveled by M. Scott Peck">
-                </div>
                 <p class="peck-eyebrow">Eight sessions &middot; Starting May 5, 2026 &middot; Zoom</p>
                 <h1>The Work of Growing Up</h1>
                 <p class="peck-subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em>, using the book as a doorway into personal work.</p>
@@ -207,11 +207,16 @@
 
     <!-- Quote -->
     <section class="content-section" style="background-color: var(--color-bg-alt);">
-        <div class="container" style="max-width: 800px; text-align: center;">
-            <blockquote>
-                <p style="font-family: var(--font-heading); font-size: 1.4rem; font-style: italic; margin-bottom: 1rem;">&ldquo;The attempt to avoid legitimate suffering lies at the root of all emotional illness.&rdquo;</p>
-                <cite style="color: var(--color-text-light);">&mdash; M. Scott Peck</cite>
-            </blockquote>
+        <div class="container" style="max-width: 900px;">
+            <div class="peck-quote-row" style="display: flex; gap: 3rem; align-items: center;">
+                <div class="peck-hero-image" style="flex-shrink: 0; margin: 0;">
+                    <img src="images/road-less-traveled-photo.png" alt="The Road Less Traveled by M. Scott Peck">
+                </div>
+                <blockquote style="margin: 0;">
+                    <p style="font-family: var(--font-heading); font-size: 1.4rem; font-style: italic; margin-bottom: 1rem;">&ldquo;The attempt to avoid legitimate suffering lies at the root of all emotional illness.&rdquo;</p>
+                    <cite style="color: var(--color-text-light);">&mdash; M. Scott Peck</cite>
+                </blockquote>
+            </div>
         </div>
     </section>
 
