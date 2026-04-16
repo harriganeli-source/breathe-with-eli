@@ -36,23 +36,20 @@
             padding: var(--space-lg) 0;
         }
 
-        /* Header layout */
+        /* Header layout — centered, book above title */
         .peck-hero {
-            display: flex;
-            align-items: center;
-            gap: 3rem;
-        }
-        .peck-hero-text {
-            flex: 1;
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto;
         }
         .peck-hero-image {
-            flex-shrink: 0;
-            width: 140px;
+            width: 110px;
+            margin: 0 auto 1.5rem;
         }
         .peck-hero-image img {
             width: 100%;
             display: block;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
         .peck-eyebrow {
             font-size: 0.78rem;
@@ -62,14 +59,19 @@
             margin-bottom: 0.75rem;
         }
         .peck-hero h1 {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
         .peck-subtitle {
             font-family: var(--font-heading);
             font-style: italic;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--color-text-light);
-            margin-bottom: var(--space-md);
+            margin-bottom: 0.5rem;
+        }
+        .peck-subtitle-2 {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            margin-bottom: 1.75rem;
         }
 
         /* Sessions — dark green section */
@@ -140,13 +142,8 @@
         }
 
         @media (max-width: 600px) {
-            .peck-hero {
-                flex-direction: column-reverse;
-                align-items: flex-start;
-                gap: 1.25rem;
-            }
             .peck-hero-image {
-                width: 100px;
+                width: 90px;
             }
             .module-header {
                 flex-direction: column;
@@ -197,15 +194,14 @@
     <header class="page-header">
         <div class="container">
             <div class="peck-hero">
-                <div class="peck-hero-text">
-                    <p class="peck-eyebrow">Eight sessions &middot; Starting May 5, 2026 &middot; Zoom</p>
-                    <h1>Life is Difficult</h1>
-                    <p class="peck-subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
-                    <a href="#register" class="btn btn-primary">Reserve Your Spot</a>
-                </div>
                 <div class="peck-hero-image">
                     <img src="images/road-less-traveled.jpg" alt="The Road Less Traveled by M. Scott Peck">
                 </div>
+                <p class="peck-eyebrow">Eight sessions &middot; Starting May 5, 2026 &middot; Zoom</p>
+                <h1>Life is Difficult</h1>
+                <p class="peck-subtitle">A guided inquiry into M. Scott Peck&rsquo;s <em>The Road Less Traveled</em></p>
+                <p class="peck-subtitle-2">Using <em>The Road Less Traveled</em> as a doorway into personal inquiry.</p>
+                <a href="#register" class="btn btn-primary">Reserve Your Spot</a>
             </div>
         </div>
     </header>
@@ -253,7 +249,6 @@
                 <p class="module-desc" style="margin-top: 0.5rem;">The strangest and, for many people, the most valuable section. Peck tries to name the force that shows up when you stop white-knuckling it. Some people find it the most important part of the book. Some aren&rsquo;t ready for it the first time through. Either way, we&rsquo;ll go there.</p>
             </div>
 
-            <p class="recording-note">Every session is recorded and sent to you afterward, so you have it regardless of whether you can make it live.</p>
         </div>
     </section>
 
@@ -297,8 +292,9 @@
                 </div>
             </div>
 
-            <p style="font-size: 2.5rem; font-family: var(--font-heading); font-style: italic; margin-bottom: 0.25rem;">$199</p>
-            <p style="color: var(--color-text-light); margin-bottom: var(--space-lg);">for all eight sessions</p>
+            <p style="font-size: 2.5rem; font-family: var(--font-heading); font-style: italic; margin-bottom: 0.25rem;">$299</p>
+            <p style="color: var(--color-text-light); margin-bottom: 1rem;">for all eight sessions</p>
+            <p style="color: var(--color-text-light); margin-bottom: var(--space-lg);">Every session is recorded. You&rsquo;re welcome to attend live or watch the recording &mdash; or both.</p>
 
             <p style="margin-bottom: var(--space-md);">If you&rsquo;ve had this book on your shelf for years without quite getting to it&mdash;or read it once and felt like you only got half of it&mdash;this is probably for you.</p>
             <a href="#" class="btn btn-primary">Reserve Your Spot</a>
