@@ -62,6 +62,14 @@
         if (typeof window.observeFadeIns === 'function') {
             window.observeFadeIns();
         }
+
+        // Re-scroll to hash after dynamic content shifts the page
+        if (window.location.hash) {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     } catch (error) {
         console.error('Failed to load events:', error);
         // Show fallback message in containers
