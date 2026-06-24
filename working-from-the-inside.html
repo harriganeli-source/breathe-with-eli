@@ -77,115 +77,7 @@
             margin-bottom: 2.5rem;
         }
 
-        /* Opening two-column */
-        .wfi-intro-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: start;
-        }
-
-        .wfi-intro-grid > div > p + p {
-            margin-top: 1rem;
-        }
-
-        .wfi-intro-right {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            position: sticky;
-            top: calc(var(--nav-height) + 2rem);
-        }
-
-        .wfi-intro-photo {
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 4/3;
-        }
-
-        .wfi-intro-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-        }
-
-        .wfi-quote-card {
-            background: var(--color-white);
-            border-radius: 10px;
-            padding: 1.75rem 2rem;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.07);
-        }
-
-        .wfi-quote-card-photo {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            overflow: hidden;
-            margin-bottom: 1.1rem;
-        }
-
-        .wfi-quote-card-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-        }
-
-        .wfi-quote-card p {
-            font-family: var(--font-heading);
-            font-size: 1.15rem;
-            font-style: italic;
-            line-height: 1.55;
-            margin-bottom: 0.75rem;
-            color: var(--color-text);
-        }
-
-        .wfi-quote-card cite {
-            font-size: 0.875rem;
-            color: var(--color-text-light);
-            font-style: normal;
-            line-height: 1.6;
-        }
-
-        /* Curriculum feature grid */
-        .wfi-curriculum-label {
-            font-size: 0.8rem;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--color-text-light);
-            margin-bottom: var(--space-md);
-        }
-
-        .wfi-feature-grid {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .wfi-feature-grid li {
-            padding: 1.1rem 2rem 1.1rem 0;
-            border-bottom: 1px solid rgba(74, 93, 74, 0.12);
-            font-size: 1rem;
-            color: var(--color-text-light);
-        }
-
-        .wfi-feature-grid li:nth-child(odd) {
-            border-right: 1px solid rgba(74, 93, 74, 0.12);
-        }
-
-        .wfi-feature-grid li:nth-child(even) {
-            padding-left: 2rem;
-            padding-right: 0;
-        }
-
-        .wfi-feature-grid li:nth-last-child(-n+2) {
-            border-bottom: none;
-        }
-
-        /* Weekend two-column */
+        /* Weekend schedule two-column */
         .wfi-weekend-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -205,44 +97,29 @@
             object-fit: cover;
         }
 
-        /* Display lines */
-        .wfi-display-line {
-            padding: var(--space-xl) var(--space-md);
-            text-align: center;
+        /* Pull quotes */
+        .pull-quote {
+            border-left: 3px solid var(--color-accent);
+            padding: 1.5rem 1.5rem 1.5rem 2rem;
+            margin: 0 0 var(--space-lg);
         }
 
-        .wfi-display-text {
+        .pull-quote:last-child {
+            margin-bottom: 0;
+        }
+
+        .pull-quote p {
             font-family: var(--font-heading);
-            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-size: 1.2rem;
             font-style: italic;
-            font-weight: 400;
-            color: var(--color-text);
-            line-height: 1.3;
-            max-width: 680px;
-            margin: 0 auto;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
         }
 
-        /* Large centered quote */
-        .wfi-large-quote {
-            margin: 0;
-            text-align: center;
-        }
-
-        .wfi-large-quote p {
-            font-family: var(--font-heading);
-            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-            font-style: italic;
-            font-weight: 400;
-            line-height: 1.45;
-            color: var(--color-text);
-            margin-bottom: 1.5rem;
-        }
-
-        .wfi-large-quote cite {
+        .pull-quote cite {
             font-size: 0.9rem;
             color: var(--color-text-light);
             font-style: normal;
-            letter-spacing: 0.04em;
         }
 
         /* CTA */
@@ -300,30 +177,6 @@
                 gap: 2.5rem;
             }
 
-            .wfi-intro-right {
-                position: static;
-            }
-
-            .wfi-feature-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .wfi-feature-grid li:nth-child(odd) {
-                border-right: none;
-            }
-
-            .wfi-feature-grid li:nth-child(even) {
-                padding-left: 0;
-            }
-
-            .wfi-feature-grid li:nth-last-child(-n+2) {
-                border-bottom: 1px solid rgba(74, 93, 74, 0.12);
-            }
-
-            .wfi-feature-grid li:last-child {
-                border-bottom: none;
-            }
-
             .wfi-weekend-grid {
                 grid-template-columns: 1fr;
                 gap: 2rem;
@@ -332,6 +185,18 @@
             .wfi-weekend-photo {
                 aspect-ratio: 4/3;
                 order: -1;
+            }
+
+            .wfi-audience-list {
+                grid-template-columns: 1fr;
+            }
+
+            .pull-quote {
+                padding: 1rem 1rem 1rem 1.5rem;
+            }
+
+            .pull-quote p {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -374,55 +239,34 @@
         </div>
     </header>
 
-    <!-- Opening: two-column copy + photo/quote -->
+    <!-- Opening Section -->
     <section class="content-section">
-        <div class="container" style="max-width: 1100px;">
-            <div class="wfi-intro-grid">
-                <div>
-                    <p style="font-size: 1.1rem;">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
+        <div class="container" style="max-width: 760px;">
+            <p style="font-size: 1.1rem;">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
 
-                    <p>When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
+            <p>When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
 
-                    <p>Your ability to be present with whatever is actually happening in you is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. That includes the discomfort, the doubt, the urge to do something. Most of us were never taught to work with those things directly, and most of us can feel the gap.</p>
+            <p>Your ability to be present with whatever is actually happening in you is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. That includes the discomfort, the doubt, the urge to do something. Most of us were never taught to work with those things directly, and most of us can feel the gap.</p>
 
-                    <p>What's also true is that your internal state is information. The tightening, the pull toward a client or away from them, the flatness that descends out of nowhere. Your body is tracking something in the room. Learning to read it changes what's available to you in session.</p>
-                </div>
-                <div class="wfi-intro-right">
-                    <div class="wfi-intro-photo">
-                        <img src="images/treatment_3_clean_bright.jpg" alt="Breathwork session">
-                    </div>
-                    <div class="wfi-quote-card">
-                        <div class="wfi-quote-card-photo">
-                            <img src="images/testimonial-matt-rohrer.jpg" alt="Matthew L. Rohrer">
-                        </div>
-                        <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
-                        <cite>— Matthew L. Rohrer, LCSW<br>Psychotherapist &amp; Executive Coach</cite>
-                    </div>
-                </div>
-            </div>
+            <p>What's also true is that your internal state is information. The tightening, the pull toward a client or away from them, the flatness that descends out of nowhere. Your body is tracking something in the room. Learning to read it changes what's available to you in session.</p>
         </div>
     </section>
 
-    <!-- Curriculum: feature grid -->
+    <!-- The Promise: full-width -->
     <section class="content-section" style="background-color: var(--color-bg-alt);">
-        <div class="container" style="max-width: 900px;">
-            <p class="wfi-curriculum-label">What the weekend covers</p>
-            <ul class="wfi-feature-grid">
-                <li>The physiology of the helping impulse</li>
-                <li>Presence as a clinical tool</li>
-                <li>Reading the room through the body</li>
-                <li>Countertransference from the inside out</li>
-                <li>Intuition, and when to trust it</li>
-                <li>Doing less, and why it works</li>
-            </ul>
-        </div>
-    </section>
-
-    <!-- The Promise -->
-    <section class="content-section">
         <div class="container" style="max-width: 760px;">
             <p style="font-size: 1.1rem;">This weekend is designed to close it. Over two days we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires.</p>
             <p style="margin-top: 1rem;">You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
+        </div>
+    </section>
+
+    <!-- Rohrer testimonial -->
+    <section class="content-section">
+        <div class="container" style="max-width: 760px;">
+            <blockquote class="pull-quote">
+                <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
+                <cite>— Matthew L. Rohrer, LCSW, Psychotherapist &amp; Executive Coach</cite>
+            </blockquote>
         </div>
     </section>
 
@@ -434,14 +278,9 @@
         </div>
     </section>
 
-    <!-- Display line -->
-    <div class="wfi-display-line">
-        <p class="wfi-display-text">Most of us can feel the gap.</p>
-    </div>
-
-    <!-- What the Weekend Looks Like: two-column -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
-        <div class="container" style="max-width: 1100px;">
+    <!-- What the Weekend Looks Like: image + text -->
+    <section class="content-section">
+        <div class="container" style="max-width: 1000px;">
             <div class="wfi-weekend-grid">
                 <div class="wfi-weekend-photo">
                     <img src="images/team-workshop.jpg" alt="Workshop participants">
@@ -450,19 +289,15 @@
                     <h2 style="margin-bottom: var(--space-md);">What the Weekend Looks Like</h2>
                     <p>Each day runs from 10am to 5pm with breaks and an included lunch. The mornings open with partner exercises and relational practices, where you can watch yourself in real time: where you reach, where you withdraw, where you start working harder than the moment requires. Discussion and journaling run throughout both days, giving you time to integrate what surfaces.</p>
                     <p style="margin-top: 1rem;">The afternoons move into breathwork. You'll use it to surface what's actually running underneath your helping impulse, the anxiety, the need, the patterns you've learned to work around rather than through.</p>
+                    <p style="margin-top: 1rem; font-style: italic; color: var(--color-text-light);">This is experiential work. It will ask something of you.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Display line -->
-    <div class="wfi-display-line">
-        <p class="wfi-display-text">This is experiential work. It will ask something of you.</p>
-    </div>
-
-    <!-- About Eli: two-column -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
-        <div class="container" style="max-width: 900px;">
+    <!-- About Eli -->
+    <section class="content-section">
+        <div class="container" style="max-width: 800px;">
             <div class="two-col">
                 <div class="about-image">
                     <img src="images/eli-portrait.jpg" alt="Eli Harrigan" style="object-position: center top;">
@@ -475,20 +310,17 @@
         </div>
     </section>
 
-    <!-- Testimonial: large centered quote -->
-    <section class="content-section">
-        <div class="container" style="max-width: 680px;">
-            <blockquote class="wfi-large-quote">
+    <!-- Testimonials -->
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container" style="max-width: 760px;">
+            <h2 style="text-align: center; margin-bottom: var(--space-lg);">What People Say</h2>
+
+            <blockquote class="pull-quote">
                 <p>"Eli masterfully fosters a balance between a trustworthy container and risk-taking."</p>
                 <cite>— Jason Moser, LMSW</cite>
             </blockquote>
         </div>
     </section>
-
-    <!-- Display line -->
-    <div class="wfi-display-line" style="background-color: var(--color-bg-alt);">
-        <p class="wfi-display-text">Your body is tracking something in the room.</p>
-    </div>
 
     <!-- Details -->
     <section class="content-section">
