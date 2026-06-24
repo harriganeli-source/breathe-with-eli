@@ -188,13 +188,87 @@
 
         .wfi-cta h2 {
             color: #e8e2d9;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            letter-spacing: -0.01em;
+            text-transform: none;
             margin-bottom: var(--space-sm);
         }
 
-        .wfi-cta p {
+        .wfi-cta > div > p {
             color: rgba(232, 226, 217, 0.7);
-            max-width: 480px;
+            max-width: 520px;
             margin: 0 auto var(--space-md);
+        }
+
+        /* Interest form */
+        .wfi-interest-form {
+            text-align: left;
+            margin-top: var(--space-md);
+        }
+
+        .wfi-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .wfi-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .wfi-form-group label {
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(232, 226, 217, 0.55);
+        }
+
+        .wfi-form-group input,
+        .wfi-form-group textarea {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(232, 226, 217, 0.18);
+            border-radius: 4px;
+            padding: 0.7rem 0.9rem;
+            color: #e8e2d9;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .wfi-form-group input::placeholder,
+        .wfi-form-group textarea::placeholder {
+            color: rgba(232, 226, 217, 0.25);
+        }
+
+        .wfi-form-group input:focus,
+        .wfi-form-group textarea:focus {
+            border-color: rgba(196, 167, 125, 0.55);
+        }
+
+        .wfi-form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .wfi-form-success {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-size: 1.3rem;
+            color: rgba(232, 226, 217, 0.85);
+            padding: var(--space-md) 0;
+        }
+
+        @media (max-width: 600px) {
+            .wfi-form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .btn-gold {
@@ -292,7 +366,7 @@
             <h1>Working from the Inside</h1>
             <p class="wfi-hero-subtitle">A two-day workshop for people who hold space for others</p>
             <p class="wfi-hero-meta">Fall 2026 &bull; Victor, NY &bull; 10 spots</p>
-            <a href="#reserve" class="btn btn-gold">Reserve Your Spot</a>
+            <a href="#keep-me-posted" class="btn btn-gold">Keep Me Posted</a>
         </div>
     </header>
 
@@ -418,13 +492,67 @@
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="wfi-cta" id="reserve">
-        <div class="container" style="max-width: 560px;">
-            <h2>Reserve Your Spot</h2>
-            <p>Space is limited to ten participants. To register or ask a question, reach out directly.</p>
-            <a href="mailto:eli@breathewitheli.com?subject=Working from the Inside" class="btn btn-gold">eli@breathewitheli.com</a>
+    <!-- CTA / Interest form -->
+    <section class="wfi-cta" id="keep-me-posted">
+        <div class="container" style="max-width: 620px;">
+            <h2>Keep Me Posted</h2>
+            <p>Dates and registration for Fall 2026 are coming soon. Leave your email and I'll reach out when details are set.</p>
+            <div id="wfi-form-container">
+                <form id="wfi-interest-form" class="wfi-interest-form" novalidate>
+                    <input type="hidden" name="_subject" value="Working from the Inside — Keep Me Posted">
+                    <div class="wfi-form-row">
+                        <div class="wfi-form-group">
+                            <label for="wfi-first-name">First Name</label>
+                            <input type="text" id="wfi-first-name" name="first_name" required>
+                        </div>
+                        <div class="wfi-form-group">
+                            <label for="wfi-email">Email</label>
+                            <input type="email" id="wfi-email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="wfi-form-group">
+                        <label for="wfi-context">What brought you here? <span style="text-transform: none; letter-spacing: 0; font-style: italic;">(optional)</span></label>
+                        <textarea id="wfi-context" name="brought_you_here" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold">Keep Me Posted</button>
+                </form>
+            </div>
+            <div id="wfi-form-success" class="wfi-form-success" style="display: none;">
+                Got it — I'll be in touch.
+            </div>
         </div>
+        <script>
+            (function () {
+                var form = document.getElementById('wfi-interest-form');
+                var container = document.getElementById('wfi-form-container');
+                var success = document.getElementById('wfi-form-success');
+
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    var btn = form.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.textContent = 'Sending…';
+
+                    try {
+                        var res = await fetch('https://formspree.io/f/mlgbnvqa', {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        if (res.ok) {
+                            container.style.display = 'none';
+                            success.style.display = 'block';
+                        } else {
+                            throw new Error();
+                        }
+                    } catch (_) {
+                        btn.disabled = false;
+                        btn.textContent = 'Keep Me Posted';
+                        alert('Something went wrong. Please try again or email eli@breathewitheli.com directly.');
+                    }
+                });
+            })();
+        </script>
     </section>
 
     <!-- Newsletter -->
