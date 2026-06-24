@@ -85,39 +85,6 @@
             align-items: start;
         }
 
-        .wfi-problem-list {
-            list-style: none;
-            padding: 0;
-            margin: var(--space-md) 0 0;
-        }
-
-        .wfi-problem-list li {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(74, 93, 74, 0.15);
-        }
-
-        .wfi-problem-list li:last-child {
-            border-bottom: none;
-        }
-
-        .wfi-problem-list .wfi-icon {
-            flex-shrink: 0;
-            width: 20px;
-            height: 20px;
-            margin-top: 2px;
-            color: var(--color-secondary);
-        }
-
-        .wfi-problem-list li p {
-            margin: 0;
-            font-size: 0.975rem;
-            color: var(--color-text-light);
-            line-height: 1.6;
-        }
-
         /* Right column: photo + testimonial */
         .wfi-intro-right {
             display: flex;
@@ -159,13 +126,6 @@
             font-size: 0.875rem;
             color: var(--color-text-light);
             font-style: normal;
-        }
-
-        /* Resolution callout */
-        .wfi-resolution {
-            margin-top: var(--space-lg);
-            padding-top: var(--space-lg);
-            border-top: 1px solid rgba(74, 93, 74, 0.15);
         }
 
         /* Weekend schedule two-column */
@@ -364,37 +324,10 @@
             <p style="font-size: 1.1rem; max-width: 700px; margin-bottom: var(--space-lg);">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
 
             <div class="wfi-intro-grid">
-                <!-- Left: problem list + resolution -->
+                <!-- Left: prose -->
                 <div>
-                    <p style="font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-text-light); margin-bottom: var(--space-sm);">It shows up in moments like these</p>
-                    <ul class="wfi-problem-list">
-                        <li>
-                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="10" cy="10" r="8"/>
-                                <path d="M10 6v4M10 14h.01"/>
-                            </svg>
-                            <p>When a client isn't progressing, there's a pull to do something.</p>
-                        </li>
-                        <li>
-                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="10" cy="10" r="8"/>
-                                <path d="M10 6v4M10 14h.01"/>
-                            </svg>
-                            <p>When the silence goes too long, there's an urge to fill it.</p>
-                        </li>
-                        <li>
-                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="10" cy="10" r="8"/>
-                                <path d="M10 6v4M10 14h.01"/>
-                            </svg>
-                            <p>When you sense disapproval or resistance, the need to earn your way back can be almost compulsive.</p>
-                        </li>
-                    </ul>
-
-                    <div class="wfi-resolution">
-                        <p>This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
-                        <p style="margin-top: 1rem;">Your ability to stay regulated, present, and grounded in yourself is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. Most of us were never taught that directly, and most of us can feel the gap.</p>
-                    </div>
+                    <p>When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
+                    <p style="margin-top: 1rem;">Your ability to stay regulated, present, and grounded in yourself is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. Most of us were never taught that directly, and most of us can feel the gap.</p>
                 </div>
 
                 <!-- Right: photo + testimonial -->
