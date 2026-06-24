@@ -77,6 +77,40 @@
             margin-bottom: 2.5rem;
         }
 
+        /* Curriculum list */
+        .wfi-curriculum-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+            margin-bottom: var(--space-sm);
+        }
+
+        .wfi-curriculum-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .wfi-curriculum-list li {
+            padding: 0.85rem 0 0.85rem 1.5rem;
+            border-bottom: 1px solid rgba(74, 93, 74, 0.12);
+            font-size: 1rem;
+            color: var(--color-text-light);
+            position: relative;
+        }
+
+        .wfi-curriculum-list li:last-child {
+            border-bottom: none;
+        }
+
+        .wfi-curriculum-list li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+        }
+
         /* Weekend schedule two-column */
         .wfi-weekend-grid {
             display: grid;
@@ -252,21 +286,26 @@
         </div>
     </section>
 
-    <!-- The Promise: full-width -->
+    <!-- Curriculum list -->
     <section class="content-section" style="background-color: var(--color-bg-alt);">
         <div class="container" style="max-width: 760px;">
-            <p style="font-size: 1.1rem;">This weekend is designed to close it. Over two days we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires.</p>
-            <p style="margin-top: 1rem;">You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
+            <p class="wfi-curriculum-label">What the weekend covers</p>
+            <ul class="wfi-curriculum-list">
+                <li>The physiology of the helping impulse</li>
+                <li>Presence as a clinical tool</li>
+                <li>Reading the room through the body</li>
+                <li>Countertransference from the inside out</li>
+                <li>Intuition, and when to trust it</li>
+                <li>Doing less, and why it works</li>
+            </ul>
         </div>
     </section>
 
-    <!-- Rohrer testimonial -->
+    <!-- The Promise: full-width -->
     <section class="content-section">
         <div class="container" style="max-width: 760px;">
-            <blockquote class="pull-quote">
-                <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
-                <cite>— Matthew L. Rohrer, LCSW, Psychotherapist &amp; Executive Coach</cite>
-            </blockquote>
+            <p style="font-size: 1.1rem;">This weekend is designed to address it directly. Over two days we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires.</p>
+            <p style="margin-top: 1rem;">You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
         </div>
     </section>
 
@@ -314,6 +353,11 @@
     <section class="content-section" style="background-color: var(--color-bg-alt);">
         <div class="container" style="max-width: 760px;">
             <h2 style="text-align: center; margin-bottom: var(--space-lg);">What People Say</h2>
+
+            <blockquote class="pull-quote">
+                <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
+                <cite>— Matthew L. Rohrer, LCSW, Psychotherapist &amp; Executive Coach</cite>
+            </blockquote>
 
             <blockquote class="pull-quote">
                 <p>"Eli masterfully fosters a balance between a trustworthy container and risk-taking."</p>
