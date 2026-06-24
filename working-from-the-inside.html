@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="css/styles.css">
 
     <style>
+        /* Hero */
         .wfi-hero {
             background-color: #1e2a1e;
             padding: calc(var(--nav-height) + var(--space-xl)) var(--space-md) var(--space-xl);
@@ -76,6 +77,146 @@
             margin-bottom: 2.5rem;
         }
 
+        /* Opening two-column layout */
+        .wfi-intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .wfi-problem-list {
+            list-style: none;
+            padding: 0;
+            margin: var(--space-md) 0 0;
+        }
+
+        .wfi-problem-list li {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(74, 93, 74, 0.15);
+        }
+
+        .wfi-problem-list li:last-child {
+            border-bottom: none;
+        }
+
+        .wfi-problem-list .wfi-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            color: var(--color-secondary);
+        }
+
+        .wfi-problem-list li p {
+            margin: 0;
+            font-size: 0.975rem;
+            color: var(--color-text-light);
+            line-height: 1.6;
+        }
+
+        /* Right column: photo + testimonial */
+        .wfi-intro-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .wfi-intro-photo {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 4/3;
+        }
+
+        .wfi-intro-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+        }
+
+        .wfi-testimonial-card {
+            background: var(--color-white);
+            border-radius: 10px;
+            padding: 1.5rem 1.75rem;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+        }
+
+        .wfi-testimonial-card p {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.55;
+            margin-bottom: 0.75rem;
+            color: var(--color-text);
+        }
+
+        .wfi-testimonial-card cite {
+            font-size: 0.875rem;
+            color: var(--color-text-light);
+            font-style: normal;
+        }
+
+        /* Resolution callout */
+        .wfi-resolution {
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid rgba(74, 93, 74, 0.15);
+        }
+
+        /* Weekend schedule two-column */
+        .wfi-weekend-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .wfi-weekend-photo {
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+        }
+
+        .wfi-weekend-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Who this is for list */
+        .wfi-audience-list {
+            list-style: none;
+            padding: 0;
+            margin: var(--space-md) 0 var(--space-md);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem 2rem;
+        }
+
+        .wfi-audience-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            color: var(--color-text-light);
+        }
+
+        .wfi-audience-list li::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-accent);
+            flex-shrink: 0;
+        }
+
+        /* Pull quotes */
         .pull-quote {
             border-left: 3px solid var(--color-accent);
             padding: 1.5rem 1.5rem 1.5rem 2rem;
@@ -100,6 +241,7 @@
             font-style: normal;
         }
 
+        /* CTA */
         .wfi-cta {
             background-color: #1e2a1e;
             padding: var(--space-xl) var(--space-md);
@@ -129,6 +271,7 @@
             transform: translateY(-2px);
         }
 
+        /* Details */
         .detail-line {
             margin-bottom: 0.6rem;
             font-size: 1rem;
@@ -139,12 +282,32 @@
             font-size: 2rem;
             color: var(--color-text);
             margin-top: var(--space-md);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0;
         }
 
+        /* Mobile */
         @media (max-width: 768px) {
             .wfi-hero {
                 padding: calc(var(--nav-height) + var(--space-md)) var(--space-md) var(--space-md);
+            }
+
+            .wfi-intro-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .wfi-weekend-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .wfi-weekend-photo {
+                aspect-ratio: 4/3;
+                order: -1;
+            }
+
+            .wfi-audience-list {
+                grid-template-columns: 1fr;
             }
 
             .pull-quote {
@@ -195,43 +358,102 @@
         </div>
     </header>
 
-    <!-- Opening Copy -->
+    <!-- Opening Section: two-column -->
     <section class="content-section">
-        <div class="container" style="max-width: 760px;">
-            <p style="font-size: 1.1rem;">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
+        <div class="container" style="max-width: 1000px;">
+            <p style="font-size: 1.1rem; max-width: 700px; margin-bottom: var(--space-lg);">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
 
-            <p>When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
+            <div class="wfi-intro-grid">
+                <!-- Left: problem list + resolution -->
+                <div>
+                    <p style="font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-text-light); margin-bottom: var(--space-sm);">It shows up in moments like these</p>
+                    <ul class="wfi-problem-list">
+                        <li>
+                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="10" cy="10" r="8"/>
+                                <path d="M10 6v4M10 14h.01"/>
+                            </svg>
+                            <p>When a client isn't progressing, there's a pull to do something.</p>
+                        </li>
+                        <li>
+                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="10" cy="10" r="8"/>
+                                <path d="M10 6v4M10 14h.01"/>
+                            </svg>
+                            <p>When the silence goes too long, there's an urge to fill it.</p>
+                        </li>
+                        <li>
+                            <svg class="wfi-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="10" cy="10" r="8"/>
+                                <path d="M10 6v4M10 14h.01"/>
+                            </svg>
+                            <p>When you sense disapproval or resistance, the need to earn your way back can be almost compulsive.</p>
+                        </li>
+                    </ul>
 
-            <p>Your ability to stay regulated, present, and grounded in yourself is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. Most of us were never taught that directly, and most of us can feel the gap.</p>
+                    <div class="wfi-resolution">
+                        <p>This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
+                        <p style="margin-top: 1rem;">Your ability to stay regulated, present, and grounded in yourself is the most clinically significant thing you bring into the room. More than your training, your modality, or your technique. Most of us were never taught that directly, and most of us can feel the gap.</p>
+                    </div>
+                </div>
 
-            <p>This weekend is designed to close it. Over two days we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires. You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
+                <!-- Right: photo + testimonial -->
+                <div class="wfi-intro-right">
+                    <div class="wfi-intro-photo">
+                        <img src="images/treatment_3_clean_bright.jpg" alt="Breathwork session">
+                    </div>
+                    <div class="wfi-testimonial-card">
+                        <p>"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
+                        <cite>— Matthew L. Rohrer, LCSW, Psychotherapist &amp; Executive Coach</cite>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <!-- What the Weekend Looks Like -->
+    <!-- What the Weekend Looks Like: image + text -->
     <section class="content-section" style="background-color: var(--color-bg-alt);">
+        <div class="container" style="max-width: 1000px;">
+            <div class="wfi-weekend-grid">
+                <div class="wfi-weekend-photo">
+                    <img src="images/team-workshop.jpg" alt="Workshop participants">
+                </div>
+                <div>
+                    <h2 style="margin-bottom: var(--space-md);">What the Weekend Looks Like</h2>
+                    <p>Each day runs from 10am to 5pm with breaks and an included lunch. The mornings open with partner exercises and relational practices, where you can watch yourself in real time: where you reach, where you withdraw, where you start working harder than the moment requires. Discussion and journaling run throughout both days, giving you time to integrate what surfaces.</p>
+                    <p style="margin-top: 1rem;">The afternoons move into breathwork, which here is investigative rather than relaxing. You'll use it to surface what's actually running underneath your helping impulse, the anxiety, the need, the patterns you've learned to work around rather than through.</p>
+                    <p style="margin-top: 1rem; font-style: italic; color: var(--color-text-light);">This is experiential work. It will ask something of you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Promise: full-width -->
+    <section class="content-section">
         <div class="container" style="max-width: 760px;">
-            <h2 style="margin-bottom: var(--space-lg);">What the Weekend Looks Like</h2>
-
-            <p>Each day runs from 10am to 5pm with breaks and an included lunch. The mornings open with partner exercises and relational practices, where you can watch yourself in real time: where you reach, where you withdraw, where you start working harder than the moment requires. Discussion and journaling run throughout both days, giving you time to integrate what surfaces.</p>
-
-            <p style="margin-top: var(--space-md);">The afternoons move into breathwork, which here is investigative rather than relaxing. You'll use it to surface what's actually running underneath your helping impulse, the anxiety, the need, the patterns you've learned to work around rather than through.</p>
-
-            <p style="margin-top: var(--space-md);">This is experiential work. It will ask something of you.</p>
+            <p style="font-size: 1.1rem;">This weekend is designed to close it. Over two days we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires.</p>
+            <p style="margin-top: 1rem;">You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
         </div>
     </section>
 
     <!-- Who This Is For -->
-    <section class="content-section">
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
         <div class="container" style="max-width: 760px;">
-            <h2 style="margin-bottom: var(--space-lg);">Who This Is For</h2>
-
-            <p>Therapists, coaches, yoga teachers, bodyworkers, social workers, nurses, and anyone else whose work puts them in regular contact with other people's pain. You don't need a credential for this to matter. The skills translate to any relationship, including the ones waiting for you at home.</p>
+            <h2 style="margin-bottom: var(--space-md);">Who This Is For</h2>
+            <ul class="wfi-audience-list">
+                <li>Therapists</li>
+                <li>Coaches</li>
+                <li>Yoga teachers</li>
+                <li>Bodyworkers</li>
+                <li>Social workers</li>
+                <li>Nurses</li>
+            </ul>
+            <p>Anyone whose work puts them in regular contact with other people's pain. You don't need a credential for this to matter. The skills translate to any relationship, including the ones waiting for you at home.</p>
         </div>
     </section>
 
     <!-- About Eli -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
+    <section class="content-section">
         <div class="container" style="max-width: 800px;">
             <div class="two-col">
                 <div class="about-image">
@@ -239,7 +461,6 @@
                 </div>
                 <div>
                     <h2 style="margin-bottom: var(--space-md);">About Eli</h2>
-
                     <p>Eli Harrigan is a breathwork facilitator and somatic coach based in Rochester, NY. He trained with Jesse Torgerson, who has been facilitating this work around the world for over 40 years, and has been working with individuals, groups, and organizations since 2019. He also facilitates the Present Man Project, a men's group focused on embodied self-inquiry and relational development.</p>
                 </div>
             </div>
@@ -247,7 +468,7 @@
     </section>
 
     <!-- Testimonials -->
-    <section class="content-section">
+    <section class="content-section" style="background-color: var(--color-bg-alt);">
         <div class="container" style="max-width: 760px;">
             <h2 style="text-align: center; margin-bottom: var(--space-lg);">What People Say</h2>
 
@@ -264,7 +485,7 @@
     </section>
 
     <!-- Details -->
-    <section class="content-section" style="background-color: var(--color-bg-alt);">
+    <section class="content-section">
         <div class="container" style="max-width: 580px; text-align: center;">
             <h2 style="margin-bottom: var(--space-md);">The Details</h2>
             <p class="detail-line"><strong>Dates:</strong> September [dates], 2026</p>
