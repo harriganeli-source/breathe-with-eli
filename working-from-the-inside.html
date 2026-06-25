@@ -87,12 +87,14 @@
             color: var(--color-text);
         }
 
-        /* Section headings — smaller than global h2 */
+        /* Section headings — unified with list labels */
         .content-section h2 {
-            font-size: clamp(1rem, 1.8vw, 1.2rem);
-            letter-spacing: 0.06em;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             font-weight: 500;
+            color: var(--color-text-light);
         }
 
         /* Testimonial quote text — larger */
@@ -102,10 +104,12 @@
 
         /* Curriculum list */
         .wfi-curriculum-label {
+            font-family: var(--font-body);
             font-size: 0.8rem;
-            letter-spacing: 0.18em;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
             color: var(--color-text-light);
+            font-weight: 500;
             margin-bottom: var(--space-sm);
         }
 
@@ -206,10 +210,12 @@
         }
 
         .wfi-cta h2 {
+            font-family: var(--font-heading);
             color: #e8e2d9;
-            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
             letter-spacing: -0.01em;
             text-transform: none;
+            font-weight: 400;
             margin-bottom: var(--space-sm);
         }
 
@@ -392,7 +398,7 @@
     <!-- Opening Section -->
     <section class="content-section">
         <div class="container" style="max-width: 760px;">
-            <p style="font-size: 1.1rem;">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
+            <p>Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
 
             <p>When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
 
