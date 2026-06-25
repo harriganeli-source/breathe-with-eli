@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTZKY6VY4T"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PTZKY6VY4T');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working from the Inside | Eli Harrigan</title>
+    <meta name="description" content="A series of four sessions for therapists and other spaceholders. Breathwork, partner exercises, and somatic self-inquiry. Fall 2026, Victor, NY.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Working from the Inside | Eli Harrigan">
+    <meta property="og:description" content="A series of four sessions for therapists and other spaceholders. Fall 2026, Victor, NY.">
+    <meta property="og:image" content="https://breathewitheli.com/images/hero-group-session.jpg">
+    <meta property="og:url" content="https://breathewitheli.com/working-from-the-inside">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        /* ==============================================
+           WORKING FROM THE INSIDE — V2
+           High-contrast, editorial design
+           ============================================== */
+
+        /* --- Section wrapper --- */
+        .v2 {
+            padding: 5.5rem var(--space-md);
+        }
+
+        .v2--dark  { background-color: #1e2a1e; }
+        .v2--warm  { background-color: #f2efe9; }
+
+        /* Containers */
+        .v2-narrow { max-width: 660px;  margin-inline: auto; }
+        .v2-mid    { max-width: 800px;  margin-inline: auto; }
+        .v2-wide   { max-width: 1060px; margin-inline: auto; }
+
+        /* --- Hero --- */
+        .v2-hero {
+            background-color: #1e2a1e;
+            min-height: 82vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: calc(var(--nav-height) + 5rem) var(--space-md) 5rem;
+            text-align: center;
+        }
+
+        .v2-hero-inner { max-width: 720px; width: 100%; }
+
+        .v2-hero h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            font-weight: 500;
+            color: #e8e2d9;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+        }
+
+        .v2-hero-subtitle {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+            color: #c4a77d;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            letter-spacing: 0.02em;
+        }
+
+        .v2-hero-meta {
+            font-family: var(--font-body);
+            font-size: 0.76rem;
+            color: rgba(232, 226, 217, 0.42);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2.5rem;
+        }
+
+        /* --- Section labels --- */
+        .v2-label {
+            display: block;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .v2-label--sage { color: #4a5d4a; }
+        .v2-label--gold { color: #c4a77d; }
+
+        /* --- Body text --- */
+        .v2-body {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.78;
+            color: #2d2d2d;
+        }
+
+        .v2-body + .v2-body { margin-top: 1.25rem; }
+
+        .v2-body--dim { color: rgba(232, 226, 217, 0.7); }
+
+        /* --- Key statement — full dark stripe --- */
+        .v2-statement {
+            background-color: #1e2a1e;
+            padding: 6rem var(--space-md);
+            text-align: center;
+        }
+
+        .v2-statement-text {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+            line-height: 1.55;
+            color: #e8e2d9;
+            max-width: 740px;
+            margin: 0 auto;
+        }
+
+        /* --- What the series covers (dark) --- */
+        .v2-covers-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .v2-covers-list li {
+            display: flex;
+            align-items: baseline;
+            gap: 1.2rem;
+            padding: 1.15rem 0;
+            border-bottom: 1px solid rgba(232, 226, 217, 0.09);
+            font-family: var(--font-body);
+            font-size: 1.05rem;
+            color: rgba(232, 226, 217, 0.8);
+            line-height: 1.5;
+        }
+
+        .v2-covers-list li:last-child { border-bottom: none; }
+
+        .v2-covers-list li::before {
+            content: '—';
+            color: #c4a77d;
+            flex-shrink: 0;
+        }
+
+        /* --- Rohrer pullquote --- */
+        .v2-pullquote {
+            background-color: #f2efe9;
+            padding: 6rem var(--space-md);
+            text-align: center;
+        }
+
+        .v2-pullquote-text {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-size: clamp(1.5rem, 3vw, 2.1rem);
+            line-height: 1.5;
+            color: #2d2d2d;
+            max-width: 680px;
+            margin: 0 auto 2rem;
+        }
+
+        .v2-pullquote-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .v2-pullquote-photo {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .v2-pullquote-cite {
+            font-style: normal;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: #6b6b6b;
+            text-align: left;
+            line-height: 1.55;
+        }
+
+        /* --- Who This Is For list --- */
+        .v2-audience-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0 2rem;
+        }
+
+        .v2-audience-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(74, 93, 74, 0.1);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: #2d2d2d;
+            line-height: 1.5;
+        }
+
+        .v2-audience-list li:last-child { border-bottom: none; }
+
+        /* --- What we'll go into (dark) --- */
+        .v2-deep-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .v2-deep-list li {
+            padding: 1.3rem 0;
+            border-bottom: 1px solid rgba(232, 226, 217, 0.07);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            line-height: 1.78;
+            color: rgba(232, 226, 217, 0.65);
+        }
+
+        .v2-deep-list li:last-child { border-bottom: none; }
+
+        /* --- Two-column grid --- */
+        .v2-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .v2-photo {
+            border-radius: 6px;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+        }
+
+        .v2-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .v2-italic-closer {
+            font-style: italic;
+            color: #888;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.7;
+            font-family: var(--font-body);
+        }
+
+        /* --- Testimonial (dark) --- */
+        .v2-testimonial {
+            max-width: 720px;
+            margin: 3rem auto 0;
+        }
+
+        .v2-testimonial-quote {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+            line-height: 1.55;
+            color: #e8e2d9;
+            margin-bottom: 1.75rem;
+        }
+
+        .v2-testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .v2-testimonial-photo {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .v2-testimonial-cite {
+            font-style: normal;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            color: rgba(232, 226, 217, 0.48);
+            line-height: 1.55;
+        }
+
+        /* --- Details --- */
+        .v2-details {
+            list-style: none;
+            padding: 0;
+            margin: 2.5rem 0 3rem;
+            border-top: 1px solid rgba(74, 93, 74, 0.12);
+        }
+
+        .v2-details li {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 2rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(74, 93, 74, 0.12);
+            font-size: 1rem;
+            font-family: var(--font-body);
+        }
+
+        .v2-details-key {
+            font-size: 0.76rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #888;
+            flex-shrink: 0;
+        }
+
+        .v2-details-val { color: #2d2d2d; text-align: right; }
+
+        .v2-investment {
+            font-family: var(--font-heading);
+            font-size: clamp(2.8rem, 5vw, 3.8rem);
+            color: #2d2d2d;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .v2-investment-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #888;
+        }
+
+        /* --- CTA / Form (dark) --- */
+        .v2-cta {
+            background-color: #1e2a1e;
+            padding: 5.5rem var(--space-md);
+            text-align: center;
+        }
+
+        .v2-cta-heading {
+            font-family: var(--font-heading);
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 400;
+            color: #e8e2d9;
+            letter-spacing: -0.01em;
+            margin-bottom: 1rem;
+        }
+
+        .v2-cta-sub {
+            font-family: var(--font-body);
+            color: rgba(232, 226, 217, 0.58);
+            max-width: 460px;
+            margin: 0 auto 2.5rem;
+            font-size: 1rem;
+            line-height: 1.72;
+        }
+
+        .v2-form {
+            text-align: left;
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .v2-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .v2-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .v2-form-group label {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: rgba(232, 226, 217, 0.38);
+        }
+
+        .v2-form-group input,
+        .v2-form-group textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(232, 226, 217, 0.13);
+            border-radius: 3px;
+            padding: 0.8rem 1rem;
+            color: #e8e2d9;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .v2-form-group input:focus,
+        .v2-form-group textarea:focus {
+            border-color: rgba(196, 167, 125, 0.5);
+        }
+
+        .v2-form-group input::placeholder,
+        .v2-form-group textarea::placeholder {
+            color: rgba(232, 226, 217, 0.18);
+        }
+
+        .v2-form-group textarea { resize: vertical; min-height: 90px; }
+
+        .v2-form-success {
+            font-family: var(--font-heading);
+            font-style: italic;
+            font-size: 1.4rem;
+            color: rgba(232, 226, 217, 0.82);
+            padding: 2rem 0;
+        }
+
+        .btn-gold {
+            background-color: #c4a77d;
+            color: #1e2a1e;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background-color: #b8956c;
+            color: #1e2a1e;
+            transform: translateY(-2px);
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) {
+            .v2-hero {
+                min-height: 65vh;
+                padding: calc(var(--nav-height) + 3rem) var(--space-md) 3rem;
+            }
+
+            .v2, .v2-statement, .v2-pullquote, .v2-cta {
+                padding: 3.5rem var(--space-md);
+            }
+
+            .v2-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .v2-photo { aspect-ratio: 4/3; }
+
+            .v2-form-row { grid-template-columns: 1fr; }
+
+            .v2-details li { flex-direction: column; gap: 0.2rem; }
+            .v2-details-val { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">Eli Harrigan</a>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="upcoming.html">Upcoming Events</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="work-with-me.html">Work With Me</a></li>
+                <li class="nav-dropdown">
+                    <a href="for-teams.html">For Teams</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="for-teams.html">All Teams &amp; Organizations</a></li>
+                        <li><a href="helping-the-helpers.html">Healthcare &amp; Caregivers</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="book.html" class="nav-cta">Book a Session</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="v2-hero">
+        <div class="v2-hero-inner">
+            <h1>Working from the Inside</h1>
+            <p class="v2-hero-subtitle">For therapists and other spaceholders</p>
+            <p class="v2-hero-meta">Fall 2026 &bull; Victor, NY &bull; 8 spots &bull; $950</p>
+            <a href="#stay-in-the-loop" class="btn btn-gold">Keep Me Posted</a>
+        </div>
+    </header>
+
+    <!-- Opening prose -->
+    <section class="v2">
+        <div class="v2-narrow">
+            <p class="v2-body">Most people in the helping professions are well-trained in how to work with the people in front of them. Fewer have spent real time examining what happens in their own nervous system during a session, and how much that shapes the outcome.</p>
+            <p class="v2-body">When a client isn't progressing, there's a pull to do something. When the silence goes too long, there's an urge to fill it. When you sense disapproval or resistance, the need to earn your way back can be almost compulsive. This is the part of the work that often doesn't show up in supervision, isn't always addressed in continuing education, and quietly runs your sessions more than you probably realize.</p>
+        </div>
+    </section>
+
+    <!-- Key statement — full dark stripe -->
+    <section class="v2-statement">
+        <p class="v2-statement-text">Your ability to be present with whatever is actually happening in you is the most clinically significant thing you bring into the room.</p>
+    </section>
+
+    <!-- Continues -->
+    <section class="v2">
+        <div class="v2-narrow">
+            <p class="v2-body">More than your training, your modality, or your technique. That includes the discomfort, the doubt, the urge to do something. Most of us were never taught to work with those things directly, and most of us can feel the gap.</p>
+            <p class="v2-body">This series is designed to close it.</p>
+        </div>
+    </section>
+
+    <!-- What the series covers — dark -->
+    <section class="v2 v2--dark">
+        <div class="v2-mid">
+            <span class="v2-label v2-label--gold">What the series covers</span>
+            <ul class="v2-covers-list">
+                <li>The physiology of the helping impulse</li>
+                <li>Presence as a clinical tool</li>
+                <li>Reading the room through the body</li>
+                <li>Countertransference from the inside out</li>
+                <li>Intuition, and when to trust it</li>
+                <li>Knowing when to act and when to wait</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Promise -->
+    <section class="v2">
+        <div class="v2-narrow">
+            <p class="v2-body">Over four sessions we'll use breathwork, partner exercises, relational practices, and structured self-inquiry to help you locate where you leave yourself in session, where you're acting from need rather than presence, and where you're working harder than the work requires.</p>
+            <p class="v2-body">You'll leave with a clearer felt sense of what's yours and what belongs to the person you're with, and more trust in your ability to be effective through presence alone.</p>
+        </div>
+    </section>
+
+    <!-- Rohrer pullquote -->
+    <section class="v2-pullquote">
+        <p class="v2-pullquote-text">"Doing breathwork with Eli has helped open me up and shift my relationship to my own pain, sadness, and joy."</p>
+        <div class="v2-pullquote-author">
+            <img class="v2-pullquote-photo" src="images/testimonial-matt-rohrer.jpg" alt="Matthew L. Rohrer">
+            <cite class="v2-pullquote-cite">Matthew L. Rohrer, LCSW<br>Psychotherapist &amp; Executive Coach</cite>
+        </div>
+    </section>
+
+    <!-- Who This Is For -->
+    <section class="v2">
+        <div class="v2-narrow">
+            <span class="v2-label v2-label--sage">Who This Is For</span>
+            <p class="v2-body">Primarily designed for:</p>
+            <ul class="v2-audience-list">
+                <li>Therapists and psychotherapists</li>
+                <li>Social workers</li>
+                <li>Coaches</li>
+                <li>Healthcare workers</li>
+                <li>Clergy</li>
+                <li>Teachers</li>
+            </ul>
+            <p class="v2-body">And anyone else whose work puts them in regular contact with other people's pain. Yoga teachers, bodyworkers, first responders. You don't need a credential for this to matter. The skills translate to any relationship, including the ones waiting for you at home.</p>
+        </div>
+    </section>
+
+    <!-- What we'll go into — dark -->
+    <section class="v2 v2--dark">
+        <div class="v2-mid">
+            <span class="v2-label v2-label--gold">What we'll go into</span>
+            <ul class="v2-deep-list">
+                <li>The pull to fix, and where it lives in the body</li>
+                <li>The anxiety that surfaces when a session isn't moving</li>
+                <li>What it feels like to stay present with someone else's pain without trying to change it</li>
+                <li>The wounds that draw people to helping work, and how they show up in the room</li>
+                <li>The difference between helping from wholeness and helping from need</li>
+                <li>What becomes available when we stop trying to manage our reactions and start reading them instead</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- What the Sessions Look Like -->
+    <section class="v2">
+        <div class="v2-wide">
+            <div class="v2-grid">
+                <div class="v2-photo">
+                    <img src="images/team-workshop.jpg" alt="Workshop participants">
+                </div>
+                <div>
+                    <span class="v2-label v2-label--sage">What the Sessions Look Like</span>
+                    <p class="v2-body">We meet four Sunday mornings in the fall, each session running three hours. The work includes breathwork, partner exercises, relational practices, journaling, and group discussion. Sessions open with partner exercises and relational practices, creating space to notice in real time where there's a reach, a withdrawal, a moment of working harder than the moment requires. Discussion and journaling run throughout, giving time to integrate what surfaces.</p>
+                    <p class="v2-body">The breathwork surfaces what's actually running underneath the helping impulse — the anxiety, the need, the patterns we've learned to work around rather than through. Your internal state is information. The tightening, the pull toward a client or away from them, the flatness that descends out of nowhere. Your body is tracking something in the room, and learning to read it changes what's available to you in session.</p>
+                    <p class="v2-italic-closer">This is experiential work. It will ask something of you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Eli -->
+    <section class="v2 v2--warm">
+        <div class="v2-wide">
+            <div class="v2-grid">
+                <div class="v2-photo">
+                    <img src="images/eli-portrait.jpg" alt="Eli Harrigan" style="object-position: center top;">
+                </div>
+                <div>
+                    <span class="v2-label v2-label--sage">About Eli</span>
+                    <p class="v2-body">Eli Harrigan is a breathwork facilitator and somatic coach based in Rochester, NY. He trained with Jesse Torgerson, who has been facilitating this work around the world for over 40 years, and has been working with individuals, groups, and organizations since 2019. He also facilitates the Present Man Project, a men's group focused on embodied self-inquiry and relational development.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What People Say — dark -->
+    <section class="v2 v2--dark">
+        <div class="v2-mid">
+            <span class="v2-label v2-label--gold" style="text-align: center;">What People Say</span>
+            <div class="v2-testimonial">
+                <p class="v2-testimonial-quote">"Eli masterfully fosters a balance between a trustworthy container and risk-taking."</p>
+                <div class="v2-testimonial-author">
+                    <img class="v2-testimonial-photo" src="images/testimonial-jason-moser.jpg" alt="Jason Moser">
+                    <cite class="v2-testimonial-cite">Jason Moser, LMSW</cite>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Details -->
+    <section class="v2">
+        <div class="v2-narrow" style="text-align: center;">
+            <span class="v2-label v2-label--sage">The Details</span>
+            <ul class="v2-details" style="text-align: left;">
+                <li>
+                    <span class="v2-details-key">Format</span>
+                    <span class="v2-details-val">Four Sunday mornings, 3 hours each</span>
+                </li>
+                <li>
+                    <span class="v2-details-key">Dates</span>
+                    <span class="v2-details-val">Fall 2026 — exact dates TBD &bull; <a href="#stay-in-the-loop" style="color: #4a5d4a;">Keep Me Posted</a></span>
+                </li>
+                <li>
+                    <span class="v2-details-key">Location</span>
+                    <span class="v2-details-val">Victor, NY</span>
+                </li>
+                <li>
+                    <span class="v2-details-key">Group size</span>
+                    <span class="v2-details-val">8 participants max</span>
+                </li>
+            </ul>
+            <p class="v2-investment">$950</p>
+            <p class="v2-investment-label">Investment</p>
+        </div>
+    </section>
+
+    <!-- Stay in the Loop -->
+    <section class="v2-cta" id="stay-in-the-loop">
+        <div style="max-width: 620px; margin: 0 auto;">
+            <h2 class="v2-cta-heading">Stay in the Loop</h2>
+            <p class="v2-cta-sub">Dates for the Fall 2026 series are coming soon. Leave your email and I'll reach out when registration opens.</p>
+            <div id="wfi-form-container">
+                <form id="wfi-interest-form" class="v2-form" novalidate>
+                    <input type="hidden" name="_subject" value="Working from the Inside — Keep Me Posted">
+                    <div class="v2-form-row">
+                        <div class="v2-form-group">
+                            <label for="wfi-first-name">First Name</label>
+                            <input type="text" id="wfi-first-name" name="first_name" required>
+                        </div>
+                        <div class="v2-form-group">
+                            <label for="wfi-email">Email</label>
+                            <input type="email" id="wfi-email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="v2-form-group">
+                        <label for="wfi-context">What brought you here? <span style="text-transform: none; letter-spacing: 0; font-style: italic; font-weight: 400;">(optional)</span></label>
+                        <textarea id="wfi-context" name="brought_you_here" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold">Keep Me Posted</button>
+                </form>
+            </div>
+            <div id="wfi-form-success" class="v2-form-success" style="display: none;">
+                Got it — I'll be in touch.
+            </div>
+        </div>
+        <script>
+            (function () {
+                var form = document.getElementById('wfi-interest-form');
+                var container = document.getElementById('wfi-form-container');
+                var success = document.getElementById('wfi-form-success');
+
+                form.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    var btn = form.querySelector('button[type="submit"]');
+                    btn.disabled = true;
+                    btn.textContent = 'Sending…';
+
+                    try {
+                        var res = await fetch('https://formspree.io/f/mlgbnvqa', {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: { 'Accept': 'application/json' }
+                        });
+                        if (res.ok) {
+                            container.style.display = 'none';
+                            success.style.display = 'block';
+                        } else {
+                            throw new Error();
+                        }
+                    } catch (_) {
+                        btn.disabled = false;
+                        btn.textContent = 'Keep Me Posted';
+                        alert('Something went wrong. Please try again or email eli@breathewitheli.com directly.');
+                    }
+                });
+            })();
+        </script>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">Eli Harrigan</a>
+                    <p>Breathwork & Coaching</p>
+                    <p class="footer-location">Rochester, NY & Online</p>
+                </div>
+                <div class="footer-nav">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="work-with-me.html">Work With Me</a></li>
+                        <li><a href="upcoming.html">Upcoming Events</a></li>
+                        <li class="nav-dropdown">
+                            <a href="for-teams.html">For Teams</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="for-teams.html">All Teams &amp; Organizations</a></li>
+                                <li><a href="helping-the-helpers.html">Healthcare &amp; Caregivers</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="book.html">Book</a></li>
+                    </ul>
+                </div>
+                <div class="footer-connect">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="mailto:eli@breathewitheli.com">eli@breathewitheli.com</a></li>
+                        <li><a href="https://instagram.com/breathewitheli" target="_blank" rel="noopener">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Eli Harrigan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
