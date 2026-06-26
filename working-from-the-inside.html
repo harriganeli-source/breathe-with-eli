@@ -66,8 +66,9 @@
         .v3-lede {
             font-family: var(--font-body);
             font-size: 1.15rem;
+            font-weight: 500;
             line-height: 1.78;
-            color: rgba(232, 226, 217, 0.88);
+            color: rgba(232, 226, 217, 1.0);
         }
 
         /* Standard body — dimmer, supporting */
@@ -93,16 +94,20 @@
             line-height: 2.15;
             color: rgba(232, 226, 217, 0.62);
             margin-top: 1.4rem;
+            border-left: 2px solid rgba(196, 167, 125, 0.35);
+            padding-left: 1.25rem;
         }
 
         /* Named concept — gold, set apart */
         .v3-named {
             display: block;
             font-family: var(--font-body);
-            font-size: 0.92rem;
-            color: rgba(196, 167, 125, 0.78);
-            letter-spacing: 0.04em;
-            margin: 1.6rem 0;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: rgba(196, 167, 125, 0.95);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin: 2rem 0;
         }
 
         /* Standout — key conclusions inside sections, clearly body-level */
@@ -110,28 +115,36 @@
             font-family: var(--font-body);
             font-size: 1.1rem;
             font-weight: 600;
-            color: rgba(232, 226, 217, 0.82);
+            color: rgba(232, 226, 217, 0.92);
             line-height: 1.65;
             margin: 1.75rem 0;
+            border-left: 2px solid #c4a77d;
+            padding-left: 1.25rem;
         }
 
         /* Inline bold emphasis within body paragraphs */
         .v3-em {
-            color: rgba(232, 226, 217, 0.84);
+            color: rgba(232, 226, 217, 0.96);
             font-weight: 600;
         }
 
         /* Closing callout — large, weighted, final word */
         .v3-callout {
             font-family: var(--font-body);
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 600;
             color: #e8e2d9;
-            line-height: 1.65;
-            margin-top: 2.25rem;
+            line-height: 1.6;
+            margin-top: 2.5rem;
+            padding-top: 2.5rem;
+            border-top: 1px solid rgba(196, 167, 125, 0.2);
         }
 
-        .v3-callout + .v3-callout { margin-top: 0.5rem; }
+        .v3-callout + .v3-callout {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0.5rem;
+        }
 
         /* ---- Hero — full-bleed image ---- */
         .v3-hero {
