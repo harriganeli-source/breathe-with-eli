@@ -2,13 +2,17 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PTZKY6VY4T"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-PTZKY6VY4T');
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-PTZKY6VY4T';
+        document.head.appendChild(s);
+      });
     </script>
 
     <meta charset="UTF-8">
@@ -87,6 +91,7 @@
         <div id="hero-mandala"></div>
         <div class="hero-content">
             <h1>Come Home to Yourself</h1>
+            <script>(function(){var h=document.querySelector('.hero-content h1');if(h&&window.__abHeadline){h.textContent=window.__abHeadline;h.style.opacity='1';}})();</script>
             <p class="hero-subtitle">Get out of your head and back into your body.<br class="desktop-only"> 1:1 sessions and workshops.</p>
             <div id="hero-mandala-mobile"></div>
             <div class="hero-buttons">
