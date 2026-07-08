@@ -1547,6 +1547,15 @@ p {
         display: none;
     }
 
+    /* Reserve the mandala's box before JS assigns its class (prevents CLS) */
+    #hero-mandala-mobile {
+        display: block;
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin: var(--space-md) auto;
+    }
+
     .zen-garden-mobile {
         display: block;
         position: relative;
