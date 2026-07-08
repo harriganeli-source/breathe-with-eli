@@ -150,7 +150,7 @@ function toggleCaption(button) {
 // loaded via: https://breathe-with-eli.kit.com/7a97c5385b/index.js
 
 // Hero animation - randomly pick Zen Garden or Chevron Mandala on each page load
-(function() {
+function __bweHeroMandala() {
     const isMobile = window.innerWidth <= 768;
     const desktopContainer = document.getElementById('hero-mandala');
     const mobileContainer = document.getElementById('hero-mandala-mobile');
@@ -463,10 +463,10 @@ function toggleCaption(button) {
 
         animateBreathing();
     }
-})();
+}
 
 // Interactive Breath Wave - Trailing Line
-(function() {
+function __bweBreathWave() {
     const container = document.querySelector('.breath-wave-container');
     if (!container) return;
 
@@ -669,10 +669,10 @@ function toggleCaption(button) {
 
     // Start animation
     draw();
-})();
+}
 
 // Interactive Heart Mandala with circles and breathing animation (Inner Beloved page)
-(function() {
+function __bweHeartMandala() {
     const isMobile = window.innerWidth <= 768;
     const container = isMobile
         ? document.getElementById('hero-heart-mandala-mobile')
@@ -897,4 +897,15 @@ function toggleCaption(button) {
 
     // Start breathing animation
     animateBreathing();
-})();
+}
+
+
+// Hero/interactive animations: run after first paint so LCP is not delayed
+(function schedule(fns) {
+    function run() { fns.forEach(function(f) { f(); }); }
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(run, { timeout: 1500 });
+    } else {
+        requestAnimationFrame(function() { setTimeout(run, 0); });
+    }
+})([__bweHeroMandala, __bweBreathWave, __bweHeartMandala]);
