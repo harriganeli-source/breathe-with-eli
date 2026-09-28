@@ -14,7 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book a Session | Eli Harrigan</title>
-    <meta name="description" content="Book a breathwork session, coaching call, or free consultation with Eli Harrigan.">
+    <meta name="description" content="Book a breathwork session or free consultation with Eli Harrigan.">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
@@ -151,7 +151,6 @@
                     <a href="work-with-me.html">Work With Me</a>
                     <ul class="dropdown-menu">
                         <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
-                        <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
                         <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
                     </ul>
                 </li>
@@ -201,15 +200,9 @@
                         </div>
                     </div>
                 </div>
-                <a class="booking-card" href="contact.html" style="text-decoration: none; color: inherit; display: block;">
-                    <h3>Coaching</h3>
-                    <div class="price">Apply for Coaching</div>
-                    <div class="duration"></div>
-                    <p>1:1 somatic coaching for honest reflection, emotional unearthing, and embodied change.</p>
-                </a>
                 <div class="booking-card" data-service="group-breathwork" onclick="bookService('group-breathwork')">
                     <h3>Group Breathwork</h3>
-                    <div class="price">$40&ndash;$60</div>
+                    <div class="price">$60</div>
                     <p>Come as you are & unwind chronic patterns of bracing in the body-mind with the support of a group.</p>
                 </div>
             </div>
@@ -235,9 +228,9 @@
                 <div>
                     <h3>Locations</h3>
                     <ul style="margin-top: 1rem; color: var(--color-text-light);">
-                        <li style="margin-bottom: 0.75rem;"><strong>Victor, NY</strong> – In-person breathwork & coaching</li>
-                        <li style="margin-bottom: 0.75rem;"><strong>Pittsford, NY</strong> – In-person breathwork & coaching</li>
-                        <li style="margin-bottom: 0.75rem;"><strong>Virtual</strong> – Coaching & breathwork via Zoom</li>
+                        <li style="margin-bottom: 0.75rem;"><strong>Victor, NY</strong> – In-person breathwork</li>
+                        <li style="margin-bottom: 0.75rem;"><strong>Pittsford, NY</strong> – In-person breathwork</li>
+                        <li style="margin-bottom: 0.75rem;"><strong>Virtual</strong> – Breathwork via Zoom</li>
                     </ul>
                 </div>
                 <div>
@@ -247,9 +240,18 @@
                     </p>
                 </div>
                 <div>
-                    <h3>Cancellation Policy</h3>
+                    <h3>Payment and Cancellation</h3>
                     <p style="margin-top: 1rem; color: var(--color-text-light);">
-                        Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may be subject to a fee.
+                        Private sessions are paid in full when you book. Payments are non-refundable.
+                    </p>
+                    <p style="margin-top: 0.75rem; color: var(--color-text-light);">
+                        Need to change your time? Let me know at least 24 hours before your session and we&rsquo;ll reschedule to a date within 60 days.
+                    </p>
+                    <p style="margin-top: 0.75rem; color: var(--color-text-light);">
+                        With less than 24 hours&rsquo; notice, or if you don&rsquo;t show, you can reschedule once, to a date within 30 days.
+                    </p>
+                    <p style="margin-top: 0.75rem; color: var(--color-text-light);">
+                        Package sessions follow the same policy. If I ever need to cancel, you&rsquo;ll get a full refund or a new time, your choice.
                     </p>
                 </div>
             </div>
@@ -280,7 +282,7 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <a href="index.html" class="footer-logo">Eli Harrigan</a>
-                    <p>Breathwork & Coaching</p>
+                    <p>Breathwork</p>
                     <p class="footer-location">Rochester, NY & Online</p>
                 </div>
                 <div class="footer-nav">
@@ -291,7 +293,6 @@
                     <a href="work-with-me.html">Work With Me</a>
                     <ul class="dropdown-menu">
                         <li><a href="work-with-me.html#breathwork">Dynamic Breathwork</a></li>
-                        <li><a href="work-with-me.html#coaching">Somatic Coaching</a></li>
                         <li><a href="work-with-me.html#mens-groups">Men's Groups</a></li>
                     </ul>
                 </li>
@@ -327,9 +328,6 @@
         // Acuity appointment type URLs
         const acuityUrls = {
             'consultation': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88330409',
-            'coaching-virtual': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88330399',
-            'coaching-victor': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88331832',
-            'coaching-pittsford': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=88331858',
             'breathwork-victor': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=84562996',
             'breathwork-pittsford': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=21772859',
             'breathwork-virtual': 'https://app.acuityscheduling.com/schedule.php?owner=22572559&appointmentType=84563446',
@@ -358,7 +356,7 @@
             const params = new URLSearchParams(window.location.search);
             const service = params.get('service');
 
-            if (service === 'breathwork' || service === 'coaching') {
+            if (service === 'breathwork') {
                 // Show options expanded
                 const options = document.getElementById(service + '-options');
                 const card = document.querySelector('[data-service="' + service + '"]');
