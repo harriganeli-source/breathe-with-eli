@@ -948,7 +948,8 @@ p {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 360px));
+    justify-content: center;
     gap: var(--space-md);
 }
 
@@ -2549,7 +2550,4 @@ p {
     }
 }
 
-@media (max-width: 768px) {
-    .investment-cards > div:nth-child(2) { order: 3; }
-    .investment-cards > div:nth-child(3) { order: 2; }
-}
+
