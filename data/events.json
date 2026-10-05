@@ -38,32 +38,6 @@
       "buttonText": "Register",
       "buttonLink": "https://app.acuityscheduling.com/schedule/eea46621/?categories[]=Breathwork%20Group",
       "isExternal": true
-    },
-    {
-      "id": "mens-weekend-2025-03-27",
-      "title": "Men’s Weekend Workshop",
-      "month": "Mar",
-      "day": "27",
-      "endDate": "to 29",
-      "dateTimeDisplay": "Friday-Sunday, March 27-29",
-      "location": "Victor, NY",
-      "description": "Somatics, movement, emotional processing, breathwork, fire circle. Real challenge & connection. No bullshit.",
-      "buttonText": "More Info",
-      "buttonLink": "mens-weekend.html",
-      "isExternal": false
-    },
-    {
-      "id": "present-man-2025-04-07",
-      "title": "The Present Man Project",
-      "month": "Apr",
-      "day": "7",
-      "endDate": "to Jun 30",
-      "dateTimeDisplay": "Ongoing Men’s Group · 7:00 PM - 9:30 PM Tuesdays",
-      "location": "Victor, NY",
-      "description": "Next cohort dates: April 7th, 21st · May 5th, 19th · June 2nd, 16th, 30th",
-      "buttonText": "More Info",
-      "buttonLink": "mensgroup.html",
-      "isExternal": false
     }
   ]
 }

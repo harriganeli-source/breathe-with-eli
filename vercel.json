@@ -27,6 +27,36 @@
       "source": "/cart",
       "destination": "/book",
       "permanent": true
+    },
+    {
+      "source": "/mensgroup",
+      "destination": "/work-with-me",
+      "permanent": false
+    },
+    {
+      "source": "/mensgroup.html",
+      "destination": "/work-with-me",
+      "permanent": false
+    },
+    {
+      "source": "/mens-weekend",
+      "destination": "/work-with-me",
+      "permanent": false
+    },
+    {
+      "source": "/mens-weekend.html",
+      "destination": "/work-with-me",
+      "permanent": false
+    },
+    {
+      "source": "/onlinemen",
+      "destination": "/work-with-me",
+      "permanent": false
+    },
+    {
+      "source": "/onlinemen.html",
+      "destination": "/work-with-me",
+      "permanent": false
     }
   ],
   "headers": [
